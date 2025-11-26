@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { DrawingElement } from "./DrawingElement";
 
 interface CanvasElementProps {
     element: any;
@@ -143,15 +142,7 @@ export function CanvasElement({
 
         const selectedClass = isSelected ? "ring-2 ring-blue-500 z-10" : "";
 
-        if (element.type === "draw") {
-            return (
-                <DrawingElement
-                    element={element}
-                    isSelected={isSelected}
-                    onUpdate={(updated) => onUpdateElement(updated, index)}
-                />
-            );
-        }
+
 
         switch (element.type) {
             case "table":
@@ -187,20 +178,18 @@ export function CanvasElement({
                                             return (
                                                 <td
                                                     key={colIdx}
-                                                    className={`p-2 cursor-pointer hover:bg-blue-50 transition-colors ${
-                                                        isSelectedCell ? "bg-blue-100" : ""
-                                                    }`}
+                                                    className={`p-2 cursor-pointer hover:bg-blue-50 transition-colors ${isSelectedCell ? "bg-blue-100" : ""
+                                                        }`}
                                                     style={{
                                                         width: `${cellWidth}px`,
                                                         height: `${cellHeight}px`,
-                                                        border: `${element.borderWidth || 1}px solid ${
-                                                            element.borderColor || "#000000"
-                                                        }`,
+                                                        border: `${element.borderWidth || 1}px solid ${element.borderColor || "#000000"
+                                                            }`,
                                                         backgroundColor: isSelectedCell
                                                             ? "#DBEAFE"
                                                             : rowIdx === 0 && element.headerRow
-                                                              ? "#f3f4f6"
-                                                              : "transparent",
+                                                                ? "#f3f4f6"
+                                                                : "transparent",
                                                         fontWeight:
                                                             rowIdx === 0 && element.headerRow
                                                                 ? "bold"
@@ -262,11 +251,11 @@ export function CanvasElement({
                             src={element.src}
                             alt={element.alt || "Image"}
                             style={{
-                                width: `${element.width || 200}px`,
-                                height: `${element.height || 150}px`,
-                                objectFit: "contain"
+                                width: element.width || 200,
+                                height: element.height || 150,
+                                objectFit: "cover",
+                                display: "block",
                             }}
-                            className="border border-gray-300"
                         />
                     </div>
                 );
@@ -344,11 +333,10 @@ export function CanvasElement({
                                 element.type === "header" && element.underline ? "underline" : "none",
                             padding: "4px 8px"
                         }}
-                        className={`absolute cursor-move rounded transition-all whitespace-nowrap ${
-                            isSelected
-                                ? "border-blue-500 bg-blue-50 shadow-lg"
-                                : "border-transparent hover:border-blue-300 hover:bg-blue-50"
-                        } ${selectedClass}`}
+                        className={`absolute cursor-move rounded transition-all whitespace-nowrap ${isSelected
+                            ? "border-blue-500 bg-blue-50 shadow-lg"
+                            : "border-transparent hover:border-blue-300 hover:bg-blue-50"
+                            } ${selectedClass}`}
                         title={element.field}
                     >
                         {element.value || element.field}

@@ -128,17 +128,7 @@ export const elementTypes = {
             lineWidth: 1
         }
     },
-    draw: {
-        name: "Draw",
-        icon: Minus,
-        defaultProps: {
-            type: "draw",
-            strokes: [],
-            color: "#000000",
-            width: 300,
-            height: 200
-        }
-    }
+   
 };
 
 export const templatePresets = {

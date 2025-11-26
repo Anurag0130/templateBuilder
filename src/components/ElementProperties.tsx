@@ -50,47 +50,7 @@ export function ElementProperties({ selectedElement, onUpdateElement, fileInputR
         );
 
         switch (selectedElement.type) {
-            case "draw":
-                return (
-                    <>
-                        {commonControls}
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
-                            <input
-                                type="number"
-                                value={selectedElement.width || 300}
-                                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                                min="100"
-                                max="750"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-600 mb-2">Height (px)</label>
-                            <input
-                                type="number"
-                                value={selectedElement.height || 200}
-                                onChange={(e) => onUpdateElement({ ...selectedElement, height: parseInt(e.target.value) })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                                min="100"
-                                max="750"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-600 mb-2">Pen Color</label>
-                            <input
-                                type="color"
-                                value={selectedElement.color || "#000000"}
-                                onChange={(e) => onUpdateElement({ ...selectedElement, color: e.target.value })}
-                                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-                            />
-                        </div>
-                        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                            <label className="block text-xs font-semibold text-blue-900 mb-2">Drawing Area</label>
-                            <p className="text-xs text-blue-700">Click on the drawing area and use your mouse/touch to draw</p>
-                        </div>
-                    </>
-                );
+
 
             case "table":
             case "formTable":
@@ -274,7 +234,7 @@ export function ElementProperties({ selectedElement, onUpdateElement, fileInputR
                                 onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
                                 min="50"
-                                max="600"
+                                // max="600"
                             />
                         </div>
                         <div className="mb-4">

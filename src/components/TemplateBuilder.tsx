@@ -1,10 +1,20 @@
 import React, { useState, useRef } from "react";
-import { studentData, elementTypes } from "./constants";
+import { studentData } from "./constants";
 import { Sidebar } from "./Sidebar";
 import { Canvas } from "./Canvas";
+import { useHistory } from "./useHistory";
 
 export default function MainTemplateBuilder() {
-    const [elements, setElements] = useState([]);
+    // Use history hook for undo/redo functionality
+    const {
+        state: elements,
+        setState: setElements,
+        undo,
+        redo,
+        canUndo,
+        canRedo
+    } = useHistory<any[]>([]);
+
     const [draggingField, setDraggingField] = useState<string | null>(null);
     const [selectedElement, setSelectedElement] = useState<any>(null);
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -19,7 +29,6 @@ export default function MainTemplateBuilder() {
 
     const handleDropToPage = (coords: { x: number; y: number }) => {
         if (!draggingField) return;
-
         const newElement = {
             id: Date.now(),
             field: draggingField,
@@ -33,8 +42,7 @@ export default function MainTemplateBuilder() {
             textAlign: "left",
             fontFamily: "Arial"
         };
-
-        setElements((prev) => [...prev, newElement]);
+        setElements([...elements, newElement]);
         setDraggingField(null);
     };
 
@@ -45,10 +53,14 @@ export default function MainTemplateBuilder() {
             y: 50,
             ...elementConfig
         };
-        setElements((prev) => [...prev, newElement]);
+        setElements([...elements, newElement]);
     };
 
     const handleLoadTemplate = (templateElements: any[]) => {
+        // Clear selection when loading template
+        setSelectedElement(null);
+        setSelectedIndex(null);
+        
         setElements(
             templateElements.map((el) => ({
                 ...el,
@@ -76,11 +88,9 @@ export default function MainTemplateBuilder() {
     };
 
     const handleElementMove = (index: number, coords: { x: number; y: number }) => {
-        setElements((prev) => {
-            const copy = [...prev];
-            copy[index] = { ...copy[index], x: coords.x, y: coords.y };
-            return copy;
-        });
+        const copy = [...elements];
+        copy[index] = { ...copy[index], x: coords.x, y: coords.y };
+        setElements(copy);
     };
 
     const handleSelectElement = (element: any, index: number | null) => {
@@ -89,18 +99,17 @@ export default function MainTemplateBuilder() {
     };
 
     const handleUpdateElement = (updatedElement: any, index: number = selectedIndex!) => {
-        setElements((prev) => {
-            const copy = [...prev];
-            copy[index] = updatedElement;
-            return copy;
-        });
+        const copy = [...elements];
+        copy[index] = updatedElement;
+        setElements(copy);
+        
         if (index === selectedIndex) {
             setSelectedElement(updatedElement);
         }
     };
 
     const handleDeleteElement = (index: number) => {
-        setElements((prev) => prev.filter((_, i) => i !== index));
+        setElements(elements.filter((_, i) => i !== index));
         setSelectedElement(null);
         setSelectedIndex(null);
     };
@@ -131,6 +140,10 @@ export default function MainTemplateBuilder() {
                     selectedElement={selectedElement}
                     onDeleteElement={handleDeleteElement}
                     onUpdateElement={handleUpdateElement}
+                    onUndo={undo}
+                    onRedo={redo}
+                    canUndo={canUndo}
+                    canRedo={canRedo}
                 />
             </div>
         </>
