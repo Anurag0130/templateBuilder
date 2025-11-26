@@ -1,4 +1,6 @@
-import { Type, Table, Image as ImageIcon, Square, Minus } from "lucide-react";
+// import { Type, Table, Image as ImageIcon, Square, Minus } from "lucide-react";
+// In your constants.js or wherever elementTypes is defined
+import { Type, Table, ImageIcon, Square, Minus, Link, AlignLeft } from "lucide-react";
 
 export const studentData = {
     ApplicantAutoId: "APP/26-27/0163",
@@ -51,6 +53,8 @@ export const groupedFields = {
     "Address": ["CorrAddress", "CorrCity", "CorrState", "CorrPincode", "CorrCountry", "PerAddress", "PerCity", "PerState", "PerPincode", "PerCountry"],
 };
 
+import { Type, Table, ImageIcon, Square, Minus, Link, AlignLeft } from "lucide-react";
+
 export const elementTypes = {
     text: {
         name: "Text",
@@ -62,7 +66,10 @@ export const elementTypes = {
             fontWeight: "normal",
             color: "#000000",
             backgroundColor: "transparent",
-            textAlign: "left"
+            textAlign: "left",
+            x: 50,
+            y: 50,
+            width: 100
         }
     },
     header: {
@@ -76,7 +83,10 @@ export const elementTypes = {
             color: "#000000",
             backgroundColor: "transparent",
             textAlign: "left",
-            underline: false
+            underline: false,
+            x: 50,
+            y: 50,
+            width: 150
         }
     },
     table: {
@@ -92,7 +102,9 @@ export const elementTypes = {
             borderColor: "#000000",
             headerRow: false,
             cellData: {},
-            mergedCells: {}
+            mergedCells: {},
+            x: 50,
+            y: 50
         }
     },
     image: {
@@ -102,7 +114,10 @@ export const elementTypes = {
             type: "image",
             width: 200,
             height: 150,
-            alt: "Uploaded Image"
+            alt: "Uploaded Image",
+            src: "", // Will be set when image is uploaded
+            x: 50,
+            y: 50
         }
     },
     rectangle: {
@@ -114,7 +129,9 @@ export const elementTypes = {
             height: 100,
             backgroundColor: "#ffffff",
             borderWidth: 1,
-            borderColor: "#d1d5db"
+            borderColor: "#d1d5db",
+            x: 50,
+            y: 50
         }
     },
     line: {
@@ -125,12 +142,49 @@ export const elementTypes = {
             width: 200,
             height: 2,
             color: "#000000",
-            lineWidth: 1
+            lineWidth: 1,
+            x: 50,
+            y: 50
         }
     },
-   
+    link: {
+        name: "Link",
+        icon: Link,
+        defaultProps: {
+            type: "link",
+            text: "Click Here",
+            href: "https://example.com",
+            color: "#2563eb",
+            fontSize: 14,
+            fontWeight: "normal",
+            underline: true,
+            openInNewTab: false,
+            x: 50,
+            y: 50,
+            width: 100
+        }
+    },
+    textarea: {
+        name: "Textarea",
+        icon: AlignLeft,
+        defaultProps: {
+            type: "textarea",
+            value: "Multi-line text content...",
+            width: 200,
+            height: 100,
+            rows: 3,
+            fontSize: 12,
+            fontWeight: "normal",
+            color: "#000000",
+            backgroundColor: "#ffffff",
+            borderWidth: 1,
+            borderColor: "#d1d5db",
+            fontFamily: "Arial",
+            x: 50,
+            y: 50
+        }
+    }
 };
-
 export const templatePresets = {
     admissionForm: {
         name: "Admission Form",

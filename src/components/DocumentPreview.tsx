@@ -308,7 +308,6 @@ export default function DocumentPreview() {
 
   const downloadPDF = () => {
     alert("PDF download feature - integrate html2pdf.js library");
-    navigate("/main");
   };
   const gotoCustomTemplate = () => {
     navigate("/main");
@@ -853,22 +852,25 @@ export default function DocumentPreview() {
         </div>
 
         <div className="action-buttons">
-          {/* <button className="action-btn" onClick={loadTemplate}>
-            <RefreshCw size={16} />
-            Load Template
-          </button> */}
+
           <button className="action-btn" onClick={fillData}>
             <Eye size={16} />
             Fill Data
           </button>
-          {/* action-btn-primary */}
-          <button className="action-btn " onClick={gotoCustomTemplate}>
-            <FileText size={16} className="btn-icon" />
-            Create Custom Template
+
+          <button className="action-btn" onClick={loadTemplate}>
+            <RefreshCw size={16} />
+            Load Template
           </button>
           <button className="action-btn" onClick={downloadPDF}>
             <Download size={16} />
             Download Your PDF
+          </button>
+
+          {/* action-btn-primary */}
+          <button className="action-btn " onClick={gotoCustomTemplate}>
+            <FileText size={16} className="btn-icon" />
+            Create Custom Template
           </button>
         </div>
       </div>
