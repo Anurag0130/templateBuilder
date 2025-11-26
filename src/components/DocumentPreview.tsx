@@ -847,27 +847,28 @@ export default function DocumentPreview() {
             value={selectedTemplate}
             onChange={(e) => setSelectedTemplate(e.target.value)}
           >
-            <option value="template1">Genesis Global School - Admission Form</option>
+            <option value="template1"> Admission Form</option>
             <option value="template2">Fee Receipt (with Loops & Conditions)</option>
           </select>
         </div>
 
         <div className="action-buttons">
-          <button className="action-btn" onClick={loadTemplate}>
+          {/* <button className="action-btn" onClick={loadTemplate}>
             <RefreshCw size={16} />
             Load Template
-          </button>
+          </button> */}
           <button className="action-btn" onClick={fillData}>
             <Eye size={16} />
             Fill Data
           </button>
-          <button className="action-btn action-btn-primary" onClick={downloadPDF}>
-            <Download size={16} />
-            Download PDF
-          </button>
-          <button className="action-btn action-btn-primary" onClick={gotoCustomTemplate}>
-            <Download size={16} />
+          {/* action-btn-primary */}
+          <button className="action-btn " onClick={gotoCustomTemplate}>
+            <FileText size={16} className="btn-icon" />
             Create Custom Template
+          </button>
+          <button className="action-btn" onClick={downloadPDF}>
+            <Download size={16} />
+            Download Your PDF
           </button>
         </div>
       </div>
