@@ -7,6 +7,16 @@ export default function DocumentPreview() {
   const containerRef = useRef(null);
   const [selectedTemplate, setSelectedTemplate] = useState("template1");
 
+  const [templateName, setTemplateName] = useState("");
+  const [templateHtml, setTemplateHtml] = useState("");
+  const [customTemplates, setCustomTemplates] = useState('')
+
+  useEffect(() => {
+    const saved = localStorage.getItem("customTemplates");
+    console.log('this is saved', saved)
+    setCustomTemplates(saved)
+  }, []);
+
   const navigate = useNavigate();
 
   const backendData = {
@@ -293,14 +303,35 @@ export default function DocumentPreview() {
 
   const loadTemplate = () => {
     if (containerRef.current) {
-      const template = selectedTemplate === 'template1' ? templateSrc : feeReceiptTemplate;
+      // const template = selectedTemplate === 'template1' ? templateSrc : feeReceiptTemplate;
+      const template =
+        selectedTemplate === 'template1' ? templateSrc :
+          selectedTemplate === 'template2' ? feeReceiptTemplate :
+            selectedTemplate === 'template3' ? customTemplates :
+              feeReceiptTemplate;
       containerRef.current.innerHTML = template;
     }
   };
 
   const fillData = () => {
-    const template = selectedTemplate === 'template1' ? templateSrc : feeReceiptTemplate;
-    const data = selectedTemplate === 'template1' ? backendData : feeReceiptData;
+    // const template = selectedTemplate === 'template1' ? templateSrc : feeReceiptTemplate;
+    // const data = selectedTemplate === 'template1' ? backendData : feeReceiptData;
+
+    console.log('selectedTemplate', selectedTemplate)
+    const template =
+      selectedTemplate === 'template1' ? templateSrc :
+        selectedTemplate === 'template2' ? feeReceiptTemplate :
+          selectedTemplate === 'template3' ? customTemplates :
+            feeReceiptTemplate;
+
+    const data =
+      selectedTemplate === 'template1' ? backendData :
+        selectedTemplate === 'template2' ? feeReceiptData :
+          selectedTemplate === 'template3' ? feeReceiptData :
+            feeReceiptData;
+
+
+
     const compiled = Handlebars.compile(template);
     const html = compiled(data);
     containerRef.current.innerHTML = html;
@@ -847,7 +878,11 @@ export default function DocumentPreview() {
             onChange={(e) => setSelectedTemplate(e.target.value)}
           >
             <option value="template1"> Admission Form</option>
+            {/* <option value="template2">Fee Receipt (with Loops & Conditions)</option> */}
             <option value="template2">Fee Receipt (with Loops & Conditions)</option>
+            <option value="template3">Custom Template</option>
+
+
           </select>
         </div>
 

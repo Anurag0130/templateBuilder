@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Save, FileDown, Upload, Undo, Redo } from "lucide-react";
 import { CanvasElement } from "./CanvasElement";
-import { downloadHTML } from "./canvasExport";
+import { downloadHTML, saveTemplate } from "./canvasExport";
 
 interface CanvasProps {
     elements: any[];
@@ -117,7 +117,7 @@ export function Canvas({
                 {/* Other Actions */}
                 <button
                     className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 hover:border-blue-500 transition-colors text-sm font-medium text-gray-700"
-                // onClick={() => downloadHTML(elements, 'my-canvas.html')}
+                    onClick={() => saveTemplate(`template-${Date.now()}.html`, elements)}
                 >
                     <Save size={16} />
                     Save Template
