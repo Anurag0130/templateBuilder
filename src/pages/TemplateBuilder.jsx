@@ -32,7 +32,8 @@ export default function TemplateBuilder() {
         const newElement = {
             id: Date.now(),
             field: draggingField,
-            value: studentData[draggingField] || "",
+            value: draggingField || "",
+            // value: studentData[draggingField] || "",
             x: coords.x - 8,
             y: coords.y - 8,
             fontSize: 12,
@@ -99,6 +100,7 @@ export default function TemplateBuilder() {
     };
 
     const handleUpdateElement = (updatedElement, index = selectedIndex) => {
+        console.log('updatedElement', updatedElement)
         const copy = [...elements];
         copy[index] = updatedElement;
         setElements(copy);

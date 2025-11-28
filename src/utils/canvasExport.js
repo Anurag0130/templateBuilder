@@ -61,7 +61,7 @@ export const exportCanvasToHTML = (elements) => {
         `;
 
 
-      // inside exportCanvasToHTML -> in switch(element.type) case 'table':
+
       case "table": {
         const width = element.width || 400;
         const borderColor = element.borderColor || "#000000";
