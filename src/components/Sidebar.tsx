@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Search, X, ChevronRight, ChevronLeft } from "lucide-react";
 import { groupedFields, elementTypes, templatePresets, studentData } from "./constants";
 import { ElementProperties } from "./ElementProperties";
-
+import { HandlebarsRules } from './HandlebarsRules';
 interface SidebarProps {
     onDragStart: (e: any, field: string) => void;
     selectedElement: any;
@@ -49,7 +49,6 @@ export function Sidebar({
                 >
                     <ChevronRight size={20} className="text-gray-600" />
                 </button>
-                
                 {/* Vertical tabs indicators */}
                 <div className="flex flex-col gap-4 mt-6">
                     <div className="w-1 h-1 rounded-full bg-gray-400" title="Fields"></div>
@@ -79,14 +78,13 @@ export function Sidebar({
 
             {/* Tabs */}
             <div className="flex bg-white border-b border-gray-200 flex-shrink-0">
-                {["fields", "elements", "templates", "properties"].map((tab) => (
+                {["fields", "elements", "templates", "properties", "handlebars"]?.map((tab) => (
                     <button
                         key={tab}
-                        className={`flex-1 py-3 px-3 text-xs font-medium transition-all ${
-                            activeTab === tab
-                                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                                : "text-gray-600 hover:bg-gray-50"
-                        }`}
+                        className={`flex-1 py-3 px-3 text-xs font-medium transition-all ${activeTab === tab
+                            ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                            : "text-gray-600 hover:bg-gray-50"
+                            }`}
                         onClick={() => setActiveTab(tab)}
                     >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -227,6 +225,10 @@ export function Sidebar({
                             </div>
                         )}
                     </div>
+                )}
+
+                {activeTab === "handlebars" && (
+                    <HandlebarsRules />
                 )}
             </div>
         </div>

@@ -44,6 +44,12 @@ export default function DocumentPreview() {
         { key: "income", label: "Annual Income" },
       ],
     },
+    previousSchools: [
+      { school: "Kids Global School", year: "2023-24", grade: "2" },
+      { school: "Sunshine Academy", year: "2022-23", grade: "1" }
+    ],
+    schoolName: "GENESIS GLOBAL SCHOOL",
+    schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304"
   };
 
   const feeReceiptData: any = {
@@ -84,9 +90,7 @@ export default function DocumentPreview() {
   const loadTemplate = () => {
     if (!containerRef.current) return;
 
-    const currentTemplate: any = (templates as any[]).find(
-      (t: any) => t.id === selectedTemplate
-    );
+    const currentTemplate: any = (templates as any[]).find((t: any) => t.id === selectedTemplate);
 
     if (!currentTemplate) return;
 
@@ -96,19 +100,11 @@ export default function DocumentPreview() {
   const fillData = () => {
     if (!containerRef.current) return;
 
-    const currentTemplate: any = (templates as any[]).find(
-      (t: any) => t.id === selectedTemplate
-    );
+    const currentTemplate: any = (templates as any[]).find((t: any) => t.id === selectedTemplate);
 
     if (!currentTemplate) return;
 
-    const data =
-      selectedTemplate === "admissionForm"
-        ? backendData
-        : selectedTemplate === "feeReceipt"
-        ? feeReceiptData
-        : backendData;
-
+    const data = selectedTemplate === "admissionForm" ? backendData : selectedTemplate === "feeReceipt" ? feeReceiptData : backendData;
     const compiled: any = Handlebars.compile(currentTemplate.content);
     containerRef.current.innerHTML = compiled(data);
   };
@@ -198,7 +194,7 @@ export default function DocumentPreview() {
         <div className="ml-80 flex-1 p-8 pb-24 overflow-y-auto">
           <div
             id="template-container"
-            ref={containerRef} 
+            ref={containerRef}
             className="max-w-6xl mx-auto p-12 bg-white border border-gray-300 rounded min-h-[calc(100vh-10rem)]"
           >
             <div className="text-center text-gray-400 py-20">

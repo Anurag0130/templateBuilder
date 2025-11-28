@@ -40,7 +40,15 @@ export const studentData = {
             Pincode: "3023",
             Country: "Australia",
         }
-    }
+    },
+    extraLanguages: ["English", "Hindi", "French"],
+    previousSchools: [
+        { school: "Kids Global School", year: "2023-24", grade: "2" },
+        { school: "Sunshine Academy", year: "2022-23", grade: "1" }
+    ],
+    schoolName: "GENESIS GLOBAL SCHOOL",
+    schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304"
+
 };
 
 
@@ -67,7 +75,7 @@ export const elementTypes = {
             textAlign: "left",
             x: 50,
             y: 50,
-            width: 100
+            width: 500,
         }
     },
     header: {
@@ -84,7 +92,7 @@ export const elementTypes = {
             underline: false,
             x: 50,
             y: 50,
-            width: 150
+            width: 500,
         }
     },
     table: {
@@ -111,7 +119,7 @@ export const elementTypes = {
         icon: ImageIcon,
         defaultProps: {
             type: "image",
-            width: 200,
+            width: 400,
             height: 150,
             alt: "Uploaded Image",
             src: "",
@@ -124,7 +132,7 @@ export const elementTypes = {
         icon: Square,
         defaultProps: {
             type: "rectangle",
-            width: 200,
+            width: 400,
             height: 100,
             backgroundColor: "#ffffff",
             borderWidth: 1,
@@ -138,7 +146,7 @@ export const elementTypes = {
         icon: Minus,
         defaultProps: {
             type: "line",
-            width: 200,
+            width: 400,
             height: 2,
             color: "#000000",
             lineWidth: 1,
@@ -160,7 +168,7 @@ export const elementTypes = {
             openInNewTab: false,
             x: 50,
             y: 50,
-            width: 100
+            width: 400,
         }
     },
     textarea: {
@@ -169,7 +177,7 @@ export const elementTypes = {
         defaultProps: {
             type: "textarea",
             value: "Multi-line text content...",
-            width: 200,
+            width: 400,
             height: 100,
             rows: 3,
             fontSize: 12,
