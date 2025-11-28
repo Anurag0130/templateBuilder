@@ -24,7 +24,7 @@ export default function MainTemplateBuilder() {
         setDraggingField(field);
         try {
             e.dataTransfer.setData("text/plain", field);
-        } catch (err) {}
+        } catch (err) { }
     };
 
     const handleDropToPage = (coords: { x: number; y: number }) => {
@@ -60,7 +60,7 @@ export default function MainTemplateBuilder() {
         // Clear selection when loading template
         setSelectedElement(null);
         setSelectedIndex(null);
-        
+
         setElements(
             templateElements.map((el) => ({
                 ...el,
@@ -102,7 +102,7 @@ export default function MainTemplateBuilder() {
         const copy = [...elements];
         copy[index] = updatedElement;
         setElements(copy);
-        
+
         if (index === selectedIndex) {
             setSelectedElement(updatedElement);
         }

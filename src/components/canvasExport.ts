@@ -1,4 +1,6 @@
 import React from 'react';
+// import { templates } from "./templateStore";
+import { templates, addTemplate } from '../templateStore';
 
 // Add this utility function to convert your canvas elements to HTML
 export const exportCanvasToHTML = (elements: any[]) => {
@@ -96,24 +98,24 @@ export const downloadHTML = (elements: any[], filename: string = 'canvas-export.
   URL.revokeObjectURL(url);
 };
 
+
+
 export const saveTemplate = (templateName, templateHtml) => {
   if (!templateName.trim()) {
     alert("Template name is required");
     return;
   }
 
-  let templates = JSON.parse(localStorage.getItem("customTemplates")) || [];
   const htmlContent = exportCanvasToHTML(templateHtml);
 
-  templates.push({
-    id: Date.now(),
+  const newTemplate = {
+    id: crypto.randomUUID(),
     name: templateName,
-    html: htmlContent
-  });
+    content: htmlContent
+  };
 
-  localStorage.setItem("customTemplates", JSON.stringify(templates));
+  addTemplate(newTemplate); // <-- PUSH INTO GLOBAL ARRAY
 
   alert("Template saved successfully!");
 };
-
 

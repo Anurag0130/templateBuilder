@@ -1,5 +1,3 @@
-// import { Type, Table, Image as ImageIcon, Square, Minus } from "lucide-react";
-// In your constants.js or wherever elementTypes is defined
 import { Type, Table, ImageIcon, Square, Minus, Link, AlignLeft } from "lucide-react";
 
 export const studentData = {
@@ -32,17 +30,19 @@ export const studentData = {
     FatherAnnualIncome: "200000.0",
     MotherAnnualIncome: "100000.0",
     udf_All_the_communication_from_the_school_is_to_be_sent_to: "Both",
-    CorrAddress: "9 Old hall drive",
-    PerAddress: "9 Old hall drive",
-    CorrCity: "Caroline Springs",
-    PerCity: "Caroline Springs",
-    CorrState: "Victoria",
-    PerState: "Victoria",
-    CorrPincode: "3023",
-    PerPincode: "3023",
-    CorrCountry: "Australia",
-    PerCountry: "Australia",
+
+    addressDetails: {
+
+        Permanent: {
+            Address: "9 Old hall drive",
+            City: "Caroline Springs",
+            State: "Victoria",
+            Pincode: "3023",
+            Country: "Australia",
+        }
+    }
 };
+
 
 export const groupedFields = {
     "Basic Info": ["ApplicantAutoId", "AcademicYear", "Class", "udf_curriculum"],
@@ -52,8 +52,6 @@ export const groupedFields = {
     "Mother": ["MotherName", "udf_EJZUtgLlNisqlIiZwjFoJWTaRyOLxK", "udf_QMWkLmQUlcqaVivfzYwkuwnpOnZGpK", "MotherMobileNo", "MotherEmailId", "MotherQualification", "MotherOccupation", "MotherOrganisation", "MotherAnnualIncome"],
     "Address": ["CorrAddress", "CorrCity", "CorrState", "CorrPincode", "CorrCountry", "PerAddress", "PerCity", "PerState", "PerPincode", "PerCountry"],
 };
-
-import { Type, Table, ImageIcon, Square, Minus, Link, AlignLeft } from "lucide-react";
 
 export const elementTypes = {
     text: {
@@ -103,6 +101,7 @@ export const elementTypes = {
             headerRow: false,
             cellData: {},
             mergedCells: {},
+            cellStyles: {},
             x: 50,
             y: 50
         }
@@ -115,7 +114,7 @@ export const elementTypes = {
             width: 200,
             height: 150,
             alt: "Uploaded Image",
-            src: "", // Will be set when image is uploaded
+            src: "",
             x: 50,
             y: 50
         }
@@ -185,6 +184,7 @@ export const elementTypes = {
         }
     }
 };
+
 export const templatePresets = {
     admissionForm: {
         name: "Admission Form",
@@ -230,4 +230,17 @@ export const templatePresets = {
             }
         ]
     }
+};
+
+export const defaultCellStyle = {
+    fontSize: 12,
+    fontWeight: "normal",
+    fontFamily: "Arial",
+    color: "#000000",
+    backgroundColor: "transparent",
+    textAlign: "left",
+    verticalAlign: "middle",
+    padding: 4,
+    borderWidth: 1,
+    borderColor: "#000000"
 };

@@ -91,6 +91,17 @@ export function ElementProperties({ selectedElement, onUpdateElement, fileInputR
                             />
                         </div>
                         <div className="mb-4">
+                            <label className="block text-xs font-medium text-gray-600 mb-2">Background Color</label>
+                            <input
+                                type="color"
+                                value={selectedElement.backgroundColor || "#ffffff"}
+                                onChange={(e) => onUpdateElement({ ...selectedElement, backgroundColor: e.target.value })}
+                                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                            />
+                        </div>
+
+
+                        <div className="mb-4">
                             <label className="block text-xs font-medium text-gray-600 mb-2">Border Width (px)</label>
                             <input
                                 type="number"
@@ -98,7 +109,7 @@ export function ElementProperties({ selectedElement, onUpdateElement, fileInputR
                                 onChange={(e) => onUpdateElement({ ...selectedElement, borderWidth: parseInt(e.target.value) })}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
                                 min="0"
-                                max="5"
+                                // max="5"
                             />
                         </div>
                         <div className="mb-4">
@@ -234,7 +245,7 @@ export function ElementProperties({ selectedElement, onUpdateElement, fileInputR
                                 onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
                                 min="50"
-                                // max="600"
+                            // max="600"
                             />
                         </div>
                         <div className="mb-4">
