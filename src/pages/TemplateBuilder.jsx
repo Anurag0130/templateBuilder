@@ -1,10 +1,10 @@
+import { Canvas } from "../components/Canvas.jsx";
+import { Sidebar } from "../components/Sidebar.jsx";
+import { useHistory } from "../hooks/useHistory.ts";
+import { studentData } from "../templates/constants.js";
 import React, { useState, useRef } from "react";
-import { studentData } from "./constants";
-import { Sidebar } from "./Sidebar";
-import { Canvas } from "./Canvas";
-import { useHistory } from "./useHistory";
 
-export default function MainTemplateBuilder() {
+export default function TemplateBuilder() {
     // Use history hook for undo/redo functionality
     const {
         state: elements,
@@ -13,26 +13,26 @@ export default function MainTemplateBuilder() {
         redo,
         canUndo,
         canRedo
-    } = useHistory<any[]>([]);
+    } = useHistory([]);
 
-    const [draggingField, setDraggingField] = useState<string | null>(null);
-    const [selectedElement, setSelectedElement] = useState<any>(null);
-    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const fileInputRef = useRef(null);
+    const [draggingField, setDraggingField] = useState(null);
+    const [selectedIndex, setSelectedIndex] = useState(null);
+    const [selectedElement, setSelectedElement] = useState(null);
 
-    const handleDragStart = (e: React.DragEvent, field: string) => {
+    const handleDragStart = (e, field) => {
         setDraggingField(field);
         try {
             e.dataTransfer.setData("text/plain", field);
         } catch (err) { }
     };
 
-    const handleDropToPage = (coords: { x: number; y: number }) => {
+    const handleDropToPage = (coords) => {
         if (!draggingField) return;
         const newElement = {
             id: Date.now(),
             field: draggingField,
-            value: studentData[draggingField as keyof typeof studentData] || "",
+            value: studentData[draggingField] || "",
             x: coords.x - 8,
             y: coords.y - 8,
             fontSize: 12,
@@ -46,7 +46,7 @@ export default function MainTemplateBuilder() {
         setDraggingField(null);
     };
 
-    const handleAddElement = (elementConfig: any) => {
+    const handleAddElement = (elementConfig) => {
         const newElement = {
             id: Date.now(),
             x: 50,
@@ -56,7 +56,7 @@ export default function MainTemplateBuilder() {
         setElements([...elements, newElement]);
     };
 
-    const handleLoadTemplate = (templateElements: any[]) => {
+    const handleLoadTemplate = (templateElements) => {
         // Clear selection when loading template
         setSelectedElement(null);
         setSelectedIndex(null);
@@ -69,7 +69,7 @@ export default function MainTemplateBuilder() {
         );
     };
 
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = (event) => {
         const file = event.target.files?.[0];
         if (file) {
             const reader = new FileReader();
@@ -87,18 +87,18 @@ export default function MainTemplateBuilder() {
         event.target.value = "";
     };
 
-    const handleElementMove = (index: number, coords: { x: number; y: number }) => {
+    const handleElementMove = (index, coords) => {
         const copy = [...elements];
         copy[index] = { ...copy[index], x: coords.x, y: coords.y };
         setElements(copy);
     };
 
-    const handleSelectElement = (element: any, index: number | null) => {
+    const handleSelectElement = (element, index) => {
         setSelectedElement(element);
         setSelectedIndex(index);
     };
 
-    const handleUpdateElement = (updatedElement: any, index: number = selectedIndex!) => {
+    const handleUpdateElement = (updatedElement, index = selectedIndex) => {
         const copy = [...elements];
         copy[index] = updatedElement;
         setElements(copy);
@@ -108,7 +108,7 @@ export default function MainTemplateBuilder() {
         }
     };
 
-    const handleDeleteElement = (index: number) => {
+    const handleDeleteElement = (index) => {
         setElements(elements.filter((_, i) => i !== index));
         setSelectedElement(null);
         setSelectedIndex(null);

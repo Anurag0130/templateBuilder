@@ -1,16 +1,9 @@
-import React, { useState } from "react";
-import { Search, X, ChevronRight, ChevronLeft } from "lucide-react";
-import { groupedFields, elementTypes, templatePresets, studentData } from "./constants";
-import { ElementProperties } from "./ElementProperties";
-import { HandlebarsRules } from './HandlebarsRules';
-interface SidebarProps {
-    onDragStart: (e: any, field: string) => void;
-    selectedElement: any;
-    onUpdateElement: (element: any) => void;
-    onAddElement: (config: any) => void;
-    fileInputRef: React.RefObject<HTMLInputElement>;
-    onLoadTemplate: (elements: any[]) => void;
-}
+import  { useState } from "react";
+import { HandlebarsRules } from './HandlebarsRules.jsx'
+import { ElementProperties } from "./ElementProperties.jsx";
+import { Search, ChevronRight, ChevronLeft } from "lucide-react";
+import { groupedFields, elementTypes, templatePresets, studentData } from "../templates/constants.js";
+
 
 export function Sidebar({
     onDragStart,
@@ -19,16 +12,17 @@ export function Sidebar({
     onAddElement,
     fileInputRef,
     onLoadTemplate
-}: SidebarProps) {
+}
+
+) {
     const [query, setQuery] = useState("");
     const [activeTab, setActiveTab] = useState("fields");
     const [collapsed, setCollapsed] = useState(false);
 
-    const filterFields = (fields: string[]) =>
-        fields.filter((f) => f.toLowerCase().includes(query.toLowerCase()));
+    const filterFields = (fields) => fields?.filter((f) => f?.toLowerCase()?.includes(query?.toLowerCase()));
 
-    const handleAddElement = (type: string) => {
-        const elementConfig = elementTypes[type as keyof typeof elementTypes];
+    const handleAddElement = (type) => {
+        const elementConfig = elementTypes[type];
         if (elementConfig) {
             if (type === "image") {
                 fileInputRef.current?.click();
@@ -38,7 +32,7 @@ export function Sidebar({
         }
     };
 
-    /* ----------------------------- COLLAPSED VIEW ----------------------------- */
+
     if (collapsed) {
         return (
             <div className="w-12 bg-white border-r border-gray-300 flex flex-col items-center shadow-sm">
@@ -49,7 +43,6 @@ export function Sidebar({
                 >
                     <ChevronRight size={20} className="text-gray-600" />
                 </button>
-                {/* Vertical tabs indicators */}
                 <div className="flex flex-col gap-4 mt-6">
                     <div className="w-1 h-1 rounded-full bg-gray-400" title="Fields"></div>
                     <div className="w-1 h-1 rounded-full bg-gray-400" title="Elements"></div>
@@ -64,7 +57,7 @@ export function Sidebar({
     return (
         <div className="w-96 border-r border-gray-300 bg-white flex flex-col h-screen shadow-lg">
 
-            {/* Header */}
+
             <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white flex justify-between items-center flex-shrink-0">
                 <h2 className="text-lg font-semibold text-gray-800">Template Builder</h2>
                 <button
@@ -132,8 +125,8 @@ export function Sidebar({
                                                         {field}
                                                     </span>
                                                     <span className="block text-xs text-gray-500 truncate">
-                                                        {String(studentData[field as keyof typeof studentData] || "").substring(0, 35)}
-                                                        {String(studentData[field as keyof typeof studentData] || "").length > 35
+                                                        {String(studentData[field] || "").substring(0, 35)}
+                                                        {String(studentData[field] || "").length > 35
                                                             ? "..."
                                                             : ""}
                                                     </span>

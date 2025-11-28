@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
 
-interface CanvasElementProps {
-    element: any;
-    index: number;
-    isSelected: boolean;
-    onSelect: (element: any, index: number) => void;
-    onDragEnd: (e: any, index: number) => void;
-    onDelete: (index: number) => void;
-    onUpdateElement: (updatedElement: any, index: number) => void;
-}
+// interface CanvasElementProps {
+//     element: any;
+//     index: number;
+//     isSelected: boolean;
+//     onSelect: (element: any, index: number) => void;
+//     onDragEnd: (e: any, index: number) => void;
+//     onDelete: (index: number) => void;
+//     onUpdateElement: (updatedElement: any, index: number) => void;
+// }
 
 export function CanvasElement({
     element,
@@ -19,18 +19,20 @@ export function CanvasElement({
     onDragEnd,
     onDelete,
     onUpdateElement
-}: CanvasElementProps) {
+}
+    // : CanvasElementProps
+) {
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState(element.value || "");
-    const [selectedCells, setSelectedCells] = useState<Array<{ row: number; col: number }>>([]);
-    const [editingCell, setEditingCell] = useState<{ row: number; col: number } | null>(null);
+    const [selectedCells, setSelectedCells] = useState([]);
+    const [editingCell, setEditingCell] = useState(null);
 
-    const handleClick = (e: React.MouseEvent) => {
+    const handleClick = (e) => {
         e.stopPropagation();
         onSelect(element, index);
     };
 
-    const handleDoubleClick = (e: React.MouseEvent) => {
+    const handleDoubleClick = (e) => {
         e.stopPropagation();
         if (element.type === "text" || element.type === "header") {
             setIsEditing(true);
@@ -45,7 +47,7 @@ export function CanvasElement({
         }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             handleBlur();
         } else if (e.key === "Escape") {
@@ -54,17 +56,17 @@ export function CanvasElement({
         }
     };
 
-    const handleDragEnd = (e: React.DragEvent) => {
+    const handleDragEnd = (e) => {
         e.stopPropagation();
         onDragEnd(e, index);
     };
 
-    const handleDelete = (e: React.MouseEvent) => {
+    const handleDelete = (e) => {
         e.stopPropagation();
         onDelete(index);
     };
 
-    const handleCellClick = (e: React.MouseEvent, row: number, col: number) => {
+    const handleCellClick = (e, row, col) => {
         e.stopPropagation();
         if (element.type === "table") {
             const newSelectedCells = [...selectedCells];
@@ -100,14 +102,14 @@ export function CanvasElement({
         }
     };
 
-    const handleCellDoubleClick = (e: React.MouseEvent, row: number, col: number) => {
+    const handleCellDoubleClick = (e, row, col) => {
         e.stopPropagation();
         if (element.type === "table") {
             setEditingCell({ row, col });
         }
     };
 
-    const handleCellEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleCellEditChange = (e) => {
         if (!editingCell) return;
         const cellKey = `${editingCell.row}-${editingCell.col}`;
         const newCellData = { ...element.cellData };
@@ -119,7 +121,7 @@ export function CanvasElement({
         setEditingCell(null);
     };
 
-    const isCellMerged = (row: number, col: number) => {
+    const isCellMerged = (row, col) => {
         for (const [key, merge] of Object.entries(element.mergedCells || {})) {
             const [startRow, startCol] = key.split("-").map(Number);
             if (
@@ -307,7 +309,7 @@ export function CanvasElement({
                                 fontFamily: element.fontFamily || "Arial",
                                 color: element.color || "#000000",
                                 backgroundColor: element.backgroundColor || "transparent",
-                                textAlign: (element.textAlign || "left") as any,
+                                textAlign: (element.textAlign || "left"),
                                 width: element.width ? `${element.width}px` : "auto",
                                 border: "2px solid #3B82F6",
                                 outline: "none",
@@ -328,7 +330,7 @@ export function CanvasElement({
                             fontFamily: element.fontFamily || "Arial",
                             color: element.color || "#000000",
                             backgroundColor: element.backgroundColor || "transparent",
-                            textAlign: (element.textAlign || "left") as any,
+                            textAlign: (element.textAlign || "left"),
                             width: element.width ? `${element.width}px` : "auto",
                             textDecoration:
                                 element.type === "header" && element.underline ? "underline" : "none",

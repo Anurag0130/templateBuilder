@@ -1,12 +1,4 @@
-import React from "react";
-
-interface ElementPropertiesProps {
-    selectedElement: any;
-    onUpdateElement: (element: any) => void;
-    fileInputRef: React.RefObject<HTMLInputElement>;
-}
-
-export function ElementProperties({ selectedElement, onUpdateElement, fileInputRef }: ElementPropertiesProps) {
+export function ElementProperties({ selectedElement, onUpdateElement, fileInputRef }) {
     if (!selectedElement) {
         return (
             <div className="p-4">
@@ -109,7 +101,7 @@ export function ElementProperties({ selectedElement, onUpdateElement, fileInputR
                                 onChange={(e) => onUpdateElement({ ...selectedElement, borderWidth: parseInt(e.target.value) })}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
                                 min="0"
-                                // max="5"
+                            // max="5"
                             />
                         </div>
                         <div className="mb-4">

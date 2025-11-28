@@ -1,21 +1,21 @@
 import React, { useRef } from "react";
-import { Save, FileDown, Upload, Undo, Redo } from "lucide-react";
-import { CanvasElement } from "./CanvasElement";
-import { downloadHTML, saveTemplate } from "./canvasExport";
+import { CanvasElement } from "./CanvasElement.jsx";
+import { Save, FileDown, Undo, Redo } from "lucide-react";
+import { downloadHTML, saveTemplate } from "../utils/canvasExport.js";
 
-interface CanvasProps {
-    elements: any[];
-    onDropToPage: (coords: { x: number; y: number }) => void;
-    onElementMove: (index: number, coords: { x: number; y: number }) => void;
-    onSelectElement: (element: any, index: number | null) => void;
-    selectedElement: any;
-    onDeleteElement: (index: number) => void;
-    onUpdateElement: (updatedElement: any, index: number) => void;
-    onUndo?: () => void;
-    onRedo?: () => void;
-    canUndo?: boolean;
-    canRedo?: boolean;
-}
+// interface CanvasProps {
+//     elements: any[];
+//     onDropToPage: (coords: { x: number; y: number }) => void;
+//     onElementMove: (index: number, coords: { x: number; y: number }) => void;
+//     onSelectElement: (element: any, index: number | null) => void;
+//     selectedElement: any;
+//     onDeleteElement: (index: number) => void;
+//     onUpdateElement: (updatedElement: any, index: number) => void;
+//     onUndo?: () => void;
+//     onRedo?: () => void;
+//     canUndo?: boolean;
+//     canRedo?: boolean;
+// }
 
 export function Canvas({
     elements,
@@ -29,12 +29,14 @@ export function Canvas({
     onRedo,
     canUndo = false,
     canRedo = false
-}: CanvasProps) {
-    const pageRef = useRef<HTMLDivElement>(null);
+}
+// : CanvasProps
+) {
+    const pageRef = useRef(null);
 
-    const allowDrop = (e: React.DragEvent) => e.preventDefault();
+    const allowDrop = (e) => e.preventDefault();
 
-    const handleDrop = (e: React.DragEvent) => {
+    const handleDrop = (e) => {
         e.preventDefault();
         if (!pageRef.current) return;
 
@@ -45,7 +47,7 @@ export function Canvas({
         onDropToPage({ x, y });
     };
 
-    const handleElementDragEnd = (e: React.DragEvent, index: number) => {
+    const handleElementDragEnd = (e, index) => {
         if (!pageRef.current) return;
 
         const rect = pageRef.current.getBoundingClientRect();
@@ -61,7 +63,7 @@ export function Canvas({
 
     // Keyboard shortcuts
     React.useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
+        const handleKeyDown = (e) => {
             // Ctrl+Z or Cmd+Z for Undo
             if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
                 e.preventDefault();

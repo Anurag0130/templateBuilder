@@ -1,18 +1,18 @@
 import Handlebars from "handlebars";
 import { useNavigate } from "react-router-dom";
 import { useRef, useEffect, useState } from "react";
-import { templates, templateStyles } from "../templateStore";
+import { templates, templateStyles } from "../templates/templateStore";
 import { FileText, Download, RefreshCw, Eye } from "lucide-react";
 
 
-export default function DocumentPreview() {
-  const navigate: any = useNavigate();
-  const containerRef: any = useRef(null);
+export default function TemplatePreview() {
 
-  const [selectedTemplate, setSelectedTemplate] = useState<any>("template1");
+  const navigate = useNavigate();
+  const containerRef = useRef(null);
+  const [selectedTemplate, setSelectedTemplate] = useState();
 
 
-  const backendData: any = {
+  const backendData = {
     ApplicantAutoId: "REG-2025-001",
     AcademicYear: "2025-26",
     FirstName: "Aarav",
@@ -52,7 +52,7 @@ export default function DocumentPreview() {
     schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304"
   };
 
-  const feeReceiptData: any = {
+  const feeReceiptData = {
     receiptNo: "FEE/2025/001234",
     receiptDate: "15 January 2025",
     studentName: "Priya Verma",
@@ -77,41 +77,48 @@ export default function DocumentPreview() {
       "Payment received in full for Quarter 3. Next payment due: 15 April 2025",
   };
 
+
   // Handlebars helpers with any
-  Handlebars.registerHelper("get", (obj: any, key: any) => obj?.[key] ?? "");
-  Handlebars.registerHelper("formatCurrency", (amount: any) =>
+  Handlebars.registerHelper("get", (obj, key) => obj?.[key] ?? "");
+  Handlebars.registerHelper("formatCurrency", (amount) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
     }).format(amount)
   );
-  Handlebars.registerHelper("multiply", (a: any, b: any) => a * b);
+  Handlebars.registerHelper("multiply", (a, b) => a * b);
+
+
+
 
   const loadTemplate = () => {
     if (!containerRef.current) return;
 
-    const currentTemplate: any = (templates as any[]).find((t: any) => t.id === selectedTemplate);
+    const currentTemplate = (templates)?.find((temp) => temp?.id === selectedTemplate);
 
     if (!currentTemplate) return;
 
     containerRef.current.innerHTML = currentTemplate.content;
   };
 
+
   const fillData = () => {
     if (!containerRef.current) return;
 
-    const currentTemplate: any = (templates as any[]).find((t: any) => t.id === selectedTemplate);
+    const currentTemplate = (templates).find((temp) => temp?.id === selectedTemplate);
 
     if (!currentTemplate) return;
 
     const data = selectedTemplate === "admissionForm" ? backendData : selectedTemplate === "feeReceipt" ? feeReceiptData : backendData;
-    const compiled: any = Handlebars.compile(currentTemplate.content);
+    const compiled = Handlebars.compile(currentTemplate.content);
     containerRef.current.innerHTML = compiled(data);
   };
+
 
   const downloadPDF = () => {
     alert("Integrate html2pdf.js here.");
   };
+
 
   const gotoCustomTemplate = () => navigate("/main");
 
@@ -121,10 +128,9 @@ export default function DocumentPreview() {
 
   return (
     <>
-      <style>{templateStyles as any}</style>
+      <style>{templateStyles}</style>
 
       <div className="flex min-h-screen bg-gray-100">
-        {/* Sidebar */}
         <div className="w-80 bg-white border-r border-gray-300 overflow-y-auto h-screen fixed left-0 top-0 p-6">
           <div className="flex items-center gap-2 mb-5 pb-4 border-b border-gray-300">
             <FileText size={24} className="text-gray-800" />
@@ -144,13 +150,11 @@ export default function DocumentPreview() {
             <select
               id="template-select"
               value={selectedTemplate}
-              onChange={(e: any) => setSelectedTemplate(e.target.value)}
+              onChange={(e) => setSelectedTemplate(e.target.value)}
               className="w-full px-3 py-2.5 border border-gray-400 rounded text-sm text-gray-800 bg-white cursor-pointer focus:outline-none focus:border-blue-600"
             >
-              {(templates as any[]).map((t: any) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
+              {(templates)?.map((temp) => (
+                <option key={temp?.id} value={temp?.id}>  {temp?.name} </option>
               ))}
             </select>
           </div>
