@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
 
-// interface CanvasElementProps {
-//     element: any;
-//     index: number;
-//     isSelected: boolean;
-//     onSelect: (element: any, index: number) => void;
-//     onDragEnd: (e: any, index: number) => void;
-//     onDelete: (index: number) => void;
-//     onUpdateElement: (updatedElement: any, index: number) => void;
-// }
+
 
 export function CanvasElement({
     element,
@@ -20,7 +12,7 @@ export function CanvasElement({
     onDelete,
     onUpdateElement
 }
-    // : CanvasElementProps
+
 ) {
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState(element.value || "");

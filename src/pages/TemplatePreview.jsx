@@ -105,7 +105,7 @@ export default function TemplatePreview() {
   const fillData = () => {
     if (!containerRef.current) return;
 
-    const currentTemplate = (templates).find((temp) => temp?.id === selectedTemplate);
+    const currentTemplate = (templates)?.find((temp) => temp?.id === selectedTemplate);
 
     if (!currentTemplate) return;
 

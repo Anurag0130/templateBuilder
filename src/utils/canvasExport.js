@@ -66,21 +66,40 @@ export const exportCanvasToHTML = (elements) => {
         const width = element.width || 400;
         const borderColor = element.borderColor || "#000000";
         const borderWidth = element.borderWidth ?? 1;
-        const cols = element.cols || 2;
-        const rows = element.rows || 2;
-        const cellWidth = Math.round(width / cols);
+        // element.cols can be either a number (col count) or an array of column keys
+        let numCols;
+        let colKeys = null;
+        if (Array.isArray(element.cols)) {
+          colKeys = element.cols;
+          numCols = element.cols.length;
+        } else if (typeof element.cols === "number") {
+          numCols = element.cols;
+        } else {
+          // fallback
+          numCols = 2;
+        }
+        const rows = element.rows ?? 2;
+        const cellWidth = Math.round(width / numCols);
 
         let tableHTML = `<div style="${style}"><table style="border-collapse: collapse; width: ${width}px; border-color: ${borderColor};">`;
         tableHTML += "<tbody>";
 
         const repeat = element.repeat; // { arrayPath, startRow, cols: ["school","year","grade"] }
+        // treat repeat.startRow as 1-based in saved template; convert to 0-based index
+        const repeatStartIndex = repeat ? ((Number(repeat.startRow) || 1) - 1) : null;
 
         for (let r = 0; r < rows; r++) {
           // If this is the configured repeat row, emit a Handlebars each block
-          if (repeat && r === (repeat.startRow ?? 1)) {
+          if (repeat && r === repeatStartIndex) {
             tableHTML += `{{#each ${repeat.arrayPath}}}\n  <tr>`;
-            for (let c = 0; c < cols; c++) {
-              const colKey = repeat.cols && repeat.cols[c] ? repeat.cols[c] : `col${c}`;
+            for (let c = 0; c < numCols; c++) {
+              // prefer keys in repeat.cols (array of property names), otherwise fall back to colKeys or generic names
+              const colKey =
+                Array.isArray(repeat.cols) && repeat.cols[c]
+                  ? repeat.cols[c]
+                  : Array.isArray(colKeys) && colKeys[c]
+                    ? colKeys[c]
+                    : `col${c + 1}`;
               tableHTML += `<td style="width:${cellWidth}px; border:${borderWidth}px solid ${borderColor}; padding:4px;">{{${colKey}}}</td>`;
             }
             tableHTML += `</tr>\n{{/each}}`;
@@ -88,9 +107,9 @@ export const exportCanvasToHTML = (elements) => {
           }
 
           tableHTML += "<tr>";
-          for (let c = 0; c < cols; c++) {
+          for (let c = 0; c < numCols; c++) {
             const key = `${r}-${c}`;
-            // NOTE: cellContent may contain Handlebars tokens (e.g., "{{school}}") — preserve as-is
+            // cellContent may already contain Handlebars tokens — preserve as-is
             const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
             tableHTML += `<td style="width:${cellWidth}px; border:${borderWidth}px solid ${borderColor}; padding:4px;">${cellContent}</td>`;
           }
@@ -100,6 +119,7 @@ export const exportCanvasToHTML = (elements) => {
         tableHTML += "</tbody></table></div>";
         return tableHTML;
       }
+
 
       default:
         return "";
