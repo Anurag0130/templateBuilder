@@ -91,12 +91,7 @@ export function HandlebarsRules() {
                     <p className="text-xs text-gray-400">Define syntax rules for templates</p>
                 </div>
 
-                <button
-                    onClick={() => setShowForm(!showForm)}
-                    className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                >
-                    <Plus size={16} />
-                </button>
+              
             </div>
 
 

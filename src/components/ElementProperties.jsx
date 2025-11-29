@@ -41,157 +41,226 @@ export function ElementProperties({ selectedElement, onUpdateElement, fileInputR
             </>
         );
 
-        switch (selectedElement.type) {
+        switch (selectedElement.type) {            
             case "table":
             case "formTable":
                 return (
-                    <>
-                        {commonControls}
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-600 mb-2">Rows</label>
-                            <input
-                                type="number"
-                                value={selectedElement.rows || 2}
-                                onChange={(e) => onUpdateElement({ ...selectedElement, rows: parseInt(e.target.value) })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                                min="1"
-                                max="20"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-600 mb-2">Columns</label>
-                            <input
-                                type="number"
-                                value={selectedElement.cols || 2}
-                                onChange={(e) => onUpdateElement({ ...selectedElement, cols: parseInt(e.target.value) })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                                min="1"
-                                max="10"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
-                            <input
-                                type="number"
-                                value={selectedElement.width || 400}
-                                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                                min="100"
-                                max="750"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-600 mb-2">Background Color</label>
-                            <input
-                                type="color"
-                                value={selectedElement.backgroundColor || "#ffffff"}
-                                onChange={(e) => onUpdateElement({ ...selectedElement, backgroundColor: e.target.value })}
-                                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-600 mb-2">Border Width (px)</label>
-                            <input
-                                type="number"
-                                value={selectedElement.borderWidth || 1}
-                                onChange={(e) => onUpdateElement({ ...selectedElement, borderWidth: parseInt(e.target.value) })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                                min="0"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-xs font-medium text-gray-600 mb-2">Border Color</label>
-                            <input
-                                type="color"
-                                value={selectedElement.borderColor || "#000000"}
-                                onChange={(e) => onUpdateElement({ ...selectedElement, borderColor: e.target.value })}
-                                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-                            />
+                  <>
+                    {commonControls}
+                    <div className="mb-4">
+                      <label className="block text-xs font-medium text-gray-600 mb-2">
+                        Rows
+                      </label>
+                      <input
+                        type="number"
+                        value={selectedElement.rows || 2}
+                        onChange={(e) =>
+                          onUpdateElement({
+                            ...selectedElement,
+                            rows: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+                        min="1"
+                        max="20"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-xs font-medium text-gray-600 mb-2">
+                        Columns
+                      </label>
+                      <input
+                        type="number"
+                        value={selectedElement.cols || 2}
+                        onChange={(e) =>
+                          onUpdateElement({
+                            ...selectedElement,
+                            cols: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+                        min="1"
+                        max="10"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-xs font-medium text-gray-600 mb-2">
+                        Width (px)
+                      </label>
+                      <input
+                        type="number"
+                        value={selectedElement.width || 400}
+                        onChange={(e) =>
+                          onUpdateElement({
+                            ...selectedElement,
+                            width: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+                        min="100"
+                        max="750"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-xs font-medium text-gray-600 mb-2">
+                        Background Color
+                      </label>
+                      <input
+                        type="color"
+                        value={selectedElement.backgroundColor || "#ffffff"}
+                        onChange={(e) =>
+                          onUpdateElement({
+                            ...selectedElement,
+                            backgroundColor: e.target.value,
+                          })
+                        }
+                        className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-xs font-medium text-gray-600 mb-2">
+                        Border Width (px)
+                      </label>
+                      <input
+                        type="number"
+                        value={selectedElement.borderWidth || 1}
+                        onChange={(e) =>
+                          onUpdateElement({
+                            ...selectedElement,
+                            borderWidth: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+                        min="0"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-xs font-medium text-gray-600 mb-2">
+                        Border Color
+                      </label>
+                      <input
+                        type="color"
+                        value={selectedElement.borderColor || "#000000"}
+                        onChange={(e) =>
+                          onUpdateElement({
+                            ...selectedElement,
+                            borderColor: e.target.value,
+                          })
+                        }
+                        className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                      />
+                    </div>
+
+                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                      <label className="block text-xs font-semibold text-blue-900 mb-3">
+                        Row Repeat Configuration
+                      </label>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">
+                            Array Path
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g., schools or student.grades"
+                            value={selectedElement.repeat?.arrayPath || ""}
+                            onChange={(e) =>
+                              onUpdateElement({
+                                ...selectedElement,
+                                repeat: {
+                                  ...selectedElement.repeat,
+                                  arrayPath: e.target.value,
+                                },
+                              })
+                            }
+                            className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:outline-none focus:border-blue-500"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Path to the array in your data
+                          </p>
                         </div>
 
-                        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                            <label className="block text-xs font-semibold text-blue-900 mb-3">Row Repeat Configuration</label>
-                            <div className="space-y-3">
-                                <div>
-                                    <label className="block text-xs text-gray-600 mb-1">Array Path</label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., schools or student.grades"
-                                        value={selectedElement.repeat?.arrayPath || ""}
-                                        onChange={(e) => onUpdateElement({
-                                            ...selectedElement,
-                                            repeat: {
-                                                ...selectedElement.repeat,
-                                                arrayPath: e.target.value
-                                            }
-                                        })}
-                                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:outline-none focus:border-blue-500"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        Path to the array in your data
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs text-gray-600 mb-1">Start Row (0-indexed)</label>
-                                    <input
-                                        type="number"
-                                        value={selectedElement.repeat?.startRow ?? 1}
-                                        onChange={(e) => onUpdateElement({
-                                            ...selectedElement,
-                                            repeat: {
-                                                ...selectedElement.repeat,
-                                                startRow: parseInt(e.target.value)
-                                            }
-                                        })}
-                                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:outline-none focus:border-blue-500"
-                                        min="0"
-                                        max={Math.max(0, (selectedElement.rows || 2) - 1)}
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        Which row should repeat (0 = first row)
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs text-gray-600 mb-1">Column Keys (comma-separated)</label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g., school,year,grade"
-                                        value={selectedElement.repeat?.cols?.join(",") || ""}
-                                        onChange={(e) => onUpdateElement({
-                                            ...selectedElement,
-                                            repeat: {
-                                                ...selectedElement.repeat,
-                                                cols: e.target.value.split(",").map(s => s.trim()).filter(Boolean)
-                                            }
-                                        })}
-                                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:outline-none focus:border-blue-500"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        Keys for each column in the repeated row
-                                    </p>
-                                </div>
-
-                                {selectedElement.repeat?.arrayPath && (
-                                    <button
-                                        onClick={() => onUpdateElement({
-                                            ...selectedElement,
-                                            repeat: undefined
-                                        })}
-                                        className="w-full px-2 py-1.5 text-xs bg-red-100 text-red-700 border border-red-300 rounded hover:bg-red-200 transition"
-                                    >
-                                        Clear Repeat Configuration
-                                    </button>
-                                )}
-                            </div>
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">
+                            Start Row (0-indexed)
+                          </label>
+                          <input
+                            type="number"
+                            value={selectedElement.repeat?.startRow ?? 1}
+                            onChange={(e) =>
+                              onUpdateElement({
+                                ...selectedElement,
+                                repeat: {
+                                  ...selectedElement.repeat,
+                                  startRow: parseInt(e.target.value),
+                                },
+                              })
+                            }
+                            className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:outline-none focus:border-blue-500"
+                            min="0"
+                            max={Math.max(0, (selectedElement.rows || 2) - 1)}
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Which row should repeat (0 = first row)
+                          </p>
                         </div>
 
-                        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                            <label className="block text-xs font-semibold text-blue-900 mb-2">Cell Editing</label>
-                            <p className="text-xs text-blue-700">Double-click cells in the table to edit their content</p>
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">
+                            Column Keys (comma-separated)
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g., school,year,grade"
+                            value={
+                              selectedElement.repeat?.cols?.join(",") || ""
+                            }
+                            onChange={(e) => {
+                              const raw = e.target.value;
+
+                              onUpdateElement({
+                                ...selectedElement,
+                                repeat: {
+                                  ...selectedElement.repeat,
+                                  cols:
+                                    raw === ""
+                                      ? []
+                                      : raw.split(",").map((s) => s.trim()),
+                                },
+                              });
+                            }}
+                            className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:outline-none focus:border-blue-500"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Keys for each column in the repeated row
+                          </p>
                         </div>
-                    </>
+
+                        {selectedElement.repeat?.arrayPath && (
+                          <button
+                            onClick={() =>
+                              onUpdateElement({
+                                ...selectedElement,
+                                repeat: undefined,
+                              })
+                            }
+                            className="w-full px-2 py-1.5 text-xs bg-red-100 text-red-700 border border-red-300 rounded hover:bg-red-200 transition"
+                          >
+                            Clear Repeat Configuration
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                      <label className="block text-xs font-semibold text-blue-900 mb-2">
+                        Cell Editing
+                      </label>
+                      <p className="text-xs text-blue-700">
+                        Double-click cells in the table to edit their content
+                      </p>
+                    </div>
+                  </>
                 );
 
             case "image":

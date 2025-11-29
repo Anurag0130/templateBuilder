@@ -44,12 +44,67 @@ export default function TemplatePreview() {
         { key: "income", label: "Annual Income" },
       ],
     },
-    previousSchools: [
-      { school: "Kids Global School", year: "2023-24", grade: "2" },
-      { school: "Sunshine Academy", year: "2022-23", grade: "1" }
-    ],
+"previousSchools": [
+  { 
+    "school": "Kids Global School", 
+    "year": "2023-24", 
+    "grade": "2", 
+    "city": "New York", 
+    "teacher": "Ms. Taylor" 
+  },
+  { 
+    "school": "Sunshine Academy", 
+    "year": "2022-23", 
+    "grade": "1", 
+    "city": "Los Angeles", 
+    "teacher": "Mr. Lee" 
+  },
+  { 
+    "school": "Greenfield International", 
+    "year": "2021-22", 
+    "grade": "3", 
+    "city": "Chicago", 
+    "teacher": "Mrs. Johnson" 
+  },
+  { 
+    "school": "Maple Grove School", 
+    "year": "2020-21", 
+    "grade": "4", 
+    "city": "San Francisco", 
+    "teacher": "Mr. Smith" 
+  },
+  { 
+    "school": "Blue Ridge Academy", 
+    "year": "2022-23", 
+    "grade": "2", 
+    "city": "Miami", 
+    "teacher": "Ms. Davis" 
+  },
+  { 
+    "school": "Westview High School", 
+    "year": "2019-20", 
+    "grade": "5", 
+    "city": "Seattle", 
+    "teacher": "Mr. Williams" 
+  },
+  { 
+    "school": "Lakeside Prep", 
+    "year": "2021-22", 
+    "grade": "1", 
+    "city": "Austin", 
+    "teacher": "Mrs. Green" 
+  },
+  { 
+    "school": "Silver Oak School", 
+    "year": "2023-24", 
+    "grade": "3", 
+    "city": "Denver", 
+    "teacher": "Mr. Harris" 
+  },
+]
+,
     schoolName: "GENESIS GLOBAL SCHOOL",
-    schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304"
+    schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304",
   };
 
   const feeReceiptData = {
