@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Trash2 } from "lucide-react";
-
-
 
 export function CanvasElement({
     element,
@@ -11,9 +9,7 @@ export function CanvasElement({
     onDragEnd,
     onDelete,
     onUpdateElement
-}
-
-) {
+}) {
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState(element.value || "");
     const [selectedCells, setSelectedCells] = useState([]);
@@ -136,9 +132,84 @@ export function CanvasElement({
 
         const selectedClass = isSelected ? "ring-2 ring-blue-500 z-10" : "";
 
-
-
         switch (element.type) {
+            case "emailField":
+                return (
+                    <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
+                        <div style={{ width: element.width ? `${element.width}px` : "auto" }}>
+                            <label
+                                style={{
+                                    fontSize: `${element.fontSize || 14}px`,
+                                    color: element.color || "#000000",
+                                    display: "block",
+                                    marginBottom: "4px",
+                                    fontWeight: "500"
+                                }}
+                            >
+                                {element.label || "Email:"}
+                            </label>
+                            <div
+                                style={{
+                                    border: "1px solid #d1d5db",
+                                    padding: "8px 12px",
+                                    borderRadius: "4px",
+                                    backgroundColor: "#f9fafb",
+                                    fontSize: `${element.fontSize || 14}px`,
+                                    color: "#9ca3af"
+                                }}
+                            >
+                                {element.placeholder || "email@example.com"}
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case "list":
+                const listStyleType = element.listStyle === "bullet" ? "disc" : element.listStyle === "number" ? "decimal" : "none";
+                const ListTag = element.listStyle === "number" ? "ol" : "ul";
+
+                return (
+                    <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
+                        <ListTag
+                            style={{
+                                width: element.width ? `${element.width}px` : "auto",
+                                fontSize: `${element.fontSize || 14}px`,
+                                fontWeight: element.fontWeight || "normal",
+                                color: element.color || "#000000",
+                                lineHeight: element.lineHeight || 1.8,
+                                listStyleType: listStyleType,
+                                paddingLeft: element.listStyle === "none" ? "0" : `${element.indentation || 20}px`,
+                                margin: 0
+                            }}
+                        >
+                            {(element.items || ["Item 1", "Item 2", "Item 3"]).map((item, idx) => (
+                                <li key={idx}>{item}</li>
+                            ))}
+                        </ListTag>
+                    </div>
+                );
+
+            case "link":
+                return (
+                    <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
+                        <a
+                            href={element.href || "#"}
+                            style={{
+                                fontSize: `${element.fontSize || 14}px`,
+                                fontWeight: element.fontWeight || "normal",
+                                color: element.color || "#2563eb",
+                                textDecoration: element.underline ? "underline" : "none",
+                                display: "inline-block",
+                                width: element.width ? `${element.width}px` : "auto",
+                                cursor: "pointer"
+                            }}
+                            onClick={(e) => e.preventDefault()}
+                        >
+                            {element.text || "Click Here"}
+                        </a>
+                    </div>
+                );
+
             case "table":
                 const cellWidth = (element.width || 400) / (element.cols || 2);
                 const cellHeight = (element.height || 100) / (element.rows || 2);
@@ -255,19 +326,7 @@ export function CanvasElement({
                     </div>
                 );
 
-            case "rectangle":
-                return (
-                    <div
-                        style={{
-                            ...baseStyle,
-                            width: `${element.width || 200}px`,
-                            height: `${element.height || 100}px`,
-                            backgroundColor: element.backgroundColor || "#ffffff",
-                            border: `${element.borderWidth || 1}px solid ${element.borderColor || "#d1d5db"}`
-                        }}
-                        className={`absolute cursor-move ${selectedClass}`}
-                    />
-                );
+
 
             case "line":
                 return (
@@ -352,7 +411,7 @@ export function CanvasElement({
             {isSelected && (
                 <button
                     onClick={handleDelete}
-                    className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors z-20"
+                    className="absolute -top-0 -right-0 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors z-20"
                 >
                     <Trash2 size={12} />
                 </button>

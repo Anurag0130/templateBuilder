@@ -1,4 +1,5 @@
 import { Canvas } from "../components/Canvas.jsx";
+import { DummyJsonDataPanel } from "../components/DummyJsonDataPanel.jsx";
 import { Sidebar } from "../components/Sidebar.jsx";
 import { useHistory } from "../hooks/useHistory.ts";
 import { studentData } from "../templates/constants.js";
@@ -116,6 +117,10 @@ export default function TemplateBuilder() {
         setSelectedIndex(null);
     };
 
+    const handleDataChange = (newData) => {
+        setTemplateData(newData);
+        console.log('Template data updated:', newData);
+    };
     return (
         <>
             <input
@@ -147,7 +152,10 @@ export default function TemplateBuilder() {
                     canUndo={canUndo}
                     canRedo={canRedo}
                 />
+            <DummyJsonDataPanel onDataChange={handleDataChange} />
             </div>
+
+            {/* Right Panel - JSON Data */}
         </>
     );
 }

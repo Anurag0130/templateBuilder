@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Copy, Code } from "lucide-react";
+import { Copy, Code, Check, ChevronRight } from "lucide-react";
 
 const DEFAULT_RULES = [
     {
@@ -35,95 +35,155 @@ const DEFAULT_RULES = [
     },
 ];
 
+const RuleCard = ({ rule, onCopy, copiedId }) => (
+    <div className="bg-white border border-gray-200 rounded-lg p-3 hover:border-indigo-300 hover:shadow-sm transition-all">
+        <div className="space-y-2">
+            {/* Syntax */}
+            <code className="text-xs font-mono bg-indigo-50 px-2 py-1 rounded text-indigo-700 font-semibold block break-all">
+                {rule?.syntax || "No Syntax"}
+            </code>
 
-const RuleCard = ({ rule, onDelete, onCopy }) => (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-2 hover:shadow transition">
-        <div className="flex items-start justify-between">
-            <div className="flex-1">
+            {/* Description */}
+            <p className="text-xs text-gray-600 leading-relaxed">
+                {rule?.description || "No description"}
+            </p>
 
-                <div className="flex items-center gap-2 mb-1">
-                    <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-blue-600">
-                        {rule?.syntax || "No Syntax"}
+            {/* Example */}
+            {rule.example && (
+                <div className="bg-green-50 border border-green-200 rounded p-2">
+                    <p className="text-[10px] font-semibold text-green-800 mb-1 flex items-center gap-1">
+                        <Code size={10} />
+                        Example
+                    </p>
+                    <code className="text-[10px] font-mono text-green-700 block break-all">
+                        {rule?.example}
                     </code>
-
-                    <button
-                        onClick={() => onCopy(rule.syntax)}
-                        className="p-1 hover:bg-gray-100 rounded"
-                        title="Copy syntax"
-                    >
-                        <Copy size={14} className="text-gray-500" />
-                    </button>
                 </div>
+            )}
 
-
-                <p className="text-xs text-gray-600">{rule?.description || "No description"}</p>
-
-                {rule.example && (
-                    <div className="mt-2 pt-2 border-t border-gray-100">
-                        <p className="text-xs text-gray-500 mb-1">Example:</p>
-                        <code className="text-xs font-mono bg-green-50 text-green-700 px-2 py-1 rounded block">
-                            {rule?.example || "No Example"}
-                        </code>
-                    </div>
+            {/* Copy Button */}
+            <button
+                onClick={() => onCopy(rule.syntax, rule.id)}
+                className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 active:scale-[0.98] transition-all"
+            >
+                {copiedId === rule.id ? (
+                    <>
+                        <Check size={12} />
+                        Copied!
+                    </>
+                ) : (
+                    <>
+                        <Copy size={12} />
+                        Copy
+                    </>
                 )}
-            </div>
-
+            </button>
         </div>
     </div>
 );
 
+export default function HandlebarsRules() {
+    const [rules] = useState(DEFAULT_RULES);
+    const [copiedId, setCopiedId] = useState(null);
 
-export function HandlebarsRules() {
-    const [rules, setRules] = useState(DEFAULT_RULES);
-    const [showForm, setShowForm] = useState(false);
-
-
-    const handleCopy = (text) => navigator.clipboard.writeText(text);
+    const handleCopy = (text, id) => {
+        navigator.clipboard.writeText(text);
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), 2000);
+    };
 
     return (
-        <div className="p-4 space-y-4">
-
-            <div className="flex items-center justify-between mb-2">
-                <div>
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Handlebars Rules
-                    </h3>
-                    <p className="text-xs text-gray-400">Define syntax rules for templates</p>
+        <div className="bg-gray-50 p-4">
+            {/* Header */}
+            <div className="mb-4">
+                <div className="flex items-center gap-2 mb-1">
+                    <Code size={20} className="text-indigo-600" />
+                    <h1 className="text-lg font-bold text-gray-900">
+                        Handlebars Template Guide
+                    </h1>
                 </div>
-
-              
-            </div>
-
-
-
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                    <Code size={14} className="text-purple-600" /> Quick Reference Guide
+                <p className="text-xs text-gray-600">
+                    Learn how to use dynamic template syntax in your documents
                 </p>
+            </div>
 
-                <div className="text-xs space-y-2 text-gray-600">
-                    <p>• {"{{variable}}"} – simple value</p>
-                    <p>• {"{{#if condition}}"} – condition block</p>
-                    <p>• {"{{#each array}}"} – loop</p>
-                    <p>• {"{{@index}}"} – loop index</p>
+            {/* Quick Reference */}
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-1.5 mb-2">
+                    <div className="bg-purple-600 p-1 rounded">
+                        <Code size={12} className="text-white" />
+                    </div>
+                    <h2 className="text-sm font-bold text-gray-900">Quick Reference</h2>
+                </div>
 
+                <div className="space-y-2">
+                    <div className="bg-white/70 rounded p-2">
+                        <code className="text-xs font-mono text-purple-700 font-semibold block mb-0.5">
+                            {"{{variable}}"}
+                        </code>
+                        <p className="text-[10px] text-gray-600">Insert simple values</p>
+                    </div>
+                    <div className="bg-white/70 rounded p-2">
+                        <code className="text-xs font-mono text-purple-700 font-semibold block mb-0.5">
+                            {"{{#if condition}}"}
+                        </code>
+                        <p className="text-[10px] text-gray-600">Conditional rendering</p>
+                    </div>
+                    <div className="bg-white/70 rounded p-2">
+                        <code className="text-xs font-mono text-purple-700 font-semibold block mb-0.5">
+                            {"{{#each array}}"}
+                        </code>
+                        <p className="text-[10px] text-gray-600">Loop through items</p>
+                    </div>
+                    <div className="bg-white/70 rounded p-2">
+                        <code className="text-xs font-mono text-purple-700 font-semibold block mb-0.5">
+                            {"{{@index}}"}
+                        </code>
+                        <p className="text-[10px] text-gray-600">Current loop index</p>
+                    </div>
                 </div>
             </div>
 
+            {/* Section Header */}
+            <div className="mb-3">
+                <h2 className="text-sm font-bold text-gray-900 mb-0.5">
+                    Detailed Examples
+                </h2>
+                <p className="text-xs text-gray-600">
+                    Click "Copy" on any rule to use it in your templates
+                </p>
+            </div>
 
             {/* Rules List */}
-            <div className="space-y-3">
+            <div className="space-y-3 mb-4">
                 {rules?.map((rule) => (
                     <RuleCard
                         key={rule?.id}
                         rule={rule}
-                        onDelete={() => { }}
                         onCopy={handleCopy}
+                        copiedId={copiedId}
                     />
                 ))}
             </div>
 
-
+            {/* Pro Tips */}
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-xs text-blue-900 font-semibold mb-2 flex items-center gap-1">
+                    <ChevronRight size={12} className="text-blue-600" />
+                    Pro Tips
+                </p>
+                <div className="space-y-1.5 text-[11px] text-blue-800 leading-relaxed">
+                    <p>
+                        • Combine <code className="px-1 bg-blue-100 rounded font-mono text-[10px]">{"{{#each}}"}</code> with <code className="px-1 bg-blue-100 rounded font-mono text-[10px]">{"{{#if}}"}</code> to filter items
+                    </p>
+                    <p>
+                        • Use <code className="px-1 bg-blue-100 rounded font-mono text-[10px]">{"{{@index}}"}</code> for auto-numbering lists
+                    </p>
+                    <p>
+                        • Access nested properties: <code className="px-1 bg-blue-100 rounded font-mono text-[10px]">{"{{user.name}}"}</code>
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }
