@@ -72,7 +72,7 @@ export function Sidebar({
 
 
             <div className="flex bg-white border-b border-gray-200 flex-shrink-0 shadow-sm">
-                {["fields", "elements", "templates", "rules"]?.map((tab) => (
+                {[ "elements", "templates", "rules"]?.map((tab) => (
                     <button
                         key={tab}
                         className={`flex-1 py-3.5 px-4 text-sm font-semibold transition-all relative ${
@@ -150,7 +150,7 @@ export function Sidebar({
                             <div>
                                 <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider px-1 mb-4 flex items-center gap-2">
                                     <div className="w-1 h-4 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full shadow-sm"></div>
-                                    Add Elements
+                                    Layout Elements
                                 </h3>
 
                                 <div className="grid grid-cols-2 gap-3">
