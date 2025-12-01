@@ -131,12 +131,12 @@ export function Canvas({
                     {/* Page */}
                     <div
                         ref={pageRef}
-                        className="w-[794px] h-[1123px] bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
+                        className="w-[804px] h-[1123px] bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
                         onDragOver={allowDrop}
                         onDrop={handleDrop}
                         onClick={handleCanvasClick}
                         style={{
-                            backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
+                            // backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
                             backgroundSize: '20px 20px'
                         }}
                     >

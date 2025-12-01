@@ -128,11 +128,11 @@ export const elementTypes = {
     icon: Table,
     defaultProps: {
       type: "table",
-      rows: 3,
+      rows: 2,
       cols: 3,
       width: 500,
       height: 150,
-      borderWidth: 1,
+      borderWidth: 2,
       borderColor: "#000000",
       headerRow: true,
       headerBackgroundColor: "#f3f4f6",
