@@ -116,7 +116,7 @@ export function DummyJsonDataPanel({ initialData }) {
     };
 
     return (
-        <div className="w-100 bg-white border-l border-gray-200 flex flex-col h-full">
+        <div className="w-80 bg-white border-l border-gray-200 flex flex-col h-full">
             {/* Header */}
             <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50 flex-shrink-0">
                 <div className="flex items-center justify-between mb-2">

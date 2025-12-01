@@ -56,38 +56,38 @@ export function CanvasElement({
 
     const handleCellClick = (e, row, col) => {
         e.stopPropagation();
-        if (element.type === "table") {
-            const newSelectedCells = [...selectedCells];
-            const existingIndex = newSelectedCells.findIndex((c) => c.row === row && c.col === col);
+        // if (element.type === "table") {
+        //     const newSelectedCells = [...selectedCells];
+        //     const existingIndex = newSelectedCells.findIndex((c) => c.row === row && c.col === col);
 
-            if (existingIndex > -1) {
-                newSelectedCells.splice(existingIndex, 1);
-            } else {
-                newSelectedCells.push({ row, col });
-            }
+        //     if (existingIndex > -1) {
+        //         newSelectedCells.splice(existingIndex, 1);
+        //     } else {
+        //         newSelectedCells.push({ row, col });
+        //     }
 
-            setSelectedCells(newSelectedCells);
+        //     setSelectedCells(newSelectedCells);
 
-            if (newSelectedCells.length >= 2) {
-                const rows = newSelectedCells.map((c) => c.row);
-                const cols = newSelectedCells.map((c) => c.col);
-                const minRow = Math.min(...rows);
-                const maxRow = Math.max(...rows);
-                const minCol = Math.min(...cols);
-                const maxCol = Math.max(...cols);
+        //     if (newSelectedCells.length >= 2) {
+        //         const rows = newSelectedCells.map((c) => c.row);
+        //         const cols = newSelectedCells.map((c) => c.col);
+        //         const minRow = Math.min(...rows);
+        //         const maxRow = Math.max(...rows);
+        //         const minCol = Math.min(...cols);
+        //         const maxCol = Math.max(...cols);
 
-                const mergeKey = `${minRow}-${minCol}`;
-                const newMergedCells = { ...element.mergedCells };
+        //         const mergeKey = `${minRow}-${minCol}`;
+        //         const newMergedCells = { ...element.mergedCells };
 
-                newMergedCells[mergeKey] = {
-                    rowSpan: maxRow - minRow + 1,
-                    colSpan: maxCol - minCol + 1
-                };
+        //         newMergedCells[mergeKey] = {
+        //             rowSpan: maxRow - minRow + 1,
+        //             colSpan: maxCol - minCol + 1
+        //         };
 
-                onUpdateElement({ ...element, mergedCells: newMergedCells }, index);
-                setSelectedCells([]);
-            }
-        }
+        //         onUpdateElement({ ...element, mergedCells: newMergedCells }, index);
+        //         setSelectedCells([]);
+        //     }
+        // }
     };
 
     const handleCellDoubleClick = (e, row, col) => {
