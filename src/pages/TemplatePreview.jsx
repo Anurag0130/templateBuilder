@@ -10,7 +10,8 @@ export default function TemplatePreview() {
 
   const navigate = useNavigate();
   const containerRef = useRef(null);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+
 
   useEffect(() => {
     loadTemplate();
@@ -45,7 +46,11 @@ export default function TemplatePreview() {
   };
 
 
-  const gotoCustomTemplate = () => navigate("/main");
+  // const gotoCustomTemplate = () => navigate("/main");
+  const gotoCustomTemplate = () => {
+    navigate("/main", { state: { templateId: selectedTemplate } });
+  };
+
 
 
 

@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Canvas } from "../components/Canvas.jsx";
 import { Sidebar } from "../components/Sidebar.jsx";
 import { useHistory } from "../hooks/useHistory.ts";
 import { DummyJsonDataPanel } from "../components/DummyJsonDataPanel.jsx";
-
+import { useLocation } from "react-router-dom";
+import { templates as savedTemplates } from "../templates/templateStore";
 export default function TemplateBuilder() {
     // Use history hook for undo/redo functionality
     const {
@@ -19,6 +20,24 @@ export default function TemplateBuilder() {
     const [draggingField, setDraggingField] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [selectedElement, setSelectedElement] = useState(null);
+
+    const location = useLocation();
+    const incomingTemplateId = location?.state?.templateId || null;
+
+    useEffect(() => {
+        if (!incomingTemplateId) return;
+
+        const template = savedTemplates.find(t => t.id === incomingTemplateId);
+        if (template && template.elements) {
+            setElements(
+                template.elements.map(el => ({
+                    ...el,
+                    id: Date.now() + Math.random()
+                }))
+            );
+        }
+    }, [incomingTemplateId]);
+
 
     const handleDragStart = (e, field) => {
         setDraggingField(field);

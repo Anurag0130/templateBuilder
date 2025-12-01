@@ -163,11 +163,13 @@ export const downloadHTML = (elements, filename = "template.html") => {
 
 
 export const saveTemplate = (templateName, elements) => {
+  console.log('this is element', elements)
   const htmlContent = exportCanvasToHTML(elements);
   const newTemplate = {
     id: crypto.randomUUID(),
     name: templateName,
-    content: htmlContent
+    content: htmlContent,
+    elements: elements
   };
   console.log('newTemplate', htmlContent)
   addTemplate(newTemplate);

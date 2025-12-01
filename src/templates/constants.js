@@ -4,69 +4,6 @@ import {
 } from "lucide-react";
 
 
-export const studentData = {
-  ApplicantAutoId: "APP/26-27/0163",
-  AcademicYear: "2026-27",
-  Class: "GRADE 3",
-  udf_curriculum: "IB",
-  udf_current_school: "",
-  udf_current_class: "Grade 2",
-  udf_is_transport: "YES",
-  udf_Name_of_the_Applicant: "Ryaan Seth",
-  udf_Name_of_the_Sibling: "",
-  SiblingClass: "",
-  FatherName: "Nimish Seth",
-  MotherName: "Aishwarya Rawat",
-  udf_DpCfIrEQNbqLNwhaPIlbZEMIhSLXcP: "03-11-1978",
-  udf_EJZUtgLlNisqlIiZwjFoJWTaRyOLxK: "05-08-1985",
-  udf_trhHSqcsooLHlBephDKdGQRaBhLarf: "Indian",
-  udf_QMWkLmQUlcqaVivfzYwkuwnpOnZGpK: "Australian",
-  FatherMobileNo: "468332435",
-  MotherMobileNo: "490948709",
-  FatherEmailId: "nimishseth@hotmail.com",
-  MotherEmailId: "aishxlnc@gmail.com",
-  FatherQualification: "",
-  MotherQualification: "",
-  FatherOccupation: "Consultant",
-  MotherOccupation: "Service",
-  FatherOrganisation: "",
-  MotherOrganisation: "",
-  FatherAnnualIncome: "200000.0",
-  MotherAnnualIncome: "100000.0",
-  udf_All_the_communication_from_the_school_is_to_be_sent_to: "Both",
-
-  addressDetails: {
-
-    Permanent: {
-      Address: "9 Old hall drive",
-      City: "Caroline Springs",
-      State: "Victoria",
-      Pincode: "3023",
-      Country: "Australia",
-    }
-  },
-  extraLanguages: ["English", "Hindi", "French"],
-  previousSchools: [
-    { school: "Kids Global School", year: "2023-24", grade: "2" },
-    { school: "Sunshine Academy", year: "2022-23", grade: "1" }
-  ],
-  schoolName: "GENESIS GLOBAL SCHOOL",
-  schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304"
-
-};
-
-
-export const groupedFields = {
-  "Basic Info": ["ApplicantAutoId", "AcademicYear", "Class", "udf_curriculum"],
-  "Student": ["udf_current_school", "udf_current_class", "udf_is_transport", "udf_Name_of_the_Applicant"],
-  "Sibling": ["udf_Name_of_the_Sibling", "SiblingClass"],
-  "Father": ["FatherName", "udf_DpCfIrEQNbqLNwhaPIlbZEMIhSLXcP", "udf_trhHSqcsooLHlBephDKdGQRaBhLarf", "FatherMobileNo", "FatherEmailId", "FatherQualification", "FatherOccupation", "FatherOrganisation", "FatherAnnualIncome"],
-  "Mother": ["MotherName", "udf_EJZUtgLlNisqlIiZwjFoJWTaRyOLxK", "udf_QMWkLmQUlcqaVivfzYwkuwnpOnZGpK", "MotherMobileNo", "MotherEmailId", "MotherQualification", "MotherOccupation", "MotherOrganisation", "MotherAnnualIncome"],
-  "Address": ["CorrAddress", "CorrCity", "CorrState", "CorrPincode", "CorrCountry", "PerAddress", "PerCity", "PerState", "PerPincode", "PerCountry"],
-};
-
-
-
 
 export const elementTypes = {
   text: {
@@ -508,3 +445,64 @@ export const feeReceiptData = {
     "Payment received in full for Quarter 3. Next payment due: 15 April 2025",
 };
 
+
+export const studentData = {
+  ApplicantAutoId: "APP/26-27/0163",
+  AcademicYear: "2026-27",
+  Class: "GRADE 3",
+  udf_curriculum: "IB",
+  udf_current_school: "",
+  udf_current_class: "Grade 2",
+  udf_is_transport: "YES",
+  udf_Name_of_the_Applicant: "Ryaan Seth",
+  udf_Name_of_the_Sibling: "",
+  SiblingClass: "",
+  FatherName: "Nimish Seth",
+  MotherName: "Aishwarya Rawat",
+  udf_DpCfIrEQNbqLNwhaPIlbZEMIhSLXcP: "03-11-1978",
+  udf_EJZUtgLlNisqlIiZwjFoJWTaRyOLxK: "05-08-1985",
+  udf_trhHSqcsooLHlBephDKdGQRaBhLarf: "Indian",
+  udf_QMWkLmQUlcqaVivfzYwkuwnpOnZGpK: "Australian",
+  FatherMobileNo: "468332435",
+  MotherMobileNo: "490948709",
+  FatherEmailId: "nimishseth@hotmail.com",
+  MotherEmailId: "aishxlnc@gmail.com",
+  FatherQualification: "",
+  MotherQualification: "",
+  FatherOccupation: "Consultant",
+  MotherOccupation: "Service",
+  FatherOrganisation: "",
+  MotherOrganisation: "",
+  FatherAnnualIncome: "200000.0",
+  MotherAnnualIncome: "100000.0",
+  udf_All_the_communication_from_the_school_is_to_be_sent_to: "Both",
+
+  addressDetails: {
+
+    Permanent: {
+      Address: "9 Old hall drive",
+      City: "Caroline Springs",
+      State: "Victoria",
+      Pincode: "3023",
+      Country: "Australia",
+    }
+  },
+  extraLanguages: ["English", "Hindi", "French"],
+  previousSchools: [
+    { school: "Kids Global School", year: "2023-24", grade: "2" },
+    { school: "Sunshine Academy", year: "2022-23", grade: "1" }
+  ],
+  schoolName: "GENESIS GLOBAL SCHOOL",
+  schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304"
+
+};
+
+
+export const groupedFields = {
+  "Basic Info": ["ApplicantAutoId", "AcademicYear", "Class", "udf_curriculum"],
+  "Student": ["udf_current_school", "udf_current_class", "udf_is_transport", "udf_Name_of_the_Applicant"],
+  "Sibling": ["udf_Name_of_the_Sibling", "SiblingClass"],
+  "Father": ["FatherName", "udf_DpCfIrEQNbqLNwhaPIlbZEMIhSLXcP", "udf_trhHSqcsooLHlBephDKdGQRaBhLarf", "FatherMobileNo", "FatherEmailId", "FatherQualification", "FatherOccupation", "FatherOrganisation", "FatherAnnualIncome"],
+  "Mother": ["MotherName", "udf_EJZUtgLlNisqlIiZwjFoJWTaRyOLxK", "udf_QMWkLmQUlcqaVivfzYwkuwnpOnZGpK", "MotherMobileNo", "MotherEmailId", "MotherQualification", "MotherOccupation", "MotherOrganisation", "MotherAnnualIncome"],
+  "Address": ["CorrAddress", "CorrCity", "CorrState", "CorrPincode", "CorrCountry", "PerAddress", "PerCity", "PerState", "PerPincode", "PerCountry"],
+};
