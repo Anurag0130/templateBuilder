@@ -1,9 +1,8 @@
+import React, { useState, useRef } from "react";
 import { Canvas } from "../components/Canvas.jsx";
-import { DummyJsonDataPanel } from "../components/DummyJsonDataPanel.jsx";
 import { Sidebar } from "../components/Sidebar.jsx";
 import { useHistory } from "../hooks/useHistory.ts";
-import { studentData } from "../templates/constants.js";
-import React, { useState, useRef } from "react";
+import { DummyJsonDataPanel } from "../components/DummyJsonDataPanel.jsx";
 
 export default function TemplateBuilder() {
     // Use history hook for undo/redo functionality
@@ -152,7 +151,7 @@ export default function TemplateBuilder() {
                     canUndo={canUndo}
                     canRedo={canRedo}
                 />
-            <DummyJsonDataPanel onDataChange={handleDataChange} />
+                <DummyJsonDataPanel onDataChange={handleDataChange} />
             </div>
 
             {/* Right Panel - JSON Data */}

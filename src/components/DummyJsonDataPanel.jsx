@@ -1,45 +1,14 @@
 import { useState } from "react";
 import { Copy, Check, RefreshCw, Code, ChevronDown, ChevronRight } from "lucide-react";
+import { backendData } from "../templates/constants";
 
 export function DummyJsonDataPanel({ initialData }) {
-    const defaultData = initialData || {
-        ApplicantAutoId: "APP/26-27/0163",
-        AcademicYear: "2026-27",
-        Class: "GRADE 3",
-        udf_curriculum: "IB",
-        udf_Name_of_the_Applicant: "Ryaan Seth",
-        FatherName: "Nimish Seth",
-        MotherName: "Aishwarya Rawat",
-        FatherMobileNo: "468332435",
-        MotherMobileNo: "490948709",
-        FatherEmailId: "nimishseth@hotmail.com",
-        MotherEmailId: "aishxlnc@gmail.com",
-        addressDetails: {
-            Permanent: {
-                Address: "9 Old hall drive",
-                City: "Caroline Springs",
-                State: "Victoria",
-                Pincode: "3023",
-                Country: "Australia",
-            }
-        },
-        extraLanguages: ["English", "Hindi", "French"],
-        previousSchools: [
-            { school: "Kids Global School", year: "2023-24", grade: "2" },
-            { school: "Sunshine Academy", year: "2022-23", grade: "1" }
-        ],
-        schoolName: "GENESIS GLOBAL SCHOOL",
-        schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304"
-    };
 
-    const [jsonData, setJsonData] = useState(defaultData);
+    const [jsonData, setJsonData] = useState(backendData);
     const [copied, setCopied] = useState(false);
     const [copiedField, setCopiedField] = useState(null);
     const [expandedSections, setExpandedSections] = useState({});
 
-    const handleReset = () => {
-        setJsonData(defaultData);
-    };
 
     const handleCopy = () => {
         navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
@@ -149,7 +118,7 @@ export function DummyJsonDataPanel({ initialData }) {
     return (
         <div className="w-100 bg-white border-l border-gray-200 flex flex-col h-full">
             {/* Header */}
-            {/* <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50 flex-shrink-0">
+            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50 flex-shrink-0">
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                         <div className="bg-indigo-600 p-2 rounded-lg">
@@ -171,13 +140,13 @@ export function DummyJsonDataPanel({ initialData }) {
                                 <Copy size={14} className="text-gray-600" />
                             )}
                         </button>
-                    
+
                     </div>
                 </div>
                 <p className="text-sm text-gray-600">
                     Click to expand nested fields
                 </p>
-            </div> */}
+            </div>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4">

@@ -1,22 +1,21 @@
 import { useState } from "react";
-// import { HandlebarsRules } from './HandlebarsRules.jsx'
 import HandlebarsRules from './HandlebarsRules.jsx'
 import { ElementProperties } from "./ElementProperties.jsx";
 import { Search, ChevronRight, ChevronLeft, Layout, Sparkles } from "lucide-react";
 import { groupedFields, elementTypes, templatePresets, studentData } from "../templates/constants.js";
 
 export function Sidebar({
-    onDragStart,
-    selectedElement,
-    onUpdateElement,
-    onAddElement,
-    fileInputRef,
-    onLoadTemplate
+  onDragStart,
+  selectedElement,
+  onUpdateElement,
+  onAddElement,
+  fileInputRef,
+  onLoadTemplate
 }) {
+
   const [query, setQuery] = useState("");
-  // const [activeTab, setActiveTab] = useState("fields");
-  const [activeTab, setActiveTab] = useState("elements");
   const [collapsed, setCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState("elements");
 
   const filterFields = (fields) =>
     fields?.filter((f) => f?.toLowerCase()?.includes(query?.toLowerCase()));
@@ -89,11 +88,10 @@ export function Sidebar({
         {["elements", "templates", "rules"]?.map((tab) => (
           <button
             key={tab}
-            className={`flex-1 py-3.5 px-4 text-sm font-semibold transition-all relative ${
-              activeTab === tab
-                ? "text-indigo-600 bg-gradient-to-b from-indigo-50 to-white"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-            }`}
+            className={`flex-1 py-3.5 px-4 text-sm font-semibold transition-all relative ${activeTab === tab
+              ? "text-indigo-600 bg-gradient-to-b from-indigo-50 to-white"
+              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              }`}
             onClick={() => setActiveTab(tab)}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -124,7 +122,7 @@ export function Sidebar({
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+            {/* <div className="flex-1 overflow-y-auto p-4 space-y-6">
               {Object.entries(groupedFields).map(([group, fields]) => {
                 const filtered = filterFields(fields);
                 if (!filtered.length) return null;
@@ -159,7 +157,7 @@ export function Sidebar({
                   </div>
                 );
               })}
-            </div>
+            </div> */}
           </div>
         )}
 

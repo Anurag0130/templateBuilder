@@ -250,9 +250,9 @@ export const templatePresets = {
         fontWeight: "bold",
         color: "#374151"
       },
-     
 
-     
+
+
       {
         type: "text",
         value: "Note: Please submit this form along with required documents",
@@ -310,7 +310,7 @@ export const templatePresets = {
         headers: ["Item", "Description", "Quantity", "Unit Price", "Amount"],
         columnWidths: [50, 250, 80, 100, 100]
       },
-     
+
       {
         type: "text",
         value: "Thank you for your business!",
@@ -328,7 +328,7 @@ export const templatePresets = {
     category: "awards",
     pageSize: "A4",
     elements: [
-     
+
       {
         type: "image",
         x: 325,
@@ -359,7 +359,7 @@ export const templatePresets = {
         width: 700,
         color: "#374151"
       },
-     
+
       {
         type: "text",
         value: "has successfully completed the",
@@ -370,7 +370,7 @@ export const templatePresets = {
         width: 700,
         color: "#374151"
       },
-     
+
       {
         type: "text",
         value: "with outstanding performance and dedication",
@@ -386,4 +386,125 @@ export const templatePresets = {
 
 };
 
+
+
+export const backendData = {
+  ApplicantAutoId: "REG-2025-001",
+  AcademicYear: "2025-26",
+  FirstName: "Aarav",
+  LastName: "Sharma",
+  Gender: "Male",
+  SiblingName: "Riya Sharma",
+  SiblingClass: "Grade 4",
+  MedicalCondition: "",
+  father: {
+    name: "Rajesh Sharma",
+    mobile: "9876543210",
+    email: "rajesh@example.com",
+    occupation: "Engineer",
+    income: "12 LPA",
+  },
+  mother: {
+    name: "Neha Sharma",
+    mobile: "9876500000",
+    email: "neha@example.com",
+    occupation: "Teacher",
+    income: "8 LPA",
+  },
+  parents: {
+    fields: [
+      { key: "name", label: "Name" },
+      { key: "mobile", label: "Mobile Number" },
+      { key: "email", label: "Email" },
+      { key: "occupation", label: "Occupation" },
+      { key: "income", label: "Annual Income" },
+    ],
+  },
+  "previousSchools": [
+    {
+      "school": "Kids Global School",
+      "year": "2023-24",
+      "grade": "2",
+      "city": "New York",
+      "teacher": "Ms. Taylor"
+    },
+    {
+      "school": "Sunshine Academy",
+      "year": "2022-23",
+      "grade": "1",
+      "city": "Los Angeles",
+      "teacher": "Mr. Lee"
+    },
+    {
+      "school": "Greenfield International",
+      "year": "2021-22",
+      "grade": "3",
+      "city": "Chicago",
+      "teacher": "Mrs. Johnson"
+    },
+    {
+      "school": "Maple Grove School",
+      "year": "2020-21",
+      "grade": "4",
+      "city": "San Francisco",
+      "teacher": "Mr. Smith"
+    },
+    {
+      "school": "Blue Ridge Academy",
+      "year": "2022-23",
+      "grade": "2",
+      "city": "Miami",
+      "teacher": "Ms. Davis"
+    },
+    {
+      "school": "Westview High School",
+      "year": "2019-20",
+      "grade": "5",
+      "city": "Seattle",
+      "teacher": "Mr. Williams"
+    },
+    {
+      "school": "Lakeside Prep",
+      "year": "2021-22",
+      "grade": "1",
+      "city": "Austin",
+      "teacher": "Mrs. Green"
+    },
+    {
+      "school": "Silver Oak School",
+      "year": "2023-24",
+      "grade": "3",
+      "city": "Denver",
+      "teacher": "Mr. Harris"
+    },
+  ]
+  ,
+  schoolName: "GENESIS GLOBAL SCHOOL",
+  schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304",
+};
+
+export const feeReceiptData = {
+  receiptNo: "FEE/2025/001234",
+  receiptDate: "15 January 2025",
+  studentName: "Priya Verma",
+  studentId: "STU-2024-5678",
+  class: "Grade 8-A",
+  fatherName: "Mr. Amit Verma",
+  academicYear: "2024-25",
+  paymentMode: "Online Transfer",
+  transactionId: "TXN98765432",
+  feeComponents: [
+    { description: "Tuition Fee (Quarter 3)", amount: 25000, paid: true },
+    { description: "Transportation Fee", amount: 3500, paid: true },
+    { description: "Library Fee", amount: 1200, paid: false },
+    { description: "Activity Fee", amount: 2000, paid: true },
+    { description: "Exam Fee", amount: 1500, paid: true },
+  ],
+  hasDiscount: true,
+  discountReason: "Sibling Discount (10%)",
+  discountAmount: 3320,
+  remarksAvailable: true,
+  remarks:
+    "Payment received in full for Quarter 3. Next payment due: 15 April 2025",
+};
 
