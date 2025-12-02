@@ -1,6 +1,7 @@
 import { addTemplate, updateTemplate } from '../templates/templateStore';
+import { successAlert } from './toasts.js';
 
-import { successAlert } from '../../helper.js'
+
 
 
 

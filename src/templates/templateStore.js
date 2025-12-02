@@ -1,6 +1,4 @@
-// templateStore.js
 
-// Template Styles - These styles are applied to rendered template content
 export const templateStyles = `
   .header-section { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #333; margin-bottom: 30px; }
   .school-name { font-size: 26px; font-weight: 700; color: #1a1a1a; margin: 0 0 10px 0; letter-spacing: 0.5px; }
@@ -276,7 +274,7 @@ export const templates = [
   }
 ];
 
-// Helper to add templates dynamically
+
 export const addTemplate = (template) => {
   templates.push(template);
 };

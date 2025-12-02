@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
 import { CanvasElement } from "./CanvasElement.jsx";
+import React, { useRef, useState, useEffect } from "react";
+import { SaveTemplateModal } from "./SaveTemplateModal.jsx";
 import { Save, FileDown, Undo, Redo, Sparkles } from "lucide-react";
 import { downloadHTML, saveTemplate } from "../utils/canvasExport.js";
 
@@ -15,7 +16,7 @@ export function Canvas({
     onRedo,
     canUndo = false,
     canRedo = false,
-    // New props for edit mode
+
     isEditMode = false,
     currentTemplateId = null,
     currentTemplateName = ""
@@ -31,6 +32,31 @@ export function Canvas({
             setFileName(currentTemplateName);
         }
     }, [isEditMode, currentTemplateName]);
+
+
+    //key board shortcut h bhai undo and redo k liye
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            // Ctrl+Z or Cmd+Z for Undo
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                if (canUndo && onUndo) {
+                    onUndo();
+                }
+            }
+            // Ctrl+Shift+Z or Cmd+Shift+Z or Ctrl+Y for Redo
+            if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'z') ||
+                ((e.ctrlKey || e.metaKey) && e.key === 'y')) {
+                e.preventDefault();
+                if (canRedo && onRedo) {
+                    onRedo();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [canUndo, canRedo, onUndo, onRedo]);
 
 
 
@@ -69,41 +95,20 @@ export function Canvas({
             alert("Please enter a template name");
             return;
         }
-
-        saveTemplate(
-            fileName.trim(),
-            elements,
-            isEditMode ? currentTemplateId : null
-        );
-
+        saveTemplate(fileName.trim(), elements, isEditMode ? currentTemplateId : null);
         setModalVisivble(false);
         setFileName("");
     };
 
+    const handleModalClose = () => {
+        setModalVisivble(false);
+        if (isEditMode) {
+            setFileName(currentTemplateName);
+        } else {
+            setFileName("");
+        }
+    };
 
-
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            // Ctrl+Z or Cmd+Z for Undo
-            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
-                e.preventDefault();
-                if (canUndo && onUndo) {
-                    onUndo();
-                }
-            }
-            // Ctrl+Shift+Z or Cmd+Shift+Z or Ctrl+Y for Redo
-            if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'z') ||
-                ((e.ctrlKey || e.metaKey) && e.key === 'y')) {
-                e.preventDefault();
-                if (canRedo && onRedo) {
-                    onRedo();
-                }
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [canUndo, canRedo, onUndo, onRedo]);
 
 
 
@@ -205,71 +210,14 @@ export function Canvas({
                 </div>
             </div>
 
-            {/* ---------------------------------MODAL WORK ---------------------------------- */}
-            {modalvisible && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-                    onClick={() => {
-                        setModalVisivble(false);
-                        if (isEditMode) {
-                            setFileName(currentTemplateName);
-                        } else {
-                            setFileName("");
-                        }
-                    }}
-                >
-                    <div
-                        className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fadeIn scale-100"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                            {isEditMode ? "Update Template" : "Save Template"}
-                        </h2>
-
-                        <input
-                            type="text"
-                            placeholder="Enter template name"
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition mb-5"
-                            value={fileName}
-                            onChange={(e) => setFileName(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    handleSaveTemplate();
-                                }
-                            }}
-                        />
-
-                        {isEditMode && (
-                            <p className="text-xs text-gray-500 mb-4">
-                                Currently editing: <span className="font-medium text-gray-700">{currentTemplateName}</span>
-                            </p>
-                        )}
-
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => {
-                                    setModalVisivble(false);
-                                    if (isEditMode) {
-                                        setFileName(currentTemplateName);
-                                    } else {
-                                        setFileName("");
-                                    }
-                                }}
-                                className="px-4 py-2 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSaveTemplate}
-                                disabled={!fileName.trim()}
-                                className="px-4 py-2 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
-                            >
-                                {isEditMode ? "Update" : "Save"}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <SaveTemplateModal
+                isOpen={modalvisible}
+                onClose={handleModalClose}
+                onSave={handleSaveTemplate}
+                isEditMode={isEditMode}
+                currentTemplateName={currentTemplateName}
+                initialFileName={isEditMode ? currentTemplateName : ""}
+            />
         </div>
     );
 }
