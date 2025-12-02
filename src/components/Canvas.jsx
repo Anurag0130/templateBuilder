@@ -1,7 +1,9 @@
 import React, { useRef } from "react";
+import { useState } from "react";
 import { CanvasElement } from "./CanvasElement.jsx";
 import { Save, FileDown, Undo, Redo, Sparkles } from "lucide-react";
 import { downloadHTML, saveTemplate } from "../utils/canvasExport.js";
+
 
 export function Canvas({
     elements,
@@ -45,6 +47,16 @@ export function Canvas({
         onSelectElement(null, null);
     };
 
+    const [open, setOpen] = useState(false);
+    const [fileName, setFileName] = useState("");
+
+    const handleSave = () => {
+        if (!fileName.trim()) return;      // prevent empty name
+        saveTemplate(`${fileName}.html`, elements);
+        setOpen(false);
+        setFileName("");
+    };
+
     // Keyboard shortcuts
     React.useEffect(() => {
         const handleKeyDown = (e) => {
@@ -78,11 +90,10 @@ export function Canvas({
                     <button
                         onClick={onUndo}
                         disabled={!canUndo}
-                        className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-all text-xs font-semibold ${
-                            canUndo
-                                ? 'bg-indigo-50/50 hover:bg-indigo-100/70 border border-indigo-200/60 text-indigo-600 cursor-pointer hover:shadow-md hover:-translate-y-0.5'
-                                : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
-                        }`}
+                        className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-all text-xs font-semibold ${canUndo
+                            ? 'bg-indigo-50/50 hover:bg-indigo-100/70 border border-indigo-200/60 text-indigo-600 cursor-pointer hover:shadow-md hover:-translate-y-0.5'
+                            : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
+                            }`}
                         title="Undo (Ctrl+Z)"
                     >
                         <Undo size={14} />
@@ -91,11 +102,10 @@ export function Canvas({
                     <button
                         onClick={onRedo}
                         disabled={!canRedo}
-                        className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-all text-xs font-semibold ${
-                            canRedo
-                                ? 'bg-indigo-50/50 hover:bg-indigo-100/70 border border-indigo-200/60 text-indigo-600 cursor-pointer hover:shadow-md hover:-translate-y-0.5'
-                                : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
-                        }`}
+                        className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-all text-xs font-semibold ${canRedo
+                            ? 'bg-indigo-50/50 hover:bg-indigo-100/70 border border-indigo-200/60 text-indigo-600 cursor-pointer hover:shadow-md hover:-translate-y-0.5'
+                            : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
+                            }`}
                         title="Redo (Ctrl+Shift+Z)"
                     >
                         <Redo size={14} />
@@ -104,13 +114,25 @@ export function Canvas({
                 </div>
 
                 {/* Action Buttons */}
-                <button
+                {/* <button
                     className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 transition-all text-xs font-semibold text-white shadow-md shadow-indigo-200/50 hover:shadow-lg hover:-translate-y-0.5"
                     onClick={() => saveTemplate(`template-${Date.now()}.html`, elements)}
                 >
                     <Save size={14} />
                     Save Template
+                </button> */}
+                <button
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 transition-all text-xs font-semibold text-white shadow-md shadow-indigo-200/50 hover:shadow-lg hover:-translate-y-0.5"
+                    onClick={() => setOpen(true)}
+                >
+                    <Save size={14} />
+                    Save Template
                 </button>
+
+
+
+
+
 
                 <button
                     className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-white hover:bg-indigo-50/30 border border-gray-300 hover:border-indigo-300 transition-all text-xs font-semibold text-gray-700 hover:text-indigo-600 shadow-sm hover:shadow-md hover:-translate-y-0.5"
@@ -127,7 +149,7 @@ export function Canvas({
                     {/* Decorative elements - scaled down */}
                     <div className="absolute -top-3 -left-3 w-48 h-48 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
                     <div className="absolute -bottom-3 -right-3 w-48 h-48 bg-gradient-to-br from-purple-100/30 to-indigo-100/30 rounded-full blur-3xl pointer-events-none"></div>
-                    
+
                     {/* Page - Scaled down to 0.85 for better fit at 100% zoom */}
                     <div
                         ref={pageRef}
@@ -170,6 +192,42 @@ export function Canvas({
                     </div>
                 </div>
             </div>
+            {/* Popup Modal */}
+            {open && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fadeIn scale-100">
+
+                        <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                            Save Template
+                        </h2>
+
+                        <input
+                            type="text"
+                            placeholder="Enter template name"
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition mb-5"
+                            value={fileName}
+                            onChange={(e) => setFileName(e.target.value)}
+                        />
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setOpen(false)}
+                                className="px-4 py-2 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={handleSave}
+                                className="px-4 py-2 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            )}
         </div>
     );
 }

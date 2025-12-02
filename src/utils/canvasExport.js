@@ -174,7 +174,7 @@ export const saveTemplate = (templateName, elements) => {
   console.log('newTemplate', htmlContent)
   addTemplate(newTemplate);
 
-  alert("Template saved successfully!");
+  // alert("Template saved successfully!");
 };
 
 
