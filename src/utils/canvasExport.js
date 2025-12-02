@@ -1,6 +1,6 @@
-import { addTemplate } from '../templates/templateStore';
-import { successAlert } from '../templates/helper';
+import { addTemplate, updateTemplate } from '../templates/templateStore';
 
+import {successAlert} from'../../helper.js'
 
 export const exportCanvasToHTML = (elements) => {
   const elementsHTML = elements.map(element => {
@@ -162,20 +162,26 @@ export const downloadHTML = (elements, filename = "template.html") => {
 };
 
 
-export const saveTemplate = (templateName, elements) => {
-  console.log('this is element', elements)
+export const saveTemplate = (templateName, elements, existingTemplateId = null) => {
   const htmlContent = exportCanvasToHTML(elements);
-  const newTemplate = {
-    id: crypto.randomUUID(),
+
+  const templateId = existingTemplateId || crypto.randomUUID();
+
+  const templateData = {
+    id: templateId,
     name: templateName,
     content: htmlContent,
     elements: elements
   };
-  console.log('newTemplate', htmlContent)
-  addTemplate(newTemplate);
 
-  successAlert("Saved successfully!");
+  if (existingTemplateId) {
+    updateTemplate(templateData);
+    // alert("Template updated successfully!");
+     successAlert("Saved successfullddy!");
+  } else {
+    addTemplate(templateData);
+ successAlert("Saved successfully!");
+  }
 
+  return templateId;
 };
-
-

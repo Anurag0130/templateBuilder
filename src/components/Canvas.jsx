@@ -1,9 +1,7 @@
-import React, { useRef } from "react";
-import { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { CanvasElement } from "./CanvasElement.jsx";
 import { Save, FileDown, Undo, Redo, Sparkles } from "lucide-react";
 import { downloadHTML, saveTemplate } from "../utils/canvasExport.js";
-
 
 export function Canvas({
     elements,
@@ -17,13 +15,24 @@ export function Canvas({
     onRedo,
     canUndo = false,
     canRedo = false,
-
     // New props for edit mode
     isEditMode = false,
     currentTemplateId = null,
     currentTemplateName = ""
 }) {
+
     const pageRef = useRef(null);
+    const [fileName, setFileName] = useState("");
+    const [modalvisible, setModalVisivble] = useState(false);
+
+
+    useEffect(() => {
+        if (isEditMode && currentTemplateName) {
+            setFileName(currentTemplateName);
+        }
+    }, [isEditMode, currentTemplateName]);
+
+
 
     const allowDrop = (e) => e.preventDefault();
 
@@ -48,23 +57,32 @@ export function Canvas({
         onElementMove(index, { x, y });
     };
 
+
     const handleCanvasClick = () => {
         onSelectElement(null, null);
     };
 
-    const [open, setOpen] = useState(false);
-    const [fileName, setFileName] = useState("");
 
-    const handleSave = () => {
-        if (!fileName.trim()) return;      // prevent empty name
-        saveTemplate(`${fileName}.html`, elements);
-        setOpen(false);
+
+    const handleSaveTemplate = () => {
+        if (!fileName.trim()) {
+            alert("Please enter a template name");
+            return;
+        }
+
+        saveTemplate(
+            fileName.trim(),
+            elements,
+            isEditMode ? currentTemplateId : null
+        );
+
+        setModalVisivble(false);
         setFileName("");
     };
 
- 
 
-    React.useEffect(() => {
+
+    useEffect(() => {
         const handleKeyDown = (e) => {
             // Ctrl+Z or Cmd+Z for Undo
             if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
@@ -88,26 +106,11 @@ export function Canvas({
     }, [canUndo, canRedo, onUndo, onRedo]);
 
 
-    const handleSaveTemplate = () => {
-        const templateName = prompt(isEditMode ? `Edit template name (current: ${currentTemplateName}):` : "Enter template name:",
-            isEditMode ? currentTemplateName : `template-${Date.now()}`
-        );
-
-        if (!templateName) return;
-
-        // Pass the existing template ID if in edit mode
-        saveTemplate(
-            templateName,
-            elements,
-            isEditMode ? currentTemplateId : null
-        );
-    };
 
     return (
         <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 via-indigo-50/20 to-purple-50/20 overflow-hidden">
-
             <div className="flex gap-2 p-2.5 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
-                {/* Undo/Redo Group */}
+
                 <div className="flex gap-1.5 mr-2 pr-2 border-r border-gray-200">
                     <button
                         onClick={onUndo}
@@ -135,44 +138,28 @@ export function Canvas({
                     </button>
                 </div>
 
-                {/* Action Buttons */}
-                {/* <button
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 transition-all text-xs font-semibold text-white shadow-md shadow-indigo-200/50 hover:shadow-lg hover:-translate-y-0.5"
-                    onClick={handleSaveTemplate}
-                >
-                    <Save size={14} />
-                    Save Template
-                </button> */}
+
                 <button
                     className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 transition-all text-xs font-semibold text-white shadow-md shadow-indigo-200/50 hover:shadow-lg hover:-translate-y-0.5"
-                    onClick={() => setOpen(true)}
+                    onClick={() => setModalVisivble(true)}
                 >
                     <Save size={14} />
                     {isEditMode ? "Update Template" : "Save Template"}
                 </button>
 
-
-
-
-
-
-
                 <button
                     className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-white hover:bg-indigo-50/30 border border-gray-300 hover:border-indigo-300 transition-all text-xs font-semibold text-gray-700 hover:text-indigo-600 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-                    onClick={() => downloadHTML(elements, `template-${Date.now()}.html`)}
+                    // onClick={() => downloadHTML(elements, template-${Date.now()}.html)}
                 >
                     <FileDown size={14} />
                     Export PDF
                 </button>
             </div>
 
-
             <div className="flex-1 overflow-auto p-6">
                 <div className="relative">
-
                     <div className="absolute -top-3 -left-3 w-48 h-48 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
                     <div className="absolute -bottom-3 -right-3 w-48 h-48 bg-gradient-to-br from-purple-100/30 to-indigo-100/30 rounded-full blur-3xl pointer-events-none"></div>
-
 
                     <div
                         ref={pageRef}
@@ -192,7 +179,9 @@ export function Canvas({
                                     <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center shadow-md">
                                         <Sparkles className="w-8 h-8 text-indigo-500" />
                                     </div>
-                                    <p className="text-base font-semibold text-gray-700 mb-1.5">Start Building Your Template</p>
+                                    <p className="text-base font-semibold text-gray-700 mb-1.5">
+                                        {isEditMode ? "Edit Your Template" : "Start Building Your Template"}
+                                    </p>
                                     <p className="text-xs text-gray-500 max-w-xs">
                                         Drag fields and elements from the sidebar to create your perfect template
                                     </p>
@@ -210,20 +199,31 @@ export function Canvas({
                                 onDragEnd={handleElementDragEnd}
                                 onDelete={onDeleteElement}
                                 onUpdateElement={onUpdateElement}
-
                             />
-
                         ))}
                     </div>
                 </div>
             </div>
-            {/* Popup Modal */}
-            {open && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fadeIn scale-100">
 
+            {/* ---------------------------------MODAL WORK ---------------------------------- */}
+            {modalvisible && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+                    onClick={() => {
+                        setModalVisivble(false);
+                        if (isEditMode) {
+                            setFileName(currentTemplateName);
+                        } else {
+                            setFileName("");
+                        }
+                    }}
+                >
+                    <div
+                        className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fadeIn scale-100"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                            Save Template
+                            {isEditMode ? "Update Template" : "Save Template"}
                         </h2>
 
                         <input
@@ -232,28 +232,43 @@ export function Canvas({
                             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition mb-5"
                             value={fileName}
                             onChange={(e) => setFileName(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleSaveTemplate();
+                                }
+                            }}
                         />
+
+                        {isEditMode && (
+                            <p className="text-xs text-gray-500 mb-4">
+                                Currently editing: <span className="font-medium text-gray-700">{currentTemplateName}</span>
+                            </p>
+                        )}
 
                         <div className="flex justify-end gap-3">
                             <button
-                                onClick={() => setOpen(false)}
+                                onClick={() => {
+                                    setModalVisivble(false);
+                                    if (isEditMode) {
+                                        setFileName(currentTemplateName);
+                                    } else {
+                                        setFileName("");
+                                    }
+                                }}
                                 className="px-4 py-2 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
                             >
                                 Cancel
                             </button>
-
                             <button
-                                onClick={handleSave}
-                                className="px-4 py-2 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                                onClick={handleSaveTemplate}
+                                disabled={!fileName.trim()}
+                                className="px-4 py-2 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
                             >
-                                Save
-
-
+                                {isEditMode ? "Update" : "Save"}
                             </button>
                         </div>
                     </div>
                 </div>
-
             )}
         </div>
     );
