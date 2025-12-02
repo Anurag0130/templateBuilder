@@ -68,7 +68,7 @@ export const exportCanvasToHTML = (elements) => {
         const width = element.width || 400;
         const borderColor = element.borderColor || "#000000";
         const borderWidth = element.borderWidth ?? 1;
-        // element.cols can be either a number (col count) or an array of column keys
+
         let numCols;
         let colKeys = null;
         if (Array.isArray(element.cols)) {
@@ -77,32 +77,38 @@ export const exportCanvasToHTML = (elements) => {
         } else if (typeof element.cols === "number") {
           numCols = element.cols;
         } else {
-          // fallback
           numCols = 2;
         }
+
         const rows = element.rows ?? 2;
         const cellWidth = Math.round(width / numCols);
 
-        let tableHTML = `<div style="${style}"><table style="border-collapse: collapse; width: ${width}px; border-color: ${borderColor};">`;
+        let tableHTML = `<div style="${style}">
+      <table style="border-collapse: collapse; width: ${width}px; border-color: ${borderColor};">
+  `;
         tableHTML += "<tbody>";
 
-        const repeat = element.repeat; // { arrayPath, startRow, cols: ["school","year","grade"] }
-        // treat repeat.startRow as 1-based in saved template; convert to 0-based index
+        const repeat = element.repeat;
         const repeatStartIndex = repeat ? ((Number(repeat.startRow) || 1) - 1) : null;
 
         for (let r = 0; r < rows; r++) {
-          // If this is the configured repeat row, emit a Handlebars each block
           if (repeat && r === repeatStartIndex) {
-            tableHTML += `{{#each ${repeat.arrayPath}}}\n  <tr>`;
+            tableHTML += `{{#each ${repeat.arrayPath}}}\n<tr>`;
             for (let c = 0; c < numCols; c++) {
-              // prefer keys in repeat.cols (array of property names), otherwise fall back to colKeys or generic names
               const colKey =
                 Array.isArray(repeat.cols) && repeat.cols[c]
                   ? repeat.cols[c]
                   : Array.isArray(colKeys) && colKeys[c]
                     ? colKeys[c]
                     : `col${c + 1}`;
-              tableHTML += `<td style="width:${cellWidth}px; border:${borderWidth}px solid ${borderColor}; padding:4px;">{{${colKey}}}</td>`;
+              tableHTML += `
+          <td style="
+            width:${cellWidth}px; 
+            border:${borderWidth}px solid ${borderColor}; 
+            padding:4px;
+          ">
+            {{${colKey}}}
+          </td>`;
             }
             tableHTML += `</tr>\n{{/each}}`;
             continue;
@@ -111,9 +117,28 @@ export const exportCanvasToHTML = (elements) => {
           tableHTML += "<tr>";
           for (let c = 0; c < numCols; c++) {
             const key = `${r}-${c}`;
-            // cellContent may already contain Handlebars tokens — preserve as-is
+
             const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
-            tableHTML += `<td style="width:${cellWidth}px; border:${borderWidth}px solid ${borderColor}; padding:4px;">${cellContent}</td>`;
+            const cellStyles = element.cellStyles?.[key] || {};
+
+            const bg =
+              cellStyles.backgroundColor ||
+              (r === 0 && element.headerRow ? "#f3f4f6" : "transparent");
+
+            tableHTML += `
+        <td style="
+          width:${cellWidth}px;
+          border:${borderWidth}px solid ${borderColor};
+          padding:4px;
+          background:${bg};
+          font-size:${cellStyles.fontSize || element.fontSize || 12}px;
+          font-weight:${cellStyles.fontWeight || "normal"};
+          color:${cellStyles.color || "#000000"};
+          text-align:${cellStyles.textAlign || "left"};
+        ">
+          ${cellContent}
+        </td>
+      `;
           }
           tableHTML += "</tr>";
         }
@@ -121,6 +146,7 @@ export const exportCanvasToHTML = (elements) => {
         tableHTML += "</tbody></table></div>";
         return tableHTML;
       }
+
 
 
       default:
@@ -165,6 +191,7 @@ export const downloadHTML = (elements, filename = "template.html") => {
 
 
 export const saveTemplate = (templateName, elements, existingTemplateId = null) => {
+  console.log('elements', elements)
   const htmlContent = exportCanvasToHTML(elements);
 
   const templateId = existingTemplateId || crypto.randomUUID();
@@ -179,7 +206,7 @@ export const saveTemplate = (templateName, elements, existingTemplateId = null) 
   if (existingTemplateId) {
     updateTemplate(templateData);
     // alert("Template updated successfully!");
-    successAlert("Saved successfullddy!");
+    successAlert("Edited successfully!");
   } else {
     addTemplate(templateData);
     successAlert("Saved successfully!");
