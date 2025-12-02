@@ -83,7 +83,7 @@ export function Canvas({
 
     return (
         <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 via-indigo-50/20 to-purple-50/20 overflow-hidden">
-            {/* Toolbar - Compact responsive design */}
+
             <div className="flex gap-2 p-2.5 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
                 {/* Undo/Redo Group */}
                 <div className="flex gap-1.5 mr-2 pr-2 border-r border-gray-200">
@@ -143,21 +143,21 @@ export function Canvas({
                 </button>
             </div>
 
-            {/* Canvas Area - Scaled for better fit */}
+
             <div className="flex-1 overflow-auto p-6">
                 <div className="relative">
-                    {/* Decorative elements - scaled down */}
+
                     <div className="absolute -top-3 -left-3 w-48 h-48 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
                     <div className="absolute -bottom-3 -right-3 w-48 h-48 bg-gradient-to-br from-purple-100/30 to-indigo-100/30 rounded-full blur-3xl pointer-events-none"></div>
+                    
 
-                    {/* Page - Scaled down to 0.85 for better fit at 100% zoom */}
                     <div
                         ref={pageRef}
                         className="bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
                         style={{
-                            width: '780px',  // 804px * 0.85
-                            height: '954px', // 1123px * 0.85
-                            backgroundSize: '17px 17px' // 20px * 0.85
+                            width: '680px', 
+                            height: '954px', 
+                            backgroundSize: '17px 17px' 
                         }}
                         onDragOver={allowDrop}
                         onDrop={handleDrop}
