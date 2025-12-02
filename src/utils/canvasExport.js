@@ -176,10 +176,10 @@ export const saveTemplate = (templateName, elements, existingTemplateId = null) 
 
   if (existingTemplateId) {
     updateTemplate(templateData);
-    alert("Template updated successfully!");
+    // alert("Template updated successfully!");
   } else {
     addTemplate(templateData);
-    alert("Template saved successfully!");
+    // alert("Template saved successfully!");
   }
 
   return templateId;
