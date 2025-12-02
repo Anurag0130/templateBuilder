@@ -149,15 +149,15 @@ export function Canvas({
 
                     <div className="absolute -top-3 -left-3 w-48 h-48 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
                     <div className="absolute -bottom-3 -right-3 w-48 h-48 bg-gradient-to-br from-purple-100/30 to-indigo-100/30 rounded-full blur-3xl pointer-events-none"></div>
-                    
+
 
                     <div
                         ref={pageRef}
                         className="bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
                         style={{
-                            width: '680px', 
-                            height: '954px', 
-                            backgroundSize: '17px 17px' 
+                            width: '680px',
+                            height: '954px',
+                            backgroundSize: '17px 17px'
                         }}
                         onDragOver={allowDrop}
                         onDrop={handleDrop}
@@ -187,7 +187,9 @@ export function Canvas({
                                 onDragEnd={handleElementDragEnd}
                                 onDelete={onDeleteElement}
                                 onUpdateElement={onUpdateElement}
+
                             />
+
                         ))}
                     </div>
                 </div>
@@ -222,6 +224,8 @@ export function Canvas({
                                 className="px-4 py-2 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
                             >
                                 Save
+
+
                             </button>
                         </div>
                     </div>

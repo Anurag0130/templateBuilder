@@ -1,5 +1,5 @@
 import { addTemplate } from '../templates/templateStore';
-
+import { successAlert } from '../templates/helper';
 
 
 export const exportCanvasToHTML = (elements) => {
@@ -174,7 +174,8 @@ export const saveTemplate = (templateName, elements) => {
   console.log('newTemplate', htmlContent)
   addTemplate(newTemplate);
 
-  // alert("Template saved successfully!");
+  successAlert("Template saved successfully!");
+
 };
 
 
