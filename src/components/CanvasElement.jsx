@@ -326,8 +326,6 @@ export function CanvasElement({
                     </div>
                 );
 
-
-
             case "line":
                 return (
                     <div

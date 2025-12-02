@@ -12,7 +12,7 @@ export const elementTypes = {
     defaultProps: {
       type: "text",
       value: "Static Text",
-      fontSize: 14,
+      fontSize: 18,
       fontWeight: "normal",
       color: "#000000",
       backgroundColor: "transparent",
@@ -68,7 +68,7 @@ export const elementTypes = {
       rows: 2,
       cols: 3,
       width: 500,
-      height: 150,
+      height: 100,
       borderWidth: 2,
       borderColor: "#000000",
       headerRow: true,
