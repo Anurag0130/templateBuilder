@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Handlebars from "../utils/handlebarsHelpers";
 import { useRef, useEffect, useState } from "react";
-import { FileText, Download, RefreshCw, Eye } from "lucide-react";
+import { FileText, Download, RefreshCw, Eye, Edit } from "lucide-react";
 import { backendData, feeReceiptData } from "../templates/constants";
 import { templates, templateStyles } from "../templates/templateStore";
 
@@ -46,9 +46,16 @@ export default function TemplatePreview() {
   };
 
 
-  // const gotoCustomTemplate = () => navigate("/main");
   const gotoCustomTemplate = () => {
-    navigate("/main", { state: { templateId: selectedTemplate } });
+    navigate("/main");
+  };
+
+  const gotoEditTemplate = () => {
+    if (!selectedTemplate) {
+      alert("Please select a template first");
+      return;
+    }
+    navigate("/main", { state: { templateId: selectedTemplate, mode: "edit" } });
   };
 
 
@@ -111,6 +118,15 @@ export default function TemplatePreview() {
             >
               <Download size={16} />
               Download Your PDF
+            </button>
+
+            <button
+              onClick={gotoEditTemplate}
+              disabled={!selectedTemplate}
+              className="flex items-center gap-2 px-4 py-2.5 border border-gray-400 rounded text-sm font-medium bg-white text-gray-800 hover:bg-gray-50 hover:border-blue-600 hover:text-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-400 disabled:hover:text-gray-800"
+            >
+              <Edit size={16} />
+              Edit Template
             </button>
 
             <button

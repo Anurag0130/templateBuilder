@@ -16,7 +16,12 @@ export function Canvas({
     onUndo,
     onRedo,
     canUndo = false,
-    canRedo = false
+    canRedo = false,
+
+    // New props for edit mode
+    isEditMode = false,
+    currentTemplateId = null,
+    currentTemplateName = ""
 }) {
     const pageRef = useRef(null);
 
@@ -57,7 +62,8 @@ export function Canvas({
         setFileName("");
     };
 
-    // Keyboard shortcuts
+ 
+
     React.useEffect(() => {
         const handleKeyDown = (e) => {
             // Ctrl+Z or Cmd+Z for Undo
@@ -80,6 +86,22 @@ export function Canvas({
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [canUndo, canRedo, onUndo, onRedo]);
+
+
+    const handleSaveTemplate = () => {
+        const templateName = prompt(isEditMode ? `Edit template name (current: ${currentTemplateName}):` : "Enter template name:",
+            isEditMode ? currentTemplateName : `template-${Date.now()}`
+        );
+
+        if (!templateName) return;
+
+        // Pass the existing template ID if in edit mode
+        saveTemplate(
+            templateName,
+            elements,
+            isEditMode ? currentTemplateId : null
+        );
+    };
 
     return (
         <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 via-indigo-50/20 to-purple-50/20 overflow-hidden">
@@ -116,7 +138,7 @@ export function Canvas({
                 {/* Action Buttons */}
                 {/* <button
                     className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 transition-all text-xs font-semibold text-white shadow-md shadow-indigo-200/50 hover:shadow-lg hover:-translate-y-0.5"
-                    onClick={() => saveTemplate(`template-${Date.now()}.html`, elements)}
+                    onClick={handleSaveTemplate}
                 >
                     <Save size={14} />
                     Save Template
@@ -126,8 +148,9 @@ export function Canvas({
                     onClick={() => setOpen(true)}
                 >
                     <Save size={14} />
-                    Save Template
+                    {isEditMode ? "Update Template" : "Save Template"}
                 </button>
+
 
 
 
