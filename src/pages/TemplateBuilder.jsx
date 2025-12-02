@@ -77,7 +77,6 @@ export default function TemplateBuilder() {
     };
 
     const handleLoadTemplate = (templateElements) => {
-        // Clear selection when loading template
         setSelectedElement(null);
         setSelectedIndex(null);
 
@@ -173,7 +172,7 @@ export default function TemplateBuilder() {
                 <DummyJsonDataPanel onDataChange={handleDataChange} />
             </div>
 
-            {/* Right Panel - JSON Data */}
+
         </>
     );
 }
