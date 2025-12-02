@@ -179,7 +179,7 @@ export const saveTemplate = (templateName, elements, existingTemplateId = null) 
   if (existingTemplateId) {
     updateTemplate(templateData);
     // alert("Template updated successfully!");
-    successAlert("Saved successfullddy!");
+    successAlert("Edited successfully!");
   } else {
     addTemplate(templateData);
     successAlert("Saved successfully!");
