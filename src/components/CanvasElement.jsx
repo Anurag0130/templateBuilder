@@ -12,7 +12,7 @@ export function CanvasElement({
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState(element.value || "");
-    const [selectedCells, setSelectedCells] = useState([]);
+    const [selectedCells, setSelectedCells] = useState([]); // array of {row, col}
     const [editingCell, setEditingCell] = useState(null);
 
     const handleClick = (e) => {
@@ -54,40 +54,22 @@ export function CanvasElement({
         onDelete(index);
     };
 
+    // ---- Cell selection & editing handlers ----
     const handleCellClick = (e, row, col) => {
         e.stopPropagation();
-        // if (element.type === "table") {
-        //     const newSelectedCells = [...selectedCells];
-        //     const existingIndex = newSelectedCells.findIndex((c) => c.row === row && c.col === col);
 
-        //     if (existingIndex > -1) {
-        //         newSelectedCells.splice(existingIndex, 1);
-        //     } else {
-        //         newSelectedCells.push({ row, col });
-        //     }
+        // Select only a single cell (user requested "A single selected cell")
+        const alreadySelected =
+            selectedCells.length === 1 &&
+            selectedCells[0].row === row &&
+            selectedCells[0].col === col;
 
-        //     setSelectedCells(newSelectedCells);
-
-        //     if (newSelectedCells.length >= 2) {
-        //         const rows = newSelectedCells.map((c) => c.row);
-        //         const cols = newSelectedCells.map((c) => c.col);
-        //         const minRow = Math.min(...rows);
-        //         const maxRow = Math.max(...rows);
-        //         const minCol = Math.min(...cols);
-        //         const maxCol = Math.max(...cols);
-
-        //         const mergeKey = `${minRow}-${minCol}`;
-        //         const newMergedCells = { ...element.mergedCells };
-
-        //         newMergedCells[mergeKey] = {
-        //             rowSpan: maxRow - minRow + 1,
-        //             colSpan: maxCol - minCol + 1
-        //         };
-
-        //         onUpdateElement({ ...element, mergedCells: newMergedCells }, index);
-        //         setSelectedCells([]);
-        //     }
-        // }
+        if (alreadySelected) {
+            // toggle off if clicked again
+            setSelectedCells([]);
+        } else {
+            setSelectedCells([{ row, col }]);
+        }
     };
 
     const handleCellDoubleClick = (e, row, col) => {
@@ -100,7 +82,7 @@ export function CanvasElement({
     const handleCellEditChange = (e) => {
         if (!editingCell) return;
         const cellKey = `${editingCell.row}-${editingCell.col}`;
-        const newCellData = { ...element.cellData };
+        const newCellData = { ...(element.cellData || {}) };
         newCellData[cellKey] = e.target.value;
         onUpdateElement({ ...element, cellData: newCellData }, index);
     };
@@ -124,6 +106,18 @@ export function CanvasElement({
         return { merged: false, isStart: false, merge: null };
     };
 
+    // ---- Cell style update helper ----
+    const updateCellStyle = (row, col, patch) => {
+        const key = `${row}-${col}`;
+        const prevStyles = { ...(element.cellStyles || {}) };
+        const current = prevStyles[key] || {};
+        const updated = { ...current, ...patch };
+
+        const newCellStyles = { ...prevStyles, [key]: updated };
+        onUpdateElement({ ...element, cellStyles: newCellStyles }, index);
+    };
+
+    // ---- Render ----
     const renderElement = () => {
         const baseStyle = {
             left: `${element.x}px`,
@@ -210,7 +204,7 @@ export function CanvasElement({
                     </div>
                 );
 
-            case "table":
+            case "table": {
                 const cellWidth = (element.width || 400) / (element.cols || 2);
                 const cellHeight = (element.height || 100) / (element.rows || 2);
 
@@ -233,13 +227,32 @@ export function CanvasElement({
                                                 return null;
                                             }
 
+                                            const cellKey = `${rowIdx}-${colIdx}`;
                                             const isSelectedCell = selectedCells.some(
                                                 (c) => c.row === rowIdx && c.col === colIdx
                                             );
                                             const isEditingCell =
                                                 editingCell?.row === rowIdx && editingCell?.col === colIdx;
-                                            const cellKey = `${rowIdx}-${colIdx}`;
                                             const cellContent = element.cellData?.[cellKey] || "";
+
+                                            // apply per-cell styles if present
+                                            const cellStyles = (element.cellStyles && element.cellStyles[cellKey]) || {};
+
+                                            // const computedBackground =
+                                            //     isSelectedCell ? "#DBEAFE" :
+                                            //         rowIdx === 0 && element.headerRow ? "#f3f4f6" :
+                                            //             cellStyles.backgroundColor || "transparent";
+
+                                            // const computedBackground =
+                                            //     cellStyles.backgroundColor ||
+                                            //     (rowIdx === 0 && element.headerRow ? "#f3f4f6" : "transparent");
+
+
+                                            const computedFontSize = cellStyles.fontSize ? `${cellStyles.fontSize}px` : undefined;
+                                            const computedColor = cellStyles.color || undefined;
+                                            const computedFontWeight = cellStyles.fontWeight || undefined;
+                                            const computedTextAlign = cellStyles.textAlign || undefined;
+                                            const computedBackground = cellStyles.backgroundColor || undefined;
 
                                             return (
                                                 <td
@@ -251,16 +264,12 @@ export function CanvasElement({
                                                         height: `${cellHeight}px`,
                                                         border: `${element.borderWidth || 1}px solid ${element.borderColor || "#000000"
                                                             }`,
-                                                        backgroundColor: isSelectedCell
-                                                            ? "#DBEAFE"
-                                                            : rowIdx === 0 && element.headerRow
-                                                                ? "#f3f4f6"
-                                                                : "transparent",
-                                                        fontWeight:
-                                                            rowIdx === 0 && element.headerRow
-                                                                ? "bold"
-                                                                : "normal",
-                                                        padding: 0
+                                                        backgroundColor: computedBackground,
+                                                        fontWeight: computedFontWeight,
+                                                        padding: 0,
+                                                        textAlign: computedTextAlign,
+                                                        fontSize: computedFontSize,
+                                                        color: computedColor
                                                     }}
                                                     rowSpan={cellInfo.merge?.rowSpan || 1}
                                                     colSpan={cellInfo.merge?.colSpan || 1}
@@ -291,7 +300,7 @@ export function CanvasElement({
                                                             onClick={(e) => e.stopPropagation()}
                                                         />
                                                     ) : (
-                                                        <div style={{ padding: "4px", minHeight: "100%" }}>
+                                                        <div style={{ padding: "6px", minHeight: "100%", boxSizing: "border-box" }}>
                                                             {cellContent || `Cell ${rowIdx + 1},${colIdx + 1}`}
                                                         </div>
                                                     )}
@@ -302,13 +311,125 @@ export function CanvasElement({
                                 ))}
                             </tbody>
                         </table>
-                        {selectedCells.length > 0 && (
+
+                        {/* Cell-properties panel: shows when exactly 1 cell is selected */}
+                        {selectedCells.length === 1 && (() => {
+                            const { row, col } = selectedCells[0];
+                            const selKey = `${row}-${col}`;
+                            const selStyles = (element.cellStyles && element.cellStyles[selKey]) || {};
+                            const selValue = element.cellData?.[selKey] || "";
+
+                            return (
+                                <div className="mt-2 p-2 rounded-md bg-white border shadow-sm w-full max-w-[420px]">
+                                    <div className="text-xs text-gray-600 mb-2">
+                                        Editing cell: <strong>Row {row + 1}, Col {col + 1}</strong>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label className="text-xs block mb-1">Font size (px)</label>
+                                            <input
+                                                type="number"
+                                                value={selStyles.fontSize || element.fontSize || 12}
+                                                onChange={(e) => updateCellStyle(row, col, { fontSize: Number(e.target.value) })}
+                                                className="w-full border rounded px-2 py-1 text-sm"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="text-xs block mb-1">Font weight</label>
+                                            <select
+                                                value={selStyles.fontWeight || "normal"}
+                                                onChange={(e) => updateCellStyle(row, col, { fontWeight: e.target.value })}
+                                                className="w-full border rounded px-2 py-1 text-sm"
+                                            >
+                                                <option value="normal">Normal</option>
+                                                <option value="bold">Bold</option>
+                                                <option value="600">600</option>
+                                                <option value="700">700</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-xs block mb-1">Text color</label>
+                                            <input
+                                                type="color"
+                                                value={selStyles.color || "#000000"}
+                                                onChange={(e) => updateCellStyle(row, col, { color: e.target.value })}
+                                                className="w-full border rounded px-2 py-1 text-sm h-9"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="text-xs block mb-1">Background</label>
+                                            <input
+                                                type="color"
+                                                value={selStyles.backgroundColor || "#ffffff"}
+                                                onChange={(e) => updateCellStyle(row, col, { backgroundColor: e.target.value })}
+                                                className="w-full border rounded px-2 py-1 text-sm h-9"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="text-xs block mb-1">Text align</label>
+                                            <select
+                                                value={selStyles.textAlign || "left"}
+                                                onChange={(e) => updateCellStyle(row, col, { textAlign: e.target.value })}
+                                                className="w-full border rounded px-2 py-1 text-sm"
+                                            >
+                                                <option value="left">Left</option>
+                                                <option value="center">Center</option>
+                                                <option value="right">Right</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-xs block mb-1">Cell content</label>
+                                            <input
+                                                type="text"
+                                                value={selValue}
+                                                onChange={(e) => {
+                                                    const key = `${row}-${col}`;
+                                                    const newCellData = { ...(element.cellData || {}) };
+                                                    newCellData[key] = e.target.value;
+                                                    onUpdateElement({ ...element, cellData: newCellData }, index);
+                                                }}
+                                                className="w-full border rounded px-2 py-1 text-sm"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-3 flex justify-end gap-2">
+                                        <button
+                                            onClick={() => setSelectedCells([])}
+                                            className="px-3 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200"
+                                        >
+                                            Done
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                // Reset the styles for this cell
+                                                const key = `${row}-${col}`;
+                                                const newCellStyles = { ...(element.cellStyles || {}) };
+                                                delete newCellStyles[key];
+                                                onUpdateElement({ ...element, cellStyles: newCellStyles }, index);
+                                            }}
+                                            className="px-3 py-1 text-sm rounded bg-red-50 text-red-600 hover:bg-red-100"
+                                        >
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })()}
+                        {selectedCells.length > 0 && selectedCells.length !== 1 && (
                             <div className="mt-2 text-xs text-blue-600">
-                                {selectedCells.length} cell(s) selected. Select more to merge.
+                                {selectedCells.length} cell(s) selected.
                             </div>
                         )}
                     </div>
                 );
+            }
 
             case "image":
                 return (
