@@ -363,58 +363,67 @@ export const backendData = {
       "year": "2023-24",
       "grade": "2",
       "city": "New York",
-      "teacher": "Ms. Taylor"
+      "teacher": "Ms. Taylor",
+      "name": "Aarav"
     },
     {
       "school": "Sunshine Academy",
       "year": "2022-23",
       "grade": "1",
       "city": "Los Angeles",
-      "teacher": "Mr. Lee"
+      "teacher": "Mr. Lee",
+      "name": "Vivaan"
     },
     {
       "school": "Greenfield International",
       "year": "2021-22",
       "grade": "3",
       "city": "Chicago",
-      "teacher": "Mrs. Johnson"
+      "teacher": "Mrs. Johnson",
+      "name": "Reyansh"
     },
     {
       "school": "Maple Grove School",
       "year": "2020-21",
       "grade": "4",
       "city": "San Francisco",
-      "teacher": "Mr. Smith"
+      "teacher": "Mr. Smith",
+      "name": "Darsh"
     },
     {
       "school": "Blue Ridge Academy",
       "year": "2022-23",
       "grade": "2",
       "city": "Miami",
-      "teacher": "Ms. Davis"
+      "teacher": "Ms. Davis",
+      "name": "Atharv"
     },
     {
       "school": "Westview High School",
       "year": "2019-20",
       "grade": "5",
       "city": "Seattle",
-      "teacher": "Mr. Williams"
+      "teacher": "Mr. Williams",
+      "name": "Advait"
     },
     {
       "school": "Lakeside Prep",
       "year": "2021-22",
       "grade": "1",
       "city": "Austin",
-      "teacher": "Mrs. Green"
+      "teacher": "Mrs. Green",
+      "name": "Kabir"
     },
     {
       "school": "Silver Oak School",
       "year": "2023-24",
       "grade": "3",
       "city": "Denver",
-      "teacher": "Mr. Harris"
-    },
+      "teacher": "Mr. Harris",
+      "name": "Shaurya"
+    }
   ]
+
   ,
   schoolName: "GENESIS GLOBAL SCHOOL",
   schoolAddress: "SEC-132, EXPRESSWAY, NOIDA ; 201304",
