@@ -14,7 +14,12 @@ export function Canvas({
     onUndo,
     onRedo,
     canUndo = false,
-    canRedo = false
+    canRedo = false,
+
+    // New props for edit mode
+    isEditMode = false,
+    currentTemplateId = null,
+    currentTemplateName = ""
 }) {
     const pageRef = useRef(null);
 
@@ -45,7 +50,7 @@ export function Canvas({
         onSelectElement(null, null);
     };
 
-    // Keyboard shortcuts
+
     React.useEffect(() => {
         const handleKeyDown = (e) => {
             // Ctrl+Z or Cmd+Z for Undo
@@ -69,6 +74,22 @@ export function Canvas({
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [canUndo, canRedo, onUndo, onRedo]);
 
+
+    const handleSaveTemplate = () => {
+        const templateName = prompt(isEditMode ? `Edit template name (current: ${currentTemplateName}):` : "Enter template name:",
+            isEditMode ? currentTemplateName : `template-${Date.now()}`
+        );
+
+        if (!templateName) return;
+
+        // Pass the existing template ID if in edit mode
+        saveTemplate(
+            templateName,
+            elements,
+            isEditMode ? currentTemplateId : null
+        );
+    };
+
     return (
         <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 via-indigo-50/20 to-purple-50/20 overflow-hidden">
 
@@ -78,11 +99,10 @@ export function Canvas({
                     <button
                         onClick={onUndo}
                         disabled={!canUndo}
-                        className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-all text-xs font-semibold ${
-                            canUndo
-                                ? 'bg-indigo-50/50 hover:bg-indigo-100/70 border border-indigo-200/60 text-indigo-600 cursor-pointer hover:shadow-md hover:-translate-y-0.5'
-                                : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
-                        }`}
+                        className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-all text-xs font-semibold ${canUndo
+                            ? 'bg-indigo-50/50 hover:bg-indigo-100/70 border border-indigo-200/60 text-indigo-600 cursor-pointer hover:shadow-md hover:-translate-y-0.5'
+                            : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
+                            }`}
                         title="Undo (Ctrl+Z)"
                     >
                         <Undo size={14} />
@@ -91,11 +111,10 @@ export function Canvas({
                     <button
                         onClick={onRedo}
                         disabled={!canRedo}
-                        className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-all text-xs font-semibold ${
-                            canRedo
-                                ? 'bg-indigo-50/50 hover:bg-indigo-100/70 border border-indigo-200/60 text-indigo-600 cursor-pointer hover:shadow-md hover:-translate-y-0.5'
-                                : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
-                        }`}
+                        className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-all text-xs font-semibold ${canRedo
+                            ? 'bg-indigo-50/50 hover:bg-indigo-100/70 border border-indigo-200/60 text-indigo-600 cursor-pointer hover:shadow-md hover:-translate-y-0.5'
+                            : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
+                            }`}
                         title="Redo (Ctrl+Shift+Z)"
                     >
                         <Redo size={14} />
@@ -106,11 +125,12 @@ export function Canvas({
                 {/* Action Buttons */}
                 <button
                     className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 transition-all text-xs font-semibold text-white shadow-md shadow-indigo-200/50 hover:shadow-lg hover:-translate-y-0.5"
-                    onClick={() => saveTemplate(`template-${Date.now()}.html`, elements)}
+                    onClick={handleSaveTemplate}
                 >
                     <Save size={14} />
-                    Save Template
+                    {isEditMode ? "Update Template" : "Save Template"}
                 </button>
+
 
                 <button
                     className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-white hover:bg-indigo-50/30 border border-gray-300 hover:border-indigo-300 transition-all text-xs font-semibold text-gray-700 hover:text-indigo-600 shadow-sm hover:shadow-md hover:-translate-y-0.5"
@@ -127,15 +147,15 @@ export function Canvas({
 
                     <div className="absolute -top-3 -left-3 w-48 h-48 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
                     <div className="absolute -bottom-3 -right-3 w-48 h-48 bg-gradient-to-br from-purple-100/30 to-indigo-100/30 rounded-full blur-3xl pointer-events-none"></div>
-                    
+
 
                     <div
                         ref={pageRef}
                         className="bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
                         style={{
-                            width: '680px', 
-                            height: '954px', 
-                            backgroundSize: '17px 17px' 
+                            width: '680px',
+                            height: '954px',
+                            backgroundSize: '17px 17px'
                         }}
                         onDragOver={allowDrop}
                         onDrop={handleDrop}

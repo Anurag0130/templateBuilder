@@ -21,22 +21,31 @@ export default function TemplateBuilder() {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [selectedElement, setSelectedElement] = useState(null);
 
+
     const location = useLocation();
     const incomingTemplateId = location?.state?.templateId || null;
+    const isEditMode = location?.state?.mode === "edit" && incomingTemplateId;
+
+    const [currentTemplateId, setCurrentTemplateId] = useState(null);
+    const [currentTemplateName, setCurrentTemplateName] = useState("");
 
     useEffect(() => {
         if (!incomingTemplateId) return;
+        // maan lo in future hm api hit krenge with tempalte id and database s mujhe template mil jayega
+        const template = savedTemplates?.find(t => t?.id === incomingTemplateId);
+        if (template && template?.elements) {
+            setCurrentTemplateId(template?.id || "--");
+            setCurrentTemplateName(template?.name || "--");
 
-        const template = savedTemplates.find(t => t.id === incomingTemplateId);
-        if (template && template.elements) {
             setElements(
-                template.elements.map(el => ({
+                template?.elements?.map(el => ({
                     ...el,
                     id: Date.now() + Math.random()
                 }))
             );
         }
     }, [incomingTemplateId]);
+
 
 
     const handleDragStart = (e, field) => {
@@ -52,7 +61,6 @@ export default function TemplateBuilder() {
             id: Date.now(),
             field: draggingField,
             value: draggingField || "",
-            // value: studentData[draggingField] || "",
             x: coords.x - 8,
             y: coords.y - 8,
             fontSize: 12,
@@ -168,6 +176,9 @@ export default function TemplateBuilder() {
                     onRedo={redo}
                     canUndo={canUndo}
                     canRedo={canRedo}
+                    isEditMode={isEditMode}
+                    currentTemplateId={currentTemplateId}
+                    currentTemplateName={currentTemplateName}
                 />
                 <DummyJsonDataPanel onDataChange={handleDataChange} />
             </div>

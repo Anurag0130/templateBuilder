@@ -1,4 +1,4 @@
-import { addTemplate } from '../templates/templateStore';
+import { addTemplate, updateTemplate } from '../templates/templateStore';
 
 
 
@@ -162,19 +162,27 @@ export const downloadHTML = (elements, filename = "template.html") => {
 };
 
 
-export const saveTemplate = (templateName, elements) => {
-  console.log('this is element', elements)
+export const saveTemplate = (templateName, elements, existingTemplateId = null) => {
   const htmlContent = exportCanvasToHTML(elements);
-  const newTemplate = {
-    id: crypto.randomUUID(),
+
+  const templateId = existingTemplateId || crypto.randomUUID();
+
+  const templateData = {
+    id: templateId,
     name: templateName,
     content: htmlContent,
     elements: elements
   };
-  console.log('newTemplate', htmlContent)
-  addTemplate(newTemplate);
 
-  alert("Template saved successfully!");
+  if (existingTemplateId) {
+    updateTemplate(templateData);
+    alert("Template updated successfully!");
+  } else {
+    addTemplate(templateData);
+    alert("Template saved successfully!");
+  }
+
+  return templateId;
 };
 
 
