@@ -1,7 +1,7 @@
+import { Toaster } from "sonner";
 import TemplateBuilder from "./pages/TemplateBuilder.jsx";
 import TemplatePreview from "./pages/TemplatePreview.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Toaster } from "sonner";
 
 function App() {
   return (

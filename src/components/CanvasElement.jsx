@@ -215,7 +215,8 @@ export function CanvasElement({
                                 borderCollapse: "collapse",
                                 width: `${element.width || 400}px`,
                                 borderColor: element.borderColor || "#000000",
-                                backgroundColor: element.backgroundColor || "#fff"
+                                backgroundColor: element.backgroundColor || "#fff",
+                                height: "auto"
                             }}
                         >
                             <tbody>
