@@ -7,7 +7,13 @@ function App() {
   return (
 
     <Router>
-      <Toaster richColors position="top-center" />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            color: "blue",
+          }
+        }} />
       <Routes>
 
         <Route path="/" element={<TemplatePreview />} />
