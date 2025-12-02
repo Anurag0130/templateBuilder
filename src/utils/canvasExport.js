@@ -1,6 +1,6 @@
 import { addTemplate, updateTemplate } from '../templates/templateStore';
 
-
+import {successAlert} from'../../helper.js'
 
 export const exportCanvasToHTML = (elements) => {
   const elementsHTML = elements.map(element => {
@@ -177,12 +177,11 @@ export const saveTemplate = (templateName, elements, existingTemplateId = null) 
   if (existingTemplateId) {
     updateTemplate(templateData);
     // alert("Template updated successfully!");
+     successAlert("Saved successfullddy!");
   } else {
     addTemplate(templateData);
-    // alert("Template saved successfully!");
+ successAlert("Saved successfully!");
   }
 
   return templateId;
 };
-
-
