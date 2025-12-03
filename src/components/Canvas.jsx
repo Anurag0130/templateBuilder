@@ -94,7 +94,6 @@ export function Canvas({
 
 
     const handleSaveTemplate = (templateName) => {
-        console.log('obtemplateNameject', templateName)
         saveTemplate(templateName, elements, isEditMode ? currentTemplateId : null);
         setModalVisivble(false);
 
