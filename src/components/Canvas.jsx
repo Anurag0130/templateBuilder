@@ -90,15 +90,18 @@ export function Canvas({
 
 
 
-    const handleSaveTemplate = () => {
-        if (!fileName.trim()) {
-            alert("Please enter a template name");
-            return;
-        }
-        saveTemplate(fileName.trim(), elements, isEditMode ? currentTemplateId : null);
+    const handleSaveTemplate = (templateName) => {
+        console.log('obtemplateNameject', templateName)
+        saveTemplate(templateName, elements, isEditMode ? currentTemplateId : null);
         setModalVisivble(false);
-        setFileName("");
+
+        if (isEditMode) {
+            setFileName(templateName);
+        } else {
+            setFileName("");
+        }
     };
+
 
     const handleModalClose = () => {
         setModalVisivble(false);
@@ -218,6 +221,7 @@ export function Canvas({
                 currentTemplateName={currentTemplateName}
                 initialFileName={isEditMode ? currentTemplateName : ""}
             />
+
         </div>
     );
 }

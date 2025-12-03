@@ -1,20 +1,52 @@
 import { addTemplate, updateTemplate } from '../templates/templateStore';
 import { successAlert } from './toasts.js';
 
-
-
-
-
 export const exportCanvasToHTML = (elements) => {
-  const elementsHTML = elements.map(element => {
-    const style = `position: absolute; left: ${element.x}px; top: ${element.y}px;`;
+  const sortedElements = [...elements].sort((a, b) => a.y - b.y);
+  
+  let lastBottom = 0;
+  
+  const elementsHTML = sortedElements.map((element, index) => {
+    const marginTop = index === 0 ? element.y : Math.max(0, element.y - lastBottom);
+    
+    let estimatedHeight = 0;
+    switch (element.type) {
+      case "text":
+      case "header":
+        estimatedHeight = (element.fontSize || 12) + 16; 
+        break;
+      case "image":
+        estimatedHeight = element.height || 150;
+        break;
+      case "rectangle":
+        estimatedHeight = element.height || 100;
+        break;
+      case "line":
+        estimatedHeight = element.lineWidth || 1;
+        break;
+      case "table":
+        // Rough estimate: rows * approximate row height
+        const rows = element.rows ?? 2;
+        const fontSize = element.fontSize || 12;
+        estimatedHeight = rows * (fontSize + 16); // +16 for padding and borders
+        break;
+      default:
+        estimatedHeight = 0;
+    }
+    
+    lastBottom = element.y + estimatedHeight;
+    
+    const baseStyle = `
+      margin-top: ${marginTop}px;
+      margin-left: ${element.x}px;
+    `;
 
     switch (element.type) {
       case "text":
       case "header":
         return `
           <div style="
-            ${style}
+            ${baseStyle}
             font-size: ${element.fontSize || 12}px;
             font-weight: ${element.fontWeight || "normal"};
             font-family: ${element.fontFamily || "Arial"};
@@ -34,10 +66,11 @@ export const exportCanvasToHTML = (elements) => {
           <img 
             src="${element.src}" 
             style="
-              ${style}
+              ${baseStyle}
               width: ${element.width || 200}px;
               height: ${element.height || 150}px;
               object-fit: cover;
+              display: block;
             " 
           />
         `;
@@ -45,7 +78,7 @@ export const exportCanvasToHTML = (elements) => {
       case "rectangle":
         return `
           <div style="
-            ${style}
+            ${baseStyle}
             width: ${element.width || 200}px;
             height: ${element.height || 100}px;
             background-color: ${element.backgroundColor || "#ffffff"};
@@ -56,14 +89,12 @@ export const exportCanvasToHTML = (elements) => {
       case "line":
         return `
           <div style="
-            ${style}
+            ${baseStyle}
             width: ${element.width || 200}px;
             height: ${element.lineWidth || 1}px;
             background-color: ${element.color || "#000000"};
           "></div>
         `;
-
-
 
       case "table": {
         const width = element.width || 400;
@@ -84,7 +115,7 @@ export const exportCanvasToHTML = (elements) => {
         const rows = element.rows ?? 2;
         const cellWidth = Math.round(width / numCols);
 
-        let tableHTML = `<div style="${style}">
+        let tableHTML = `<div style="${baseStyle}">
       <table style="border-collapse: collapse; width: ${width}px; border-color: ${borderColor};">
   `;
         tableHTML += "<tbody>";
@@ -118,7 +149,6 @@ export const exportCanvasToHTML = (elements) => {
           tableHTML += "<tr>";
           for (let c = 0; c < numCols; c++) {
             const key = `${r}-${c}`;
-
             const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
             const cellStyles = element.cellStyles?.[key] || {};
 
@@ -148,23 +178,20 @@ export const exportCanvasToHTML = (elements) => {
         return tableHTML;
       }
 
-
-
       default:
         return "";
     }
   })?.join("\n");
 
-  // return elementsHTML; 
   return `
     <div class="canvas-container" 
       style="
         width:794px;
-        height:1123px;
+        min-height:1123px;
         background:white;
-        position:relative;
         margin:0 auto; 
         box-shadow:0 4px 8px rgba(0,0,0,0.1);
+        padding-bottom: 20px;
       ">
       ${elementsHTML}
     </div>
@@ -174,9 +201,19 @@ export const exportCanvasToHTML = (elements) => {
 export const downloadHTML = (elements, filename = "template.html") => {
   const innerHtml = exportCanvasToHTML(elements);
   const finalHtml = `
-    <div class="canvas-container">
-        ${innerHtml}
-    </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+    * { box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  ${innerHtml}
+</body>
+</html>
   `;
 
   const blob = new Blob([finalHtml], { type: "text/html" });
@@ -189,7 +226,6 @@ export const downloadHTML = (elements, filename = "template.html") => {
 
   URL.revokeObjectURL(url);
 };
-
 
 export const saveTemplate = (templateName, elements, existingTemplateId = null) => {
   console.log('elements', elements)
@@ -206,13 +242,10 @@ export const saveTemplate = (templateName, elements, existingTemplateId = null) 
 
   if (existingTemplateId) {
     updateTemplate(templateData);
-    // alert("Template updated successfully!");
     successAlert("Edited successfully!");
   } else {
     addTemplate(templateData);
     successAlert("Saved successfully!");
-
-
   }
 
   return templateId;
