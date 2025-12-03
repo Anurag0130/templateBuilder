@@ -149,7 +149,7 @@ export const exportCanvasToHTML = (elements) => {
           tableHTML += "<tr>";
           for (let c = 0; c < numCols; c++) {
             const key = `${r}-${c}`;
-            const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
+            // const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
             const cellStyles = element.cellStyles?.[key] || {};
 
             const bg =
@@ -164,6 +164,10 @@ export const exportCanvasToHTML = (elements) => {
           background:${bg};
           font-size:${cellStyles.fontSize || element.fontSize || 12}px;
           font-weight:${cellStyles.fontWeight || "normal"};
+          font-family:${cellStyles.fontfamily || "tahoma"};
+          font-decoration:${cellStyles.textDecoration || "none"};
+          font-transform:${cellStyles.textTransform || "none"};
+          font-style:${cellStyles.fontStyle || "none"};
           color:${cellStyles.color || "#000000"};
           text-align:${cellStyles.textAlign || "left"};
         ">

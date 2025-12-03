@@ -54,23 +54,44 @@ export function CanvasElement({
         onDelete(index);
     };
 
-    // ---- Cell selection & editing handlers ----
+
+    // const handleCellClick = (e, row, col) => {
+    //     e.stopPropagation();
+
+
+    //     const alreadySelected =
+    //         selectedCells.length === 1 &&
+    //         selectedCells[0].row === row &&
+    //         selectedCells[0].col === col;
+
+    //     if (alreadySelected) {
+
+    //         setSelectedCells([]);
+    //     } else {
+    //         setSelectedCells([{ row, col }]);
+    //     }
+    // };
     const handleCellClick = (e, row, col) => {
         e.stopPropagation();
 
-        // Select only a single cell (user requested "A single selected cell")
-        const alreadySelected =
-            selectedCells.length === 1 &&
-            selectedCells[0].row === row &&
-            selectedCells[0].col === col;
+        const isCtrl = e.ctrlKey || e.metaKey;
 
-        if (alreadySelected) {
-            // toggle off if clicked again
-            setSelectedCells([]);
+        if (isCtrl) {
+            // toggle cell selection
+            const exists = selectedCells.some(c => c.row === row && c.col === col);
+
+            setSelectedCells(prev =>
+                exists
+                    ? prev.filter(c => !(c.row === row && c.col === col))
+                    : [...prev, { row, col }]
+            );
         } else {
+            // normal selection (single)
             setSelectedCells([{ row, col }]);
         }
     };
+
+
 
     const handleCellDoubleClick = (e, row, col) => {
         e.stopPropagation();
@@ -107,15 +128,17 @@ export function CanvasElement({
     };
 
     // ---- Cell style update helper ----
-    const updateCellStyle = (row, col, patch) => {
-        const key = `${row}-${col}`;
-        const prevStyles = { ...(element.cellStyles || {}) };
-        const current = prevStyles[key] || {};
-        const updated = { ...current, ...patch };
+    const updateCellStyle = (newStyles) => {
+        const updated = { ...(element.cellStyles || {}) };
 
-        const newCellStyles = { ...prevStyles, [key]: updated };
-        onUpdateElement({ ...element, cellStyles: newCellStyles }, index);
+        selectedCells.forEach(({ row, col }) => {
+            const key = `${row}-${col}`;
+            updated[key] = { ...(updated[key] || {}), ...newStyles };
+        });
+
+        onUpdateElement({ ...element, cellStyles: updated }, index);
     };
+
 
     // ---- Render ----
     const renderElement = () => {
@@ -254,6 +277,11 @@ export function CanvasElement({
                                             const computedFontWeight = cellStyles.fontWeight || undefined;
                                             const computedTextAlign = cellStyles.textAlign || undefined;
                                             const computedBackground = cellStyles.backgroundColor || undefined;
+                                            const computedFontStyle = cellStyles.fontStyle || undefined;
+                                            const computedTextTransform = cellStyles.textTransform || undefined;
+                                            const computedTextDecoration = cellStyles.textDecoration || undefined;
+                                            const computedFontFamily = cellStyles.fontFamily || undefined;
+
 
                                             return (
                                                 <td
@@ -270,7 +298,12 @@ export function CanvasElement({
                                                         padding: 0,
                                                         textAlign: computedTextAlign,
                                                         fontSize: computedFontSize,
-                                                        color: computedColor
+                                                        color: computedColor,
+                                                        fontStyle: computedFontStyle,
+                                                        textTransform: computedTextTransform,
+                                                        textDecoration: computedTextDecoration,
+                                                        fontFamily: computedFontFamily,
+
                                                     }}
                                                     rowSpan={cellInfo.merge?.rowSpan || 1}
                                                     colSpan={cellInfo.merge?.colSpan || 1}
@@ -314,7 +347,7 @@ export function CanvasElement({
                         </table>
 
                         {/* Cell-properties panel: shows when exactly 1 cell is selected */}
-                        {selectedCells.length === 1 && (() => {
+                        {selectedCells.length > 0 && (() => {
                             const { row, col } = selectedCells[0];
                             const selKey = `${row}-${col}`;
                             const selStyles = (element.cellStyles && element.cellStyles[selKey]) || {};
@@ -332,7 +365,7 @@ export function CanvasElement({
                                             <input
                                                 type="number"
                                                 value={selStyles.fontSize || element.fontSize || 12}
-                                                onChange={(e) => updateCellStyle(row, col, { fontSize: Number(e.target.value) })}
+                                                onChange={(e) => updateCellStyle({ fontSize: Number(e.target.value) })}
                                                 className="w-full border rounded px-2 py-1 text-sm"
                                             />
                                         </div>
@@ -341,7 +374,7 @@ export function CanvasElement({
                                             <label className="text-xs block mb-1">Font weight</label>
                                             <select
                                                 value={selStyles.fontWeight || "normal"}
-                                                onChange={(e) => updateCellStyle(row, col, { fontWeight: e.target.value })}
+                                                onChange={(e) => updateCellStyle({ fontWeight: e.target.value })}
                                                 className="w-full border rounded px-2 py-1 text-sm"
                                             >
                                                 <option value="normal">Normal</option>
@@ -352,11 +385,81 @@ export function CanvasElement({
                                         </div>
 
                                         <div>
+                                            <label className="text-xs block mb-1">Font Family</label>
+                                            <select
+                                                value={selStyles.fontFamily || "Tahoma"}
+                                                onChange={(e) => updateCellStyle({ fontFamily: e.target.value })}
+                                                className="w-full border rounded px-2 py-1 text-sm"
+                                            >
+                                                <option value="Tahoma">Tahoma</option>
+                                                <option value="Arial">Arial</option>
+                                                <option value="Helvetica">Helvetica</option>
+                                                <option value="Times New Roman">Times New Roman</option>
+                                                <option value="Courier New">Courier New</option>
+                                                <option value="Verdana">Verdana</option>
+                                                <option value="Georgia">Georgia</option>
+                                                
+                                                <option value="Trebuchet MS">Trebuchet MS</option>
+                                            </select>
+                                        </div>
+
+
+
+                                        <div>
+                                            <label className="text-xs block mb-1">Font Style</label>
+                                            <select
+                                                value={selStyles.fontStyle || "normal"}
+                                                onChange={(e) =>
+                                                    updateCellStyle({ fontStyle: e.target.value })
+                                                }
+                                                className="w-full border rounded px-2 py-1 text-sm"
+                                            >
+                                                <option value="normal">Normal</option>
+                                                <option value="italic">Italic</option>
+                                                <option value="oblique">Oblique</option>
+
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs block mb-1">Text Transform</label>
+                                            <select
+                                                value={selStyles.fontStyle || "normal"}
+                                                onChange={(e) =>
+                                                    updateCellStyle({ textTransform: e.target.value })
+                                                }
+                                                className="w-full border rounded px-2 py-1 text-sm"
+                                            >
+                                                <option value="none">None</option>
+                                                <option value="uppercase">Uppercase</option>
+                                                <option value="lowercase">Lowercase</option>
+                                                <option value="capitalize">Capitalize</option>
+
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-xs block mb-1">Text Decoration</label>
+                                            <select
+                                                value={selStyles.textDecoration || "none"}
+                                                onChange={(e) =>
+                                                    updateCellStyle({ textDecoration: e.target.value })
+                                                }
+                                                className="w-full border rounded px-2 py-1 text-sm"
+                                            >
+                                                <option value="none">None</option>
+                                                <option value="underline">Underline</option>
+                                                <option value="line-through">Line Through</option>
+                                            </select>
+                                        </div>
+
+
+
+                                        <div>
                                             <label className="text-xs block mb-1">Text color</label>
                                             <input
                                                 type="color"
                                                 value={selStyles.color || "#000000"}
-                                                onChange={(e) => updateCellStyle(row, col, { color: e.target.value })}
+                                                onChange={(e) => updateCellStyle({ color: e.target.value })}
                                                 className="w-full border rounded px-2 py-1 text-sm h-9"
                                             />
                                         </div>
@@ -366,7 +469,7 @@ export function CanvasElement({
                                             <input
                                                 type="color"
                                                 value={selStyles.backgroundColor || "#ffffff"}
-                                                onChange={(e) => updateCellStyle(row, col, { backgroundColor: e.target.value })}
+                                                onChange={(e) => updateCellStyle({ backgroundColor: e.target.value })}
                                                 className="w-full border rounded px-2 py-1 text-sm h-9"
                                             />
                                         </div>
@@ -375,7 +478,7 @@ export function CanvasElement({
                                             <label className="text-xs block mb-1">Text align</label>
                                             <select
                                                 value={selStyles.textAlign || "left"}
-                                                onChange={(e) => updateCellStyle(row, col, { textAlign: e.target.value })}
+                                                onChange={(e) => updateCellStyle({ textAlign: e.target.value })}
                                                 className="w-full border rounded px-2 py-1 text-sm"
                                             >
                                                 <option value="left">Left</option>
@@ -384,20 +487,7 @@ export function CanvasElement({
                                             </select>
                                         </div>
 
-                                        <div>
-                                            <label className="text-xs block mb-1">Cell content</label>
-                                            <input
-                                                type="text"
-                                                value={selValue}
-                                                onChange={(e) => {
-                                                    const key = `${row}-${col}`;
-                                                    const newCellData = { ...(element.cellData || {}) };
-                                                    newCellData[key] = e.target.value;
-                                                    onUpdateElement({ ...element, cellData: newCellData }, index);
-                                                }}
-                                                className="w-full border rounded px-2 py-1 text-sm"
-                                            />
-                                        </div>
+
                                     </div>
 
                                     <div className="mt-3 flex justify-end gap-2">
