@@ -186,15 +186,15 @@ export function Canvas({
                     <div className="absolute -top-3 -left-3 w-48 h-48 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
                     <div className="absolute -bottom-3 -right-3 w-48 h-48 bg-gradient-to-br from-purple-100/30 to-indigo-100/30 rounded-full blur-3xl pointer-events-none"></div>
 
-                    {/* <div
+                    <div
                         ref={pageRef}
                         className="bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200"
                         style={{
-                            width: '680px',
-                            WIDTH:TYPE="A4"?144:190
-                            height: '954px',
-                            backgroundSize: '17px 17px',
-                            overflow: "visible" 
+                            width: paperSize === "A4" ? "680px" : "559px",
+                            height: paperSize === "A4" ? "954px" : "794px",
+                            minWidth: paperSize === "A4" ? "680px" : "559px",
+                            minHeight: paperSize === "A4" ? "954px" : "794px",
+                            backgroundSize: "17px 17px",
                         }}
                         onDragOver={allowDrop}
                         onDrop={handleDrop}
@@ -228,57 +228,8 @@ export function Canvas({
                                 onUpdateElement={onUpdateElement}
                             />
                         ))}
-                    </div> */}
-
-                    <div
-                        ref={pageRef}
-                        className="bg-white mx-auto shadow-2xl relative rounded-lg border border-gray-300 overflow-visible"
-                        style={{
-
-                            width: paperSize === "A4" ? "680px" : "559px",
-                            height: paperSize === "A4" ? "954px" : "794px",
-                            minWidth: paperSize === "A4" ? "680px" : "559px",
-                            minHeight: paperSize === "A4" ? "954px" : "794px",
-                            backgroundSize: "17px 17px",
-    //                         backgroundImage: `
-    //   linear-gradient(to right, #f0f0f0 1px, transparent 1px),
-    //   linear-gradient(to bottom, #f0f0f0 1px, transparent 1px)
-    // `,
-                        }}
-                        onDragOver={allowDrop}
-                        onDrop={handleDrop}
-                        onClick={handleCanvasClick}
-                    >
-                        {/* Your existing content */}
-                        {elements?.length === 0 && (
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div className="text-center">
-                                    <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center shadow-md">
-                                        <Sparkles className="w-8 h-8 text-indigo-500" />
-                                    </div>
-                                    <p className="text-base font-semibold text-gray-700 mb-1.5">
-                                        Start Building Your Template
-                                    </p>
-                                    <p className="text-xs text-gray-500 max-w-xs">
-                                        Drag fields from the sidebar
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        {elements?.map((element, index) => (
-                            <CanvasElement
-                                key={element.id}
-                                element={element}
-                                index={index}
-                                isSelected={selectedElement?.id === element.id}
-                                onSelect={onSelectElement}
-                                onDragEnd={handleElementDragEnd}
-                                onDelete={onDeleteElement}
-                                onUpdateElement={onUpdateElement}
-                            />
-                        ))}
                     </div>
+
                     {/* <PagePreview /> */}
 
                 </div>
