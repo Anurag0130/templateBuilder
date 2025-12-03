@@ -1,4 +1,6 @@
 import { addTemplate, updateTemplate } from '../templates/templateStore';
+import { successAlert } from './toasts.js';
+
 
 export const exportCanvasToHTML = (elements) => {
   const sortedElements = [...elements].sort((a, b) => a.y - b.y);
