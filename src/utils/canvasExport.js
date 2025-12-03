@@ -1,31 +1,31 @@
-import { successAlert } from './toasts.js';
 import { addTemplate, updateTemplate } from '../templates/templateStore';
-
+import { successAlert } from './toasts.js';
 
 export const exportCanvasToHTML = (elements) => {
-  const sortedElements = [...elements]?.sort((a, b) => a.y - b.y);
-
+  const sortedElements = [...elements].sort((a, b) => a.y - b.y);
+  
   let lastBottom = 0;
-
-  const elementsHTML = sortedElements?.map((element, index) => {
+  
+  const elementsHTML = sortedElements.map((element, index) => {
     const marginTop = index === 0 ? element.y : Math.max(0, element.y - lastBottom);
-
+    
     let estimatedHeight = 0;
-    switch (element?.type) {
+    switch (element.type) {
       case "text":
       case "header":
-        estimatedHeight = (element?.fontSize || 12) + 16;
+        estimatedHeight = (element.fontSize || 12) + 16; 
         break;
       case "image":
-        estimatedHeight = element?.height || 150;
+        estimatedHeight = element.height || 150;
         break;
       case "rectangle":
-        estimatedHeight = element?.height || 100;
+        estimatedHeight = element.height || 100;
         break;
       case "line":
-        estimatedHeight = element?.lineWidth || 1;
+        estimatedHeight = element.lineWidth || 1;
         break;
       case "table":
+        // Rough estimate: rows * approximate row height
         const rows = element.rows ?? 2;
         const fontSize = element.fontSize || 12;
         estimatedHeight = rows * (fontSize + 16); // +16 for padding and borders
@@ -33,9 +33,9 @@ export const exportCanvasToHTML = (elements) => {
       default:
         estimatedHeight = 0;
     }
-
+    
     lastBottom = element.y + estimatedHeight;
-
+    
     const baseStyle = `
       margin-top: ${marginTop}px;
       margin-left: ${element.x}px;
@@ -149,7 +149,7 @@ export const exportCanvasToHTML = (elements) => {
           tableHTML += "<tr>";
           for (let c = 0; c < numCols; c++) {
             const key = `${r}-${c}`;
-            // const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
+            const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
             const cellStyles = element.cellStyles?.[key] || {};
 
             const bg =
@@ -205,9 +205,9 @@ export const exportCanvasToHTML = (elements) => {
 export const downloadHTML = (elements, filename = "template.html") => {
   const innerHtml = exportCanvasToHTML(elements);
   const finalHtml = `
-  <!DOCTYPE html>
- <html>
-  <head>
+<!DOCTYPE html>
+<html>
+<head>
   <meta charset="UTF-8">
   <style>
     body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
@@ -232,7 +232,6 @@ export const downloadHTML = (elements, filename = "template.html") => {
 };
 
 export const saveTemplate = (templateName, elements, existingTemplateId = null) => {
-
   const htmlContent = exportCanvasToHTML(elements);
   const templateId = existingTemplateId || crypto.randomUUID();
 
