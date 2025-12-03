@@ -1,5 +1,4 @@
 import { addTemplate, updateTemplate } from '../templates/templateStore';
-import { successAlert } from './toasts.js';
 
 export const exportCanvasToHTML = (elements) => {
   const sortedElements = [...elements].sort((a, b) => a.y - b.y);
@@ -28,7 +27,7 @@ export const exportCanvasToHTML = (elements) => {
         // Rough estimate: rows * approximate row height
         const rows = element.rows ?? 2;
         const fontSize = element.fontSize || 12;
-        estimatedHeight = rows * (fontSize + 16); // +16 for padding and borders
+        estimatedHeight = rows * (fontSize + 16);
         break;
       default:
         estimatedHeight = 0;
@@ -164,10 +163,10 @@ export const exportCanvasToHTML = (elements) => {
           background:${bg};
           font-size:${cellStyles.fontSize || element.fontSize || 12}px;
           font-weight:${cellStyles.fontWeight || "normal"};
-          font-family:${cellStyles.fontfamily || "tahoma"};
-          font-decoration:${cellStyles.textDecoration || "none"};
-          font-transform:${cellStyles.textTransform || "none"};
-          font-style:${cellStyles.fontStyle || "none"};
+          font-family:${cellStyles.fontFamily || "Tahoma"};
+          text-decoration:${cellStyles.textDecoration || "none"};
+          text-transform:${cellStyles.textTransform || "none"};
+          font-style:${cellStyles.fontStyle || "normal"};
           color:${cellStyles.color || "#000000"};
           text-align:${cellStyles.textAlign || "left"};
         ">
@@ -240,6 +239,87 @@ export const saveTemplate = (templateName, elements, existingTemplateId = null) 
     name: templateName,
     content: htmlContent,
     elements: elements
+  };
+
+  if (existingTemplateId) {
+    updateTemplate(templateData);
+    successAlert("Edited successfully!");
+  } else {
+    addTemplate(templateData);
+    successAlert("Saved successfully!");
+  }
+
+  return templateId;
+};
+
+
+
+
+
+export const exportAllPagesToHTML = (pages) => {
+  const allPagesHTML = pages.map((page, pageIndex) => {
+    const pageContent = exportCanvasToHTML(page.elements);
+    return `
+      <div class="page" style="
+        page-break-after: always;
+        margin-bottom: 20px;
+      ">
+        ${pageContent}
+      </div>
+    `;
+  }).join('\n');
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+    * { box-sizing: border-box; }
+    @media print {
+      .page { 
+        page-break-after: always; 
+        margin: 0; 
+        box-shadow: none; 
+      }
+      body { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  ${allPagesHTML}
+</body>
+</html>
+  `;
+};
+
+
+export const downloadAllPagesHTML = (pages, filename = "template-multipage.html") => {
+  const finalHtml = exportAllPagesToHTML(pages);
+
+  const blob = new Blob([finalHtml], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+
+  URL.revokeObjectURL(url);
+};
+
+
+
+export const saveMultiPageTemplate = (templateName, pages, existingTemplateId = null) => {
+  const htmlContent = exportAllPagesToHTML(pages);
+  const templateId = existingTemplateId || crypto.randomUUID();
+
+  const templateData = {
+    id: templateId,
+    name: templateName,
+    content: htmlContent,
+    pages: pages  // Save all pages data
   };
 
   if (existingTemplateId) {

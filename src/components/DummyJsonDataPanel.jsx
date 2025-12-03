@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { Copy, Check, Code, ChevronDown, ChevronRight } from "lucide-react";
+import { Copy, Check, Code, ChevronDown, ChevronRight, ChevronLeft, Minimize2, Maximize2 } from "lucide-react";
 import { backendData } from "../templates/constants";
 
-export function DummyJsonDataPanel({ initialData }) {
 
-    const [jsonData, setJsonData] = useState(backendData);
+export default function DummyJsonDataPanel({ initialData }) {
+    const [jsonData, setJsonData] = useState(initialData || backendData);
     const [copied, setCopied] = useState(false);
     const [copiedField, setCopiedField] = useState(null);
+    const [collapsed, setCollapsed] = useState(false);
     const [expandedSections, setExpandedSections] = useState({});
-
 
     const handleCopy = () => {
         navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
@@ -116,57 +116,81 @@ export function DummyJsonDataPanel({ initialData }) {
     };
 
     return (
-        <div className="w-80 bg-white border-l border-gray-200 flex flex-col h-screen shadow-xl">
+        <div className={`bg-white border-l border-gray-200 flex flex-col h-full shadow-xl transition-all duration-300 ${collapsed ? 'w-12' : 'w-80'}`}>
             {/* Header - Compact & Fixed */}
-            <div className="px-3 py-2.5 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50 flex-shrink-0">
-                <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-2">
-                        <div className="bg-indigo-600 p-1.5 rounded-lg">
-                            <Code size={14} className="text-white" />
+            {!collapsed ? (
+                <div className="px-3 py-2.5 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50 flex-shrink-0">
+                    <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-2">
+                            <div className="bg-indigo-600 p-1.5 rounded-lg">
+                                <Code size={14} className="text-white" />
+                            </div>
+                            <h2 className="text-sm font-bold text-gray-900">
+                                Template Data
+                            </h2>
                         </div>
-                        <h2 className="text-sm font-bold text-gray-900">
-                            Template Data
-                        </h2>
+                        <div className="flex items-center gap-1">
+                          
+                            <button
+                                onClick={handleCopy}
+                                className="p-1.5 hover:bg-white rounded-md transition-colors"
+                                title="Copy JSON"
+                            >
+                                {copied ? (
+                                    <Check size={14} className="text-green-600" />
+                                ) : (
+                                    <Copy size={14} className="text-gray-600" />
+                                )}
+                            </button>
+                            <button
+                                onClick={() => setCollapsed(!collapsed)}
+                                className="p-1.5 hover:bg-white rounded-md transition-colors"
+                                title="Hide Panel"
+                            >
+                                <ChevronRight size={14} className="text-gray-600" />
+                            </button>
+                        </div>
                     </div>
+                    <p className="text-xs text-gray-600">
+                        Click to expand nested fields
+                    </p>
+                </div>
+            ) : (
+                <div className="flex flex-col items-center py-3">
                     <button
-                        onClick={handleCopy}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors"
-                        title="Copy JSON"
+                        onClick={() => setCollapsed(false)}
+                        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+                        title="Show Panel"
                     >
-                        {copied ? (
-                            <Check size={14} className="text-green-600" />
-                        ) : (
-                            <Copy size={14} className="text-gray-600" />
-                        )}
+                        <ChevronLeft size={18} className="text-gray-600" />
                     </button>
                 </div>
-                <p className="text-xs text-gray-600">
-                    Click to expand nested fields
-                </p>
-            </div>
+            )}
 
-            {/* Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto p-3">
-                <div className="bg-gray-50 rounded-lg p-2.5 border border-gray-200">
-                    <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
-                        <Code size={12} />
-                        Available Fields
-                    </p>
-                    <div className="space-y-0.5">
-                        {renderJsonPreview(jsonData)}
+            {/* Content - Scrollable (hidden when collapsed) */}
+            {!collapsed && (
+                <div className="flex-1 overflow-y-auto p-3">
+                    <div className="bg-gray-50 rounded-lg p-2.5 border border-gray-200">
+                        <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+                            <Code size={12} />
+                            Available Fields
+                        </p>
+                        <div className="space-y-0.5">
+                            {renderJsonPreview(jsonData)}
+                        </div>
+                    </div>
+
+                    {/* Usage Hint */}
+                    <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-2.5">
+                        <p className="text-xs text-blue-900 font-medium mb-1.5">
+                            💡 How to use
+                        </p>
+                        <p className="text-xs text-blue-700 leading-relaxed">
+                            Hover over any field and click the <code className="px-1 bg-blue-100 rounded text-xs">{"{{}}"}</code> button to copy as Handlebars syntax
+                        </p>
                     </div>
                 </div>
-
-                {/* Usage Hint */}
-                <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-2.5">
-                    <p className="text-xs text-blue-900 font-medium mb-1.5">
-                        💡 How to use
-                    </p>
-                    <p className="text-xs text-blue-700 leading-relaxed">
-                        Hover over any field and click the <code className="px-1 bg-blue-100 rounded text-xs">{"{{}}"}</code> button to copy as Handlebars syntax
-                    </p>
-                </div>
-            </div>
+            )}
         </div>
     );
 }
