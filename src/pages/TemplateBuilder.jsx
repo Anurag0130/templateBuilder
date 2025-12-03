@@ -14,7 +14,10 @@ export default function TemplateBuilder() {
         redo,
         canUndo,
         canRedo
-    } = useHistory([]);
+    } =
+        useHistory([]);
+        // useHistory(currentPage?.elements);
+
 
     const fileInputRef = useRef(null);
     const [draggingField, setDraggingField] = useState(null);
@@ -47,6 +50,82 @@ export default function TemplateBuilder() {
     }, [incomingTemplateId]);
 
 
+    // Change from single elements array to pages array
+    const [pages, setPages] = useState([
+        { id: 1, elements: [] }
+    ]);
+    const [currentPageIndex, setCurrentPageIndex] = useState(0);
+
+    // Get current page
+    const currentPage = pages[currentPageIndex];
+
+    // Update current page elements
+    const updatePageElements = (newElements) => {
+        const newPages = [...pages];
+        newPages[currentPageIndex] = {
+            ...currentPage,
+            elements: newElements
+        };
+        setPages(newPages);
+        setElements(newElements);
+
+    };
+
+    // Add new page
+    const addPage = () => {
+        const newPage = { id: Date.now(), elements: [] };
+        setPages([...pages, newPage]);
+        setCurrentPageIndex(pages.length);
+        setSelectedElement(null);
+        setSelectedIndex(null);
+    };
+
+    // Delete page
+    const deletePage = () => {
+        if (pages.length === 1) return;
+        const newPages = pages.filter((_, i) => i !== currentPageIndex);
+        setPages(newPages);
+        setCurrentPageIndex(Math.max(0, currentPageIndex - 1));
+        setSelectedElement(null);
+        setSelectedIndex(null);
+    };
+
+    // Duplicate page
+    const duplicatePage = () => {
+        const duplicated = {
+            id: Date.now(),
+            elements: currentPage.elements.map(el => ({
+                ...el,
+                id: Date.now() + Math.random()
+            }))
+        };
+        const newPages = [...pages];
+        newPages.splice(currentPageIndex + 1, 0, duplicated);
+        setPages(newPages);
+        setCurrentPageIndex(currentPageIndex + 1);
+    };
+
+    const handlePageChange = (newIndex) => {
+        setCurrentPageIndex(newIndex);
+        setSelectedElement(null);
+        setSelectedIndex(null);
+        setElements(pages[newIndex].elements);
+    };
+
+    // Update your handleDropToPage to use updatePageElements
+    const handleDropToPage = (coords) => {
+        if (!draggingField) return;
+        const newElement = {
+            id: Date.now(),
+            field: draggingField,
+            value: draggingField,
+            x: coords.x - 8,
+            y: coords.y - 8,
+            // ... rest of your element config
+        };
+        updatePageElements([...currentPage.elements, newElement]);
+        setDraggingField(null);
+    };
 
     const handleDragStart = (e, field) => {
         setDraggingField(field);
@@ -55,24 +134,24 @@ export default function TemplateBuilder() {
         } catch (err) { }
     };
 
-    const handleDropToPage = (coords) => {
-        if (!draggingField) return;
-        const newElement = {
-            id: Date.now(),
-            field: draggingField,
-            value: draggingField || "",
-            x: coords.x - 8,
-            y: coords.y - 8,
-            fontSize: 12,
-            fontWeight: "normal",
-            color: "#000000",
-            backgroundColor: "transparent",
-            textAlign: "left",
-            fontFamily: "Arial"
-        };
-        setElements([...elements, newElement]);
-        setDraggingField(null);
-    };
+    // const handleDropToPage = (coords) => {
+    //     if (!draggingField) return;
+    //     const newElement = {
+    //         id: Date.now(),
+    //         field: draggingField,
+    //         value: draggingField || "",
+    //         x: coords.x - 8,
+    //         y: coords.y - 8,
+    //         fontSize: 12,
+    //         fontWeight: "normal",
+    //         color: "#000000",
+    //         backgroundColor: "transparent",
+    //         textAlign: "left",
+    //         fontFamily: "Arial"
+    //     };
+    //     setElements([...elements, newElement]);
+    //     setDraggingField(null);
+    // };
 
     const handleAddElement = (elementConfig) => {
         const newElement = {
@@ -81,14 +160,23 @@ export default function TemplateBuilder() {
             y: 50,
             ...elementConfig
         };
-        setElements([...elements, newElement]);
+        // setElements([...elements, newElement]);
+        // ✅ Update current page elements (not global elements)
+        updatePageElements([...currentPage.elements, newElement]);
     };
 
     const handleLoadTemplate = (templateElements) => {
         setSelectedElement(null);
         setSelectedIndex(null);
 
-        setElements(
+        // setElements(
+        //     templateElements.map((el) => ({
+        //         ...el,
+        //         id: Date.now() + Math.random()
+        //     }))
+        // );
+        // ✅ Load template into current page
+        updatePageElements(
             templateElements.map((el) => ({
                 ...el,
                 id: Date.now() + Math.random()
@@ -117,7 +205,9 @@ export default function TemplateBuilder() {
     const handleElementMove = (index, coords) => {
         const copy = [...elements];
         copy[index] = { ...copy[index], x: coords.x, y: coords.y };
-        setElements(copy);
+        // setElements(copy);
+        updatePageElements(copy);
+
     };
 
     const handleSelectElement = (element, index) => {
@@ -129,7 +219,9 @@ export default function TemplateBuilder() {
         console.log('updatedElement', updatedElement)
         const copy = [...elements];
         copy[index] = updatedElement;
-        setElements(copy);
+        // setElements(copy);
+        updatePageElements(copy);
+
 
         if (index === selectedIndex) {
             setSelectedElement(updatedElement);
@@ -137,7 +229,8 @@ export default function TemplateBuilder() {
     };
 
     const handleDeleteElement = (index) => {
-        setElements(elements.filter((_, i) => i !== index));
+        // setElements(elements.filter((_, i) => i !== index));
+        updatePageElements(currentPage.elements.filter((_, i) => i !== index));
         setSelectedElement(null);
         setSelectedIndex(null);
     };
@@ -165,7 +258,16 @@ export default function TemplateBuilder() {
                     onLoadTemplate={handleLoadTemplate}
                 />
                 <Canvas
-                    elements={elements}
+                    pages={pages}
+                    currentPageIndex={currentPageIndex}
+                    onPageChange={handlePageChange}
+                    onAddPage={addPage}
+                    onDeletePage={deletePage}
+                    onDuplicatePage={duplicatePage}
+                    elements={currentPage.elements}
+                    onUpdateElements={updatePageElements}
+
+                    // elements={elements}
                     onDropToPage={handleDropToPage}
                     onElementMove={handleElementMove}
                     onSelectElement={handleSelectElement}

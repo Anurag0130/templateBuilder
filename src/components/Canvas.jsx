@@ -3,6 +3,8 @@ import React, { useRef, useState, useEffect } from "react";
 import { SaveTemplateModal } from "./SaveTemplateModal.jsx";
 import { Save, FileDown, Undo, Redo, Sparkles } from "lucide-react";
 import { downloadHTML, saveTemplate } from "../utils/canvasExport.js";
+import { PageThumbnails } from "./PageThumbnails.jsx";
+import { BottomPageNavigation } from "./BottomPageNavigation.jsx";
 
 export function Canvas({
     elements,
@@ -19,7 +21,18 @@ export function Canvas({
 
     isEditMode = false,
     currentTemplateId = null,
-    currentTemplateName = ""
+    currentTemplateName = "",
+
+
+    // for multi pages 
+    pages,
+    currentPageIndex,
+    onPageChange,
+    onAddPage,
+    onDeletePage,
+    onDuplicatePage,
+    // elements,
+    onUpdateElements,
 }) {
 
     const pageRef = useRef(null);
@@ -91,9 +104,8 @@ export function Canvas({
 
 
     const handleSaveTemplate = (templateName) => {
-        console.log('obtemplateNameject', templateName)
-        saveTemplate(templateName, elements, isEditMode ? currentTemplateId : null);
         setModalVisivble(false);
+        saveTemplate(templateName, elements, isEditMode ? currentTemplateId : null);
 
         if (isEditMode) {
             setFileName(templateName);
@@ -164,54 +176,78 @@ export function Canvas({
                 </button>
             </div>
 
-            <div className="flex-1 overflow-auto p-6">
-                <div className="relative">
-                    <div className="absolute -top-3 -left-3 w-48 h-48 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
-                    <div className="absolute -bottom-3 -right-3 w-48 h-48 bg-gradient-to-br from-purple-100/30 to-indigo-100/30 rounded-full blur-3xl pointer-events-none"></div>
+            {/* Add Page Thumbnails Sidebar */}
+            <div className="flex flex-1 overflow-hidden">
+                <PageThumbnails
+                    pages={pages}
+                    currentIndex={currentPageIndex}
+                    onChange={onPageChange}
+                    onAddPage={onAddPage}
+                />
 
-                    <div
-                        ref={pageRef}
-                        className="bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
-                        style={{
-                            width: '680px',
-                            height: '954px',
-                            backgroundSize: '17px 17px'
-                        }}
-                        onDragOver={allowDrop}
-                        onDrop={handleDrop}
-                        onClick={handleCanvasClick}
-                    >
-                        {elements?.length === 0 && (
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div className="text-center">
-                                    <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center shadow-md">
-                                        <Sparkles className="w-8 h-8 text-indigo-500" />
+                <div className="flex-1 overflow-auto p-6">
+                    <div className="relative">
+                        <div className="absolute -top-3 -left-3 w-48 h-48 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl pointer-events-none"></div>
+                        <div className="absolute -bottom-3 -right-3 w-48 h-48 bg-gradient-to-br from-purple-100/30 to-indigo-100/30 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div
+                            ref={pageRef}
+                            className="bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
+                            style={{
+                                width: '680px',
+                                height: '954px',
+                                backgroundSize: '17px 17px'
+                            }}
+                            onDragOver={allowDrop}
+                            onDrop={handleDrop}
+                            onClick={handleCanvasClick}
+                        >
+                            {elements?.length === 0 && (
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div className="text-center">
+                                        <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center shadow-md">
+                                            <Sparkles className="w-8 h-8 text-indigo-500" />
+                                        </div>
+                                        <p className="text-base font-semibold text-gray-700 mb-1.5">
+                                            {isEditMode ? "Edit Your Template" : "Start Building Your Template"}
+                                        </p>
+                                        <p className="text-xs text-gray-500 max-w-xs">
+                                            Drag fields and elements from the sidebar to create your perfect template
+                                        </p>
                                     </div>
-                                    <p className="text-base font-semibold text-gray-700 mb-1.5">
-                                        {isEditMode ? "Edit Your Template" : "Start Building Your Template"}
-                                    </p>
-                                    <p className="text-xs text-gray-500 max-w-xs">
-                                        Drag fields and elements from the sidebar to create your perfect template
-                                    </p>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {elements?.map((element, index) => (
-                            <CanvasElement
-                                key={element.id}
-                                element={element}
-                                index={index}
-                                isSelected={selectedElement?.id === element.id}
-                                onSelect={onSelectElement}
-                                onDragEnd={handleElementDragEnd}
-                                onDelete={onDeleteElement}
-                                onUpdateElement={onUpdateElement}
-                            />
-                        ))}
+                            {elements?.map((element, index) => (
+                                <CanvasElement
+                                    key={element.id}
+                                    element={element}
+                                    index={index}
+                                    isSelected={selectedElement?.id === element.id}
+                                    onSelect={onSelectElement}
+                                    onDragEnd={handleElementDragEnd}
+                                    onDelete={onDeleteElement}
+                                    onUpdateElement={onUpdateElement}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
+
+
+                {/* Bottom Navigation */}
+
+
             </div>
+
+            <BottomPageNavigation
+                pages={pages}
+                currentIndex={currentPageIndex}
+                onPageChange={onPageChange}
+                onAddPage={onAddPage}
+                onDeletePage={onDeletePage}
+                onDuplicatePage={onDuplicatePage}
+            />
 
             <SaveTemplateModal
                 isOpen={modalvisible}
