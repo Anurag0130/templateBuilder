@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Canvas } from "../components/Canvas.jsx";
 import { Sidebar } from "../components/Sidebar.jsx";
 import { useHistory } from "../hooks/useHistory.ts";
+import React, { useState, useRef, useEffect } from "react";
 import { DummyJsonDataPanel } from "../components/DummyJsonDataPanel.jsx";
-import { useLocation } from "react-router-dom";
 import { templates as savedTemplates } from "../templates/templateStore";
 export default function TemplateBuilder() {
     // Use history hook for undo/redo functionality

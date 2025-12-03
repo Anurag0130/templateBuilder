@@ -149,7 +149,7 @@ export const exportCanvasToHTML = (elements) => {
           tableHTML += "<tr>";
           for (let c = 0; c < numCols; c++) {
             const key = `${r}-${c}`;
-            // const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
+            const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
             const cellStyles = element.cellStyles?.[key] || {};
 
             const bg =
