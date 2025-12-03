@@ -99,7 +99,7 @@ export function Canvas({
     };
 
 
-    
+
     const handleModalClose = () => {
         setModalVisible(false);
         if (isEditMode) {
@@ -109,11 +109,17 @@ export function Canvas({
         }
     };
 
-        const handleExportPDF = () => {
+    const handleExportPDF = () => {
         downloadAllPagesHTML(pages, `template-${pages.length}-pages.html`);
     };
 
 
+    const [paperSize, setPaperSize] = useState("A4"); // default
+
+
+    const handlePageSizeChange = (size) => {
+        setPaperSize(size);
+    };
 
 
     // ===== RENDER =====
@@ -121,7 +127,7 @@ export function Canvas({
     return (
         <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 via-indigo-50/20 to-purple-50/20 overflow-hidden">
             {/* Toolbar */}
-            <div className="flex gap-2 p-2.5 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm justify-between pr-4">
+            <div className="flex gap-2 p-2.5 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm justify-between pr-4 z-50">
                 {/* Undo/Redo Group */}
                 <div className="flex gap-1.5 mr-2 pr-">
                     <button
@@ -146,6 +152,8 @@ export function Canvas({
 
 
                 <div className="flex gap-4">
+                    <PageSizeSelector onChangePageSize={handlePageSizeChange} />
+
                     <button
                         className={getButtonClass(true, 'primary')}
                         onClick={() => setModalVisible(true)}
@@ -161,6 +169,9 @@ export function Canvas({
                         <FileDown size={14} />
                         Export PDF
                     </button>
+
+                    {/* <PageSizeSelector onChangePageSize={handlePageSizeChange} /> */}
+
                 </div>
             </div>
 
@@ -191,7 +202,15 @@ export function Canvas({
                         <div
                             ref={pageRef}
                             className="bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
-                            style={{ width: '680px', height: '954px', backgroundSize: '17px 17px' }}
+                            // style={{ width: '680px', height: '954px', backgroundSize: '17px 17px' }}
+                            style={{
+                                width: paperSize === "A4" ? "680px" : "559px",
+                                height: paperSize === "A4" ? "954px" : "794px",
+                                minWidth: paperSize === "A4" ? "680px" : "559px",
+                                minHeight: paperSize === "A4" ? "954px" : "794px",
+                                backgroundSize: "17px 17px",
+                            }}
+
                             onDragOver={allowDrop}
                             onDrop={handleDrop}
                             onClick={() => onSelectElement(null, null)}
@@ -227,7 +246,7 @@ export function Canvas({
                         </div>
                     </div>
                 </div>
-            <DummyJsonDataPanel onDataChange={(data) => console.log('Template data updated:', data)} />
+                <DummyJsonDataPanel onDataChange={(data) => console.log('Template data updated:', data)} />
             </div>
 
 
