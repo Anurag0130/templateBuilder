@@ -1,183 +1,205 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Canvas } from "../components/Canvas.jsx";
 import { Sidebar } from "../components/Sidebar.jsx";
-import { useHistory } from "../hooks/useHistory.ts";
+import { useState, useRef, useEffect } from "react";
 import { DummyJsonDataPanel } from "../components/DummyJsonDataPanel.jsx";
-import { useLocation } from "react-router-dom";
 import { templates as savedTemplates } from "../templates/templateStore";
+
 export default function TemplateBuilder() {
-    // Use history hook for undo/redo functionality
-    const {
-        state: elements,
-        setState: setElements,
-        undo,
-        redo,
-        canUndo,
-        canRedo
-    } =
-        useHistory([]);
-        // useHistory(currentPage?.elements);
-
-
     const fileInputRef = useRef(null);
+    const location = useLocation();
+
+
+    const incomingTemplateId = location?.state?.templateId || null;
+    const isEditMode = location?.state?.mode === "edit" && incomingTemplateId;
+
+ 
+    const [currentTemplateId, setCurrentTemplateId] = useState(null);
+    const [currentTemplateName, setCurrentTemplateName] = useState("");
+
+    // Element state
     const [draggingField, setDraggingField] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [selectedElement, setSelectedElement] = useState(null);
 
-
-    const location = useLocation();
-    const incomingTemplateId = location?.state?.templateId || null;
-    const isEditMode = location?.state?.mode === "edit" && incomingTemplateId;
-
-    const [currentTemplateId, setCurrentTemplateId] = useState(null);
-    const [currentTemplateName, setCurrentTemplateName] = useState("");
-
-    useEffect(() => {
-        if (!incomingTemplateId) return;
-        // maan lo in future hm api hit krenge with tempalte id and database s mujhe template mil jayega
-        const template = savedTemplates?.find(t => t?.id === incomingTemplateId);
-        if (template && template?.elements) {
-            setCurrentTemplateId(template?.id || "--");
-            setCurrentTemplateName(template?.name || "--");
-
-            setElements(
-                template?.elements?.map(el => ({
-                    ...el,
-                    id: Date.now() + Math.random()
-                }))
-            );
-        }
-    }, [incomingTemplateId]);
-
-
-    // Change from single elements array to pages array
-    const [pages, setPages] = useState([
-        { id: 1, elements: [] }
-    ]);
+    // Pages state
+    const [pages, setPages] = useState([{
+        id: 1,
+        elements: [],
+        history: [[]],
+        historyIndex: 0
+    }]);
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
-    // Get current page
+
     const currentPage = pages[currentPageIndex];
+    const canUndo = currentPage?.historyIndex > 0;
+    const canRedo = currentPage?.historyIndex < currentPage?.history?.length - 1;
 
-    // Update current page elements
-    const updatePageElements = (newElements) => {
+
+
+
+    const clearSelection = () => {
+        setSelectedElement(null);
+        setSelectedIndex(null);
+    };
+
+    const updatePage = (pageUpdates) => {
         const newPages = [...pages];
-        newPages[currentPageIndex] = {
-            ...currentPage,
-            elements: newElements
-        };
+        newPages[currentPageIndex] = { ...currentPage, ...pageUpdates };
         setPages(newPages);
-        setElements(newElements);
-
     };
 
-    // Add new page
-    const addPage = () => {
-        const newPage = { id: Date.now(), elements: [] };
-        setPages([...pages, newPage]);
-        setCurrentPageIndex(pages.length);
-        setSelectedElement(null);
-        setSelectedIndex(null);
+    const updatePageElements = (newElements, addToHistory = true) => {
+        const updates = { elements: newElements };
+
+        if (addToHistory) {
+            const newHistory = currentPage?.history?.slice(0, currentPage?.historyIndex + 1);
+            newHistory?.push(newElements);
+
+            if (newHistory.length > 50) {
+                newHistory?.shift();
+            } else {
+                updates.historyIndex = currentPage.historyIndex + 1;
+            }
+
+            updates.history = newHistory;
+        }
+
+        updatePage(updates);
     };
 
-    // Delete page
-    const deletePage = () => {
-        if (pages.length === 1) return;
-        const newPages = pages.filter((_, i) => i !== currentPageIndex);
-        setPages(newPages);
-        setCurrentPageIndex(Math.max(0, currentPageIndex - 1));
-        setSelectedElement(null);
-        setSelectedIndex(null);
+    // ===== UNDO/REDO =====
+
+    const undo = () => {
+        if (!canUndo) return;
+        updatePage({
+            historyIndex: currentPage.historyIndex - 1,
+            elements: currentPage.history[currentPage.historyIndex - 1]
+        });
+        clearSelection();
     };
 
-    // Duplicate page
-    const duplicatePage = () => {
-        const duplicated = {
-            id: Date.now(),
-            elements: currentPage.elements.map(el => ({
+    const redo = () => {
+        if (!canRedo) return;
+        updatePage({
+            historyIndex: currentPage.historyIndex + 1,
+            elements: currentPage.history[currentPage.historyIndex + 1]
+        });
+        clearSelection();
+    };
+
+    // ===== PAGE OPERATIONS =====
+
+    const pageOperations = {
+        add: () => {
+            setPages([...pages, {
+                id: Date.now(),
+                elements: [],
+                history: [[]],
+                historyIndex: 0
+            }]);
+            setCurrentPageIndex(pages.length);
+            clearSelection();
+        },
+
+        delete: () => {
+            if (pages.length === 1) {
+                alert("You must have at least one page!");
+                return;
+            }
+            setPages(pages.filter((_, i) => i !== currentPageIndex));
+            setCurrentPageIndex(Math.max(0, currentPageIndex - 1));
+            clearSelection();
+        },
+
+        duplicate: () => {
+            const duplicateElements = (els) => els.map(el => ({
                 ...el,
                 id: Date.now() + Math.random()
-            }))
-        };
-        const newPages = [...pages];
-        newPages.splice(currentPageIndex + 1, 0, duplicated);
-        setPages(newPages);
-        setCurrentPageIndex(currentPageIndex + 1);
+            }));
+
+            const duplicated = {
+                id: Date.now(),
+                elements: duplicateElements(currentPage.elements),
+                history: [duplicateElements(currentPage.elements)],
+                historyIndex: 0
+            };
+
+            const newPages = [...pages];
+            newPages.splice(currentPageIndex + 1, 0, duplicated);
+            setPages(newPages);
+            setCurrentPageIndex(currentPageIndex + 1);
+        },
+
+        change: (newIndex) => {
+            setCurrentPageIndex(newIndex);
+            clearSelection();
+        }
     };
 
-    const handlePageChange = (newIndex) => {
-        setCurrentPageIndex(newIndex);
-        setSelectedElement(null);
-        setSelectedIndex(null);
-        setElements(pages[newIndex].elements);
+    // ===== ELEMENT OPERATIONS =====
+
+    const elementOperations = {
+        add: (elementConfig) => {
+            updatePageElements([...currentPage.elements, {
+                id: Date.now(),
+                x: 50,
+                y: 50,
+                ...elementConfig
+            }]);
+        },
+
+        update: (updatedElement, index = selectedIndex) => {
+            const copy = [...currentPage.elements];
+            copy[index] = updatedElement;
+            updatePageElements(copy);
+            if (index === selectedIndex) setSelectedElement(updatedElement);
+        },
+
+        delete: (index) => {
+            updatePageElements(currentPage.elements.filter((_, i) => i !== index));
+            clearSelection();
+        },
+
+        select: (element, index) => {
+            setSelectedElement(element);
+            setSelectedIndex(index);
+        },
+
+        move: (index, coords) => {
+            const copy = [...currentPage.elements];
+            copy[index] = { ...copy[index], x: coords.x, y: coords.y };
+            updatePageElements(copy);
+        },
+
+        drop: (coords) => {
+            if (!draggingField) return;
+
+            updatePageElements([...currentPage.elements, {
+                id: Date.now(),
+                type: "text",
+                field: draggingField,
+                value: draggingField || "",
+                x: coords.x - 8,
+                y: coords.y - 8,
+                fontSize: 12,
+                fontWeight: "normal",
+                color: "#000000",
+                backgroundColor: "transparent",
+                textAlign: "left",
+                fontFamily: "Arial"
+            }]);
+            setDraggingField(null);
+        }
     };
 
-    // Update your handleDropToPage to use updatePageElements
-    const handleDropToPage = (coords) => {
-        if (!draggingField) return;
-        const newElement = {
-            id: Date.now(),
-            field: draggingField,
-            value: draggingField,
-            x: coords.x - 8,
-            y: coords.y - 8,
-            // ... rest of your element config
-        };
-        updatePageElements([...currentPage.elements, newElement]);
-        setDraggingField(null);
-    };
-
-    const handleDragStart = (e, field) => {
-        setDraggingField(field);
-        try {
-            e.dataTransfer.setData("text/plain", field);
-        } catch (err) { }
-    };
-
-    // const handleDropToPage = (coords) => {
-    //     if (!draggingField) return;
-    //     const newElement = {
-    //         id: Date.now(),
-    //         field: draggingField,
-    //         value: draggingField || "",
-    //         x: coords.x - 8,
-    //         y: coords.y - 8,
-    //         fontSize: 12,
-    //         fontWeight: "normal",
-    //         color: "#000000",
-    //         backgroundColor: "transparent",
-    //         textAlign: "left",
-    //         fontFamily: "Arial"
-    //     };
-    //     setElements([...elements, newElement]);
-    //     setDraggingField(null);
-    // };
-
-    const handleAddElement = (elementConfig) => {
-        const newElement = {
-            id: Date.now(),
-            x: 50,
-            y: 50,
-            ...elementConfig
-        };
-        // setElements([...elements, newElement]);
-        // ✅ Update current page elements (not global elements)
-        updatePageElements([...currentPage.elements, newElement]);
-    };
+   
 
     const handleLoadTemplate = (templateElements) => {
-        setSelectedElement(null);
-        setSelectedIndex(null);
-
-        // setElements(
-        //     templateElements.map((el) => ({
-        //         ...el,
-        //         id: Date.now() + Math.random()
-        //     }))
-        // );
-        // ✅ Load template into current page
+        clearSelection();
         updatePageElements(
-            templateElements.map((el) => ({
+            templateElements.map(el => ({
                 ...el,
                 id: Date.now() + Math.random()
             }))
@@ -186,59 +208,67 @@ export default function TemplateBuilder() {
 
     const handleImageUpload = (event) => {
         const file = event.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                handleAddElement({
-                    type: "image",
-                    src: e.target?.result,
-                    width: 200,
-                    height: 150,
-                    alt: "Uploaded Image"
-                });
-            };
-            reader.readAsDataURL(file);
-        }
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            elementOperations.add({
+                type: "image",
+                src: e.target?.result,
+                width: 200,
+                height: 150,
+                alt: "Uploaded Image"
+            });
+        };
+        reader.readAsDataURL(file);
         event.target.value = "";
     };
 
-    const handleElementMove = (index, coords) => {
-        const copy = [...elements];
-        copy[index] = { ...copy[index], x: coords.x, y: coords.y };
-        // setElements(copy);
-        updatePageElements(copy);
-
-    };
-
-    const handleSelectElement = (element, index) => {
-        setSelectedElement(element);
-        setSelectedIndex(index);
-    };
-
-    const handleUpdateElement = (updatedElement, index = selectedIndex) => {
-        console.log('updatedElement', updatedElement)
-        const copy = [...elements];
-        copy[index] = updatedElement;
-        // setElements(copy);
-        updatePageElements(copy);
 
 
-        if (index === selectedIndex) {
-            setSelectedElement(updatedElement);
+    // Load template in edit mode
+    useEffect(() => {
+        if (!incomingTemplateId) return;
+
+        const template = savedTemplates?.find(t => t?.id === incomingTemplateId);
+        if (template?.pages) {
+            setCurrentTemplateId(template.id || "--");
+            setCurrentTemplateName(template.name || "--");
+            setPages(template.pages);
+            setCurrentPageIndex(0);
         }
+    }, [incomingTemplateId]);
+
+
+    // Keyboard shortcuts undo redo k liye
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                if (canUndo) undo();
+            }
+            if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'z') ||
+                ((e.ctrlKey || e.metaKey) && e.key === 'y')) {
+                e.preventDefault();
+                if (canRedo) redo();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [canUndo, canRedo, currentPageIndex, pages]);
+
+    // ===== DRAG HANDLERS =====
+
+    const handleDragStart = (e, field) => {
+        setDraggingField(field);
+        try {
+            e.dataTransfer.setData("text/plain", field);
+        } catch (err) { }
     };
 
-    const handleDeleteElement = (index) => {
-        // setElements(elements.filter((_, i) => i !== index));
-        updatePageElements(currentPage.elements.filter((_, i) => i !== index));
-        setSelectedElement(null);
-        setSelectedIndex(null);
-    };
+  
 
-    const handleDataChange = (newData) => {
-        setTemplateData(newData);
-        console.log('Template data updated:', newData);
-    };
     return (
         <>
             <input
@@ -252,28 +282,26 @@ export default function TemplateBuilder() {
                 <Sidebar
                     onDragStart={handleDragStart}
                     selectedElement={selectedElement}
-                    onUpdateElement={handleUpdateElement}
-                    onAddElement={handleAddElement}
+                    onUpdateElement={elementOperations.update}
+                    onAddElement={elementOperations.add}
                     fileInputRef={fileInputRef}
                     onLoadTemplate={handleLoadTemplate}
                 />
                 <Canvas
                     pages={pages}
                     currentPageIndex={currentPageIndex}
-                    onPageChange={handlePageChange}
-                    onAddPage={addPage}
-                    onDeletePage={deletePage}
-                    onDuplicatePage={duplicatePage}
+                    onPageChange={pageOperations.change}
+                    onAddPage={pageOperations.add}
+                    onDeletePage={pageOperations.delete}
+                    onDuplicatePage={pageOperations.duplicate}
                     elements={currentPage.elements}
                     onUpdateElements={updatePageElements}
-
-                    // elements={elements}
-                    onDropToPage={handleDropToPage}
-                    onElementMove={handleElementMove}
-                    onSelectElement={handleSelectElement}
+                    onDropToPage={elementOperations.drop}
+                    onElementMove={elementOperations.move}
+                    onSelectElement={elementOperations.select}
                     selectedElement={selectedElement}
-                    onDeleteElement={handleDeleteElement}
-                    onUpdateElement={handleUpdateElement}
+                    onDeleteElement={elementOperations.delete}
+                    onUpdateElement={elementOperations.update}
                     onUndo={undo}
                     onRedo={redo}
                     canUndo={canUndo}
@@ -282,10 +310,8 @@ export default function TemplateBuilder() {
                     currentTemplateId={currentTemplateId}
                     currentTemplateName={currentTemplateName}
                 />
-                <DummyJsonDataPanel onDataChange={handleDataChange} />
+                {/* <DummyJsonDataPanel onDataChange={(data) => console.log('Template data updated:', data)} /> */}
             </div>
-
-
         </>
     );
 }
