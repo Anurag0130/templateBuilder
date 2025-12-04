@@ -66,9 +66,9 @@ export const elementTypes = {
     defaultProps: {
       type: "table",
       rows: 2,
-      cols: 3,
-      width: 500,
-      height: 100,
+      cols: 4,
+      width: 600,
+      height: 60,
       borderWidth: 2,
       borderColor: "#000000",
       headerRow: true,
@@ -127,7 +127,7 @@ export const defaultCellStyle = {
   verticalAlign: "middle",
   padding: 8,
   borderWidth: 1,
-  borderColor: "#000000",
+  borderColor: "red",
 };
 
 export const templatePresets = {

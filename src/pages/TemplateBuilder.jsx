@@ -1,8 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { Canvas } from "../components/Canvas.jsx";
 import { Sidebar } from "../components/Sidebar.jsx";
-import { useHistory } from "../hooks/useHistory.ts";
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { templates as savedTemplates } from "../templates/templateStore";
 
 export default function TemplateBuilder() {
@@ -13,7 +12,6 @@ export default function TemplateBuilder() {
     const incomingTemplateId = location?.state?.templateId || null;
     const isEditMode = location?.state?.mode === "edit" && incomingTemplateId;
 
- 
     const [currentTemplateId, setCurrentTemplateId] = useState(null);
     const [currentTemplateName, setCurrentTemplateName] = useState("");
 
@@ -194,7 +192,7 @@ export default function TemplateBuilder() {
         }
     };
 
-   
+
 
     const handleLoadTemplate = (templateElements) => {
         clearSelection();
@@ -267,7 +265,7 @@ export default function TemplateBuilder() {
         } catch (err) { }
     };
 
-  
+
 
     return (
         <>
@@ -276,7 +274,7 @@ export default function TemplateBuilder() {
                 ref={fileInputRef}
                 onChange={handleImageUpload}
                 accept="image/*"
-                className="hidden"
+                // className="hidden"
             />
             <div className="flex h-screen font-sans">
                 <Sidebar
@@ -310,7 +308,6 @@ export default function TemplateBuilder() {
                     currentTemplateId={currentTemplateId}
                     currentTemplateName={currentTemplateName}
                 />
-                {/* <DummyJsonDataPanel onDataChange={(data) => console.log('Template data updated:', data)} /> */}
             </div>
         </>
     );

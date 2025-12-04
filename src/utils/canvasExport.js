@@ -4,17 +4,17 @@ import { successAlert } from './toasts.js';
 
 export const exportCanvasToHTML = (elements) => {
   const sortedElements = [...elements].sort((a, b) => a.y - b.y);
-  
+
   let lastBottom = 0;
-  
+
   const elementsHTML = sortedElements.map((element, index) => {
     const marginTop = index === 0 ? element.y : Math.max(0, element.y - lastBottom);
-    
+
     let estimatedHeight = 0;
     switch (element.type) {
       case "text":
       case "header":
-        estimatedHeight = (element.fontSize || 12) + 16; 
+        estimatedHeight = (element.fontSize || 12) + 16;
         break;
       case "image":
         estimatedHeight = element.height || 150;
@@ -34,9 +34,9 @@ export const exportCanvasToHTML = (elements) => {
       default:
         estimatedHeight = 0;
     }
-    
+
     lastBottom = element.y + estimatedHeight;
-    
+
     const baseStyle = `
       margin-top: ${marginTop}px;
       margin-left: ${element.x}px;
@@ -203,60 +203,6 @@ export const exportCanvasToHTML = (elements) => {
   `;
 };
 
-export const downloadHTML = (elements, filename = "template.html") => {
-  const innerHtml = exportCanvasToHTML(elements);
-  const finalHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
-    * { box-sizing: border-box; }
-  </style>
-</head>
-<body>
-  ${innerHtml}
-</body>
-</html>
-  `;
-
-  const blob = new Blob([finalHtml], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
-
-  URL.revokeObjectURL(url);
-};
-
-export const saveTemplate = (templateName, elements, existingTemplateId = null) => {
-  const htmlContent = exportCanvasToHTML(elements);
-  const templateId = existingTemplateId || crypto.randomUUID();
-
-  const templateData = {
-    id: templateId,
-    name: templateName,
-    content: htmlContent,
-    elements: elements
-  };
-
-  if (existingTemplateId) {
-    updateTemplate(templateData);
-    successAlert("Edited successfully!");
-  } else {
-    addTemplate(templateData);
-    successAlert("Saved successfully!");
-  }
-
-  return templateId;
-};
-
-
-
-
 
 export const exportAllPagesToHTML = (pages) => {
   const allPagesHTML = pages.map((page, pageIndex) => {
@@ -277,7 +223,7 @@ export const exportAllPagesToHTML = (pages) => {
 <head>
   <meta charset="UTF-8">
   <style>
-    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+    body { margin: 32px; padding: 32px; font-family: Arial, sans-serif; }
     * { box-sizing: border-box; }
     @media print {
       .page { 
@@ -310,7 +256,6 @@ export const downloadAllPagesHTML = (pages, filename = "template-multipage.html"
 
   URL.revokeObjectURL(url);
 };
-
 
 
 export const saveMultiPageTemplate = (templateName, pages, existingTemplateId = null) => {
