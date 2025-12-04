@@ -274,7 +274,7 @@ export default function TemplateBuilder() {
                 ref={fileInputRef}
                 onChange={handleImageUpload}
                 accept="image/*"
-                // className="hidden"
+                className="hidden"
             />
             <div className="flex h-screen font-sans">
                 <Sidebar
