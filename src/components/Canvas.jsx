@@ -94,7 +94,7 @@ export function Canvas({
 
     const handleSaveTemplate = (templateName) => {
         setModalVisible(false);
-        saveMultiPageTemplate(templateName, pages, isEditMode ? currentTemplateId : null);
+        saveMultiPageTemplate(templateName, pages, isEditMode ? currentTemplateId : null, paperSize);
         setFileName(isEditMode ? templateName : "");
     };
 
@@ -110,11 +110,15 @@ export function Canvas({
     };
 
     const handleExportPDF = () => {
-        downloadAllPagesHTML(pages, `template-${pages.length}-pages.html`);
+        downloadAllPagesHTML(pages, `template-${pages.length}-pages.html`, paperSize);
     };
 
-
-    const [paperSize, setPaperSize] = useState("A4"); // default
+    const [paperSize, setPaperSize] = useState({
+        name: "A4",
+        width: "680px",
+        height: "954px",
+        orientation: "portrait"
+    });
 
 
     const handlePageSizeChange = (size) => {
@@ -203,13 +207,23 @@ export function Canvas({
                             ref={pageRef}
                             className="bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
                             // style={{ width: '680px', height: '954px', backgroundSize: '17px 17px' }}
+                            // style={{
+                            //     width: paperSize === "A4" ? "680px" : "559px",
+                            //     height: paperSize === "A4" ? "954px" : "794px",
+
+                            //     minWidth: paperSize === "A4" ? "680px" : "559px",
+                            //     minHeight: paperSize === "A4" ? "954px" : "794px",
+                            //     backgroundSize: "17px 17px",
+                            // }}
                             style={{
-                                width: paperSize === "A4" ? "680px" : "559px",
-                                height: paperSize === "A4" ? "954px" : "794px",
-                                minWidth: paperSize === "A4" ? "680px" : "559px",
-                                minHeight: paperSize === "A4" ? "954px" : "794px",
+                                width: paperSize.width,
+                                height: paperSize.height,
+                                // minWidth: paperSize.width,
+                                // minHeight: paperSize.height,
+
                                 backgroundSize: "17px 17px",
                             }}
+
 
                             onDragOver={allowDrop}
                             onDrop={handleDrop}

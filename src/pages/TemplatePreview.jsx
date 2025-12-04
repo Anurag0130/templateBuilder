@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Handlebars from "../utils/handlebarsHelpers";
 import { useRef, useEffect, useState } from "react";
-import { FileText, Download, RefreshCw, Eye, Edit } from "lucide-react";
+import { FileText, Download, RefreshCw, Eye, Edit, Menu, X } from "lucide-react";
 import { backendData, feeReceiptData } from "../templates/constants";
 import { templates, templateStyles } from "../templates/templateStore";
 
@@ -11,6 +11,7 @@ export default function TemplatePreview() {
   const navigate = useNavigate();
   const containerRef = useRef(null);
   const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
 
   useEffect(() => {
@@ -66,12 +67,26 @@ export default function TemplatePreview() {
       <style>{templateStyles}</style>
 
       <div className="flex min-h-screen bg-gray-100">
-        <div className="w-80 bg-white border-r border-gray-300 overflow-y-auto h-screen fixed left-0 top-0 p-6">
+        {/* Sidebar */}
+        <div 
+          className={`
+            w-80 bg-white border-r border-gray-300 overflow-y-auto h-screen fixed left-0 top-0 p-6 z-50
+            transition-transform duration-300 ease-in-out
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          `}
+        >
           <div className="flex items-center gap-2 mb-5 pb-4 border-b border-gray-300">
             <FileText size={24} className="text-gray-800" />
             <h2 className="text-xl font-semibold text-gray-800">
               Document Preview System
             </h2>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="ml-auto p-1 hover:bg-gray-100 rounded transition-colors"
+              title="Close sidebar"
+            >
+              <X size={18} className="text-gray-600" />
+            </button>
           </div>
 
           <div className="mb-5">
@@ -139,12 +154,28 @@ export default function TemplatePreview() {
           </div>
         </div>
 
+        {/* Toggle Button - Shows when sidebar is closed */}
+        {!sidebarOpen && (
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="fixed left-4 top-4 z-40 p-3 bg-white border border-gray-300 rounded-lg shadow-lg hover:bg-gray-50 hover:border-blue-600 transition-all"
+            title="Open sidebar"
+          >
+            <Menu size={24} className="text-gray-800" />
+          </button>
+        )}
+
         {/* Main Content */}
-        <div className="ml-80 flex-1 p-8 pb-24 overflow-y-auto">
+        <div 
+          className={`
+            flex-1 p-8 pb-24 overflow-y-auto transition-all duration-300
+            ${sidebarOpen ? 'ml-80' : 'ml-0'}
+          `}
+        >
           <div
             id="template-container"
             ref={containerRef}
-            className="max-w-6xl mx-auto p-12 bg-white border border-gray-300 rounded min-h-[calc(100vh-10rem)]"
+            className="max-w-6xl mx-auto  bg-white border border-gray-300 rounded min-h-[calc(100vh-10rem)]"
           >
             <div className="text-center text-gray-400 py-20">
               <FileText size={48} className="opacity-30 mx-auto mb-4" />
