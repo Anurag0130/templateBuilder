@@ -25,10 +25,6 @@ export default function PageSizeSelector({ onChangePageSize }) {
     const pageSizes = [
         { name: "A4", label: "A4", width: "680px", height: "954px" },
         { name: "A5", label: "A5", width: "559px", height: "794px" },
-        { name: "Letter", label: "Letter", width: "680px", height: "877px" },
-        { name: "Legal", label: "Legal", width: "680px", height: "1122px" },
-        // { name: "A3", label: "A3", width: "961px", height: "1357px" },
-        // { name: "Tabloid", label: "Tabloid", width: "877px", height: "1357px" },
     ];
 
     return (
