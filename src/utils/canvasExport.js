@@ -2,7 +2,7 @@ import { addTemplate, updateTemplate } from '../templates/templateStore';
 import { successAlert } from './toasts.js';
 
 
-export const exportCanvasToHTML = (elements) => {
+export const exportCanvasToHTML = (elements, page, pageSize = null) => {
   const sortedElements = [...elements].sort((a, b) => a.y - b.y);
 
   let lastBottom = 0;
@@ -26,7 +26,6 @@ export const exportCanvasToHTML = (elements) => {
         estimatedHeight = element.lineWidth || 1;
         break;
       case "table":
-        // Rough estimate: rows * approximate row height
         const rows = element.rows ?? 2;
         const fontSize = element.fontSize || 12;
         estimatedHeight = rows * (fontSize + 16);
@@ -57,6 +56,7 @@ export const exportCanvasToHTML = (elements) => {
             ${element.width ? `width: ${element.width}px;` : ""}
             padding: 4px 8px;
             ${element.type === "header" && element.underline ? "text-decoration: underline;" : ""}
+            
           ">
             ${element.value || element.field}
           </div>
@@ -134,11 +134,29 @@ export const exportCanvasToHTML = (elements) => {
                   : Array.isArray(colKeys) && colKeys[c]
                     ? colKeys[c]
                     : `col${c + 1}`;
+              
+              // Get cell styles for the repeat row
+              const key = `${r}-${c}`;
+              const cellStyles = element.cellStyles?.[key] || {};
+              
+              const bg =
+                cellStyles.backgroundColor ||
+                (r === 0 && element.headerRow ? "#f3f4f6" : "transparent");
+              
               tableHTML += `
           <td style="
             width:${cellWidth}px; 
             border:${borderWidth}px solid ${borderColor}; 
             padding:4px;
+            background:${bg};
+            font-size:${cellStyles.fontSize || element.fontSize || 12}px;
+            font-weight:${cellStyles.fontWeight || "normal"};
+            font-family:${cellStyles.fontFamily || "Tahoma"};
+            text-decoration:${cellStyles.textDecoration || "none"};
+            text-transform:${cellStyles.textTransform || "none"};
+            font-style:${cellStyles.fontStyle || "normal"};
+            color:${cellStyles.color || "#000000"};
+            text-align:${cellStyles.textAlign || "left"};
           ">
             {{${colKey}}}
           </td>`;
@@ -188,34 +206,120 @@ export const exportCanvasToHTML = (elements) => {
     }
   })?.join("\n");
 
+  // Use pageSize if provided, otherwise default to A4 portrait
+  const containerWidth = pageSize?.width || "210mm";
+  const containerMinHeight = pageSize?.height || "297mm";
+
   return `
     <div class="canvas-container" 
       style="
-        width:794px;
-        min-height:1123px;
+        width:${containerWidth};
+        min-height:${containerMinHeight};
         background:white;
         margin:0 auto; 
         box-shadow:0 4px 8px rgba(0,0,0,0.1);
-        padding-bottom: 20px;
+        
+        box-sizing:border-box;
       ">
-      ${elementsHTML}
+      ${elementsHTML} 
     </div>
   `;
 };
 
+export const downloadHTML = (elements, filename = "template.html", pageSize = null) => {
+  const innerHtml = exportCanvasToHTML(elements, null, pageSize);
+  
+  const pageWidth = pageSize?.width || '210mm';
+  const pageHeight = pageSize?.height || '297mm';
+  
+  const finalHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body { 
+      margin: 0; 
+      padding: 20px; 
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+    
+    @page {
+      size: ${pageWidth} ${pageHeight};
+      margin: 0;
+    }
+    
+    @media print {
+      body { 
+        padding: 0;
+        background: white;
+      }
+      .canvas-container { 
+        page-break-after: always; 
+        margin: 0 !important; 
+        box-shadow: none !important;
+        width: ${pageWidth} !important;
+        min-height: ${pageHeight} !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  ${innerHtml}
+</body>
+</html>
+  `;
 
-export const exportAllPagesToHTML = (pages) => {
+  const blob = new Blob([finalHtml], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+
+  URL.revokeObjectURL(url);
+};
+
+export const saveTemplate = (templateName, elements, existingTemplateId = null, pageSize = null) => {
+  const htmlContent = exportCanvasToHTML(elements, null, pageSize);
+  const templateId = existingTemplateId || crypto.randomUUID();
+
+  const templateData = {
+    id: templateId,
+    name: templateName,
+    content: htmlContent,
+    elements: elements,
+    pageSize: pageSize  // Save page size with template
+  };
+
+  if (existingTemplateId) {
+    updateTemplate(templateData);
+    successAlert("Edited successfully!");
+  } else {
+    addTemplate(templateData);
+    successAlert("Saved successfully!");
+  }
+
+  return templateId;
+};
+
+
+export const exportAllPagesToHTML = (pages, pageSize = null) => {
+  const pageWidth = pageSize?.width || '210mm';
+  const pageHeight = pageSize?.height || '297mm';
+  
   const allPagesHTML = pages.map((page, pageIndex) => {
-    const pageContent = exportCanvasToHTML(page.elements);
-    return `
-      <div class="page" style="
-        page-break-after: always;
-        margin-bottom: 20px;
-      ">
-        ${pageContent}
-      </div>
-    `;
-  }).join('\n');
+    const pageContent = exportCanvasToHTML(page.elements, page, pageSize);
+    return pageContent;
+  }).join('\n<div style="page-break-after: always;"></div>\n');
 
   return `
 <!DOCTYPE html>
@@ -223,15 +327,45 @@ export const exportAllPagesToHTML = (pages) => {
 <head>
   <meta charset="UTF-8">
   <style>
-    body { margin: 32px; padding: 32px; font-family: Arial, sans-serif; }
-    * { box-sizing: border-box; }
+    * { 
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body { 
+      margin: 0; 
+      padding: 20px; 
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+    
+    @page {
+      size: ${pageWidth} ${pageHeight};
+      margin: 0;
+    }
+    
+    .canvas-container {
+      margin-bottom: 20px;
+    }
+    
     @media print {
-      .page { 
-        page-break-after: always; 
-        margin: 0; 
-        box-shadow: none; 
+      body { 
+        padding: 0;
+        background: white;
       }
-      body { padding: 0; }
+      
+      .canvas-container { 
+        page-break-after: always; 
+        margin: 0 !important; 
+        box-shadow: none !important;
+        width: ${pageWidth} !important;
+        min-height: ${pageHeight} !important;
+      }
+      
+      .canvas-container:last-child {
+        page-break-after: auto;
+      }
     }
   </style>
 </head>
@@ -243,8 +377,10 @@ export const exportAllPagesToHTML = (pages) => {
 };
 
 
-export const downloadAllPagesHTML = (pages, filename = "template-multipage.html") => {
-  const finalHtml = exportAllPagesToHTML(pages);
+export const downloadAllPagesHTML = (pages, filename = "template-multipage.html", pageSize = null) => {
+  console.log("downloadAllPagesHTML called with pageSize:", pageSize);
+  
+  const finalHtml = exportAllPagesToHTML(pages, pageSize);
 
   const blob = new Blob([finalHtml], { type: "text/html" });
   const url = URL.createObjectURL(blob);
@@ -258,15 +394,18 @@ export const downloadAllPagesHTML = (pages, filename = "template-multipage.html"
 };
 
 
-export const saveMultiPageTemplate = (templateName, pages, existingTemplateId = null) => {
-  const htmlContent = exportAllPagesToHTML(pages);
+export const saveMultiPageTemplate = (templateName, pages, existingTemplateId = null, pageSize = null) => {
+  console.log("saveMultiPageTemplate called with pageSize:", pageSize);
+  
+  const htmlContent = exportAllPagesToHTML(pages, pageSize);
   const templateId = existingTemplateId || crypto.randomUUID();
 
   const templateData = {
     id: templateId,
     name: templateName,
     content: htmlContent,
-    pages: pages  // Save all pages data
+    pages: pages,  // Save all pages data
+    pageSize: pageSize  // Save page size with template
   };
 
   if (existingTemplateId) {
