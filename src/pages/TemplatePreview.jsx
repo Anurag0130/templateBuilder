@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import Handlebars from "../utils/handlebarsHelpers";
 import { useRef, useEffect, useState } from "react";
-import { FileText, Download, RefreshCw, Eye, Edit, Menu, X } from "lucide-react";
 import { backendData, feeReceiptData } from "../templates/constants";
 import { templates, templateStyles } from "../templates/templateStore";
+import { FileText, Download, RefreshCw, Eye, Edit, Menu, X } from "lucide-react";
 
 
 export default function TemplatePreview() {
@@ -68,7 +68,7 @@ export default function TemplatePreview() {
 
       <div className="flex min-h-screen bg-gray-100">
         {/* Sidebar */}
-        <div 
+        <div
           className={`
             w-80 bg-white border-r border-gray-300 overflow-y-auto h-screen fixed left-0 top-0 p-6 z-50
             transition-transform duration-300 ease-in-out
@@ -166,12 +166,12 @@ export default function TemplatePreview() {
         )}
 
         {/* Main Content */}
-       <div
-  className={`
+        <div
+          className={`
     flex-1 p-8 pb-24 overflow-y-auto transition-all duration-300
     ${sidebarOpen ? 'ml-[290px]' : 'ml-0'}
   `}
->
+        >
 
           <div
             id="template-container"
