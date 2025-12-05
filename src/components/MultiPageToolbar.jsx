@@ -1,6 +1,6 @@
 import { Plus, Copy, Trash2 } from 'lucide-react';
 
-export function BottomPageNavigation({
+export function MultiPageToolbar({
     pages,
     currentIndex,
     onAddPage,

@@ -11,9 +11,9 @@ export function CanvasElement({
     onUpdateElement
 }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [editValue, setEditValue] = useState(element.value || "");
-    const [selectedCells, setSelectedCells] = useState([]); // array of {row, col}
     const [editingCell, setEditingCell] = useState(null);
+    const [selectedCells, setSelectedCells] = useState([]); // array of {row, col}
+    const [editValue, setEditValue] = useState(element?.value || "");
 
     const handleClick = (e) => {
         e.stopPropagation();
@@ -398,7 +398,7 @@ export function CanvasElement({
                                                 <option value="Courier New">Courier New</option>
                                                 <option value="Verdana">Verdana</option>
                                                 <option value="Georgia">Georgia</option>
-                                                
+
                                                 <option value="Trebuchet MS">Trebuchet MS</option>
                                             </select>
                                         </div>

@@ -1,13 +1,13 @@
 import { CanvasElement } from "./CanvasElement.jsx";
 import { useRef, useState, useEffect } from "react";
 import { PageThumbnails } from "./PageThumbnails.jsx";
+import PageSizeSelector from "./PageSizeSelector.jsx";
 import { getButtonClass } from "../utils/styleHelpers.js";
+import DummyJsonDataPanel from "./DummyJsonDataPanel.jsx";
+import { MultiPageToolbar } from "./MultiPageToolbar.jsx";
 import { SaveTemplateModal } from "./SaveTemplateModal.jsx";
-import { BottomPageNavigation } from "./BottomPageNavigation.jsx";
 import { Save, FileDown, Undo, Redo, Sparkles } from "lucide-react";
 import { downloadAllPagesHTML, saveMultiPageTemplate } from "../utils/canvasExport.js";
-import PageSizeSelector from "./PageSizeSelector.jsx";
-import DummyJsonDataPanel from "./DummyJsonDataPanel.jsx";
 
 
 
@@ -179,7 +179,7 @@ export function Canvas({
                 </div>
             </div>
 
-            <BottomPageNavigation
+            <MultiPageToolbar
                 pages={pages}
                 currentIndex={currentPageIndex}
                 onPageChange={onPageChange}
@@ -206,21 +206,11 @@ export function Canvas({
                         <div
                             ref={pageRef}
                             className="bg-white mx-auto shadow-xl relative rounded-lg border border-gray-200 overflow-hidden"
-                            // style={{ width: '680px', height: '954px', backgroundSize: '17px 17px' }}
-                            // style={{
-                            //     width: paperSize === "A4" ? "680px" : "559px",
-                            //     height: paperSize === "A4" ? "954px" : "794px",
-
-                            //     minWidth: paperSize === "A4" ? "680px" : "559px",
-                            //     minHeight: paperSize === "A4" ? "954px" : "794px",
-                            //     backgroundSize: "17px 17px",
-                            // }}
                             style={{
                                 width: paperSize.width,
                                 height: paperSize.height,
                                 // minWidth: paperSize.width,
                                 // minHeight: paperSize.height,
-
                                 backgroundSize: "17px 17px",
                             }}
 
