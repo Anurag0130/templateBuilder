@@ -134,15 +134,15 @@ export const exportCanvasToHTML = (elements, page, pageSize = null) => {
                   : Array.isArray(colKeys) && colKeys[c]
                     ? colKeys[c]
                     : `col${c + 1}`;
-              
+
               // Get cell styles for the repeat row
               const key = `${r}-${c}`;
               const cellStyles = element.cellStyles?.[key] || {};
-              
+
               const bg =
                 cellStyles.backgroundColor ||
                 (r === 0 && element.headerRow ? "#f3f4f6" : "transparent");
-              
+
               tableHTML += `
           <td style="
             width:${cellWidth}px; 
@@ -226,100 +226,15 @@ export const exportCanvasToHTML = (elements, page, pageSize = null) => {
   `;
 };
 
-export const downloadHTML = (elements, filename = "template.html", pageSize = null) => {
-  const innerHtml = exportCanvasToHTML(elements, null, pageSize);
-  
-  const pageWidth = pageSize?.width || '210mm';
-  const pageHeight = pageSize?.height || '297mm';
-  
-  const finalHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    * { 
-      box-sizing: border-box; 
-      margin: 0;
-      padding: 0;
-    }
-    
-    body { 
-      margin: 0; 
-      padding: 20px; 
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-    }
-    
-    @page {
-      size: ${pageWidth} ${pageHeight};
-      margin: 0;
-    }
-    
-    @media print {
-      body { 
-        padding: 0;
-        background: white;
-      }
-      .canvas-container { 
-        page-break-after: always; 
-        margin: 0 !important; 
-        box-shadow: none !important;
-        width: ${pageWidth} !important;
-        min-height: ${pageHeight} !important;
-      }
-    }
-  </style>
-</head>
-<body>
-  ${innerHtml}
-</body>
-</html>
-  `;
-
-  const blob = new Blob([finalHtml], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
-
-  URL.revokeObjectURL(url);
-};
-
-export const saveTemplate = (templateName, elements, existingTemplateId = null, pageSize = null) => {
-  const htmlContent = exportCanvasToHTML(elements, null, pageSize);
-  const templateId = existingTemplateId || crypto.randomUUID();
-
-  const templateData = {
-    id: templateId,
-    name: templateName,
-    content: htmlContent,
-    elements: elements,
-    pageSize: pageSize  // Save page size with template
-  };
-
-  if (existingTemplateId) {
-    updateTemplate(templateData);
-    successAlert("Edited successfully!");
-  } else {
-    addTemplate(templateData);
-    successAlert("Saved successfully!");
-  }
-
-  return templateId;
-};
-
 
 export const exportAllPagesToHTML = (pages, pageSize = null) => {
   const pageWidth = pageSize?.width || '210mm';
   const pageHeight = pageSize?.height || '297mm';
-  
-  const allPagesHTML = pages.map((page, pageIndex) => {
-    const pageContent = exportCanvasToHTML(page.elements, page, pageSize);
+
+  const allPagesHTML = pages?.map((page) => {
+    const pageContent = exportCanvasToHTML(page?.elements, page, pageSize);
     return pageContent;
-  }).join('\n<div style="page-break-after: always;"></div>\n');
+  })?.join('\n<div style="page-break-after: always;"></div>\n');
 
   return `
 <!DOCTYPE html>
@@ -378,8 +293,6 @@ export const exportAllPagesToHTML = (pages, pageSize = null) => {
 
 
 export const downloadAllPagesHTML = (pages, filename = "template-multipage.html", pageSize = null) => {
-  console.log("downloadAllPagesHTML called with pageSize:", pageSize);
-  
   const finalHtml = exportAllPagesToHTML(pages, pageSize);
 
   const blob = new Blob([finalHtml], { type: "text/html" });
@@ -395,8 +308,8 @@ export const downloadAllPagesHTML = (pages, filename = "template-multipage.html"
 
 
 export const saveMultiPageTemplate = (templateName, pages, existingTemplateId = null, pageSize = null) => {
-  console.log("saveMultiPageTemplate called with pageSize:", pageSize);
-  
+
+
   const htmlContent = exportAllPagesToHTML(pages, pageSize);
   const templateId = existingTemplateId || crypto.randomUUID();
 
@@ -404,8 +317,8 @@ export const saveMultiPageTemplate = (templateName, pages, existingTemplateId = 
     id: templateId,
     name: templateName,
     content: htmlContent,
-    pages: pages,  // Save all pages data
-    pageSize: pageSize  // Save page size with template
+    pages: pages,
+    pageSize: pageSize
   };
 
   if (existingTemplateId) {
