@@ -239,7 +239,8 @@ export function CanvasElement({
                                 width: `${element.width || 400}px`,
                                 borderColor: element.borderColor || "#000000",
                                 backgroundColor: element.backgroundColor || "#fff",
-                                height: "auto"
+                                height: "auto",
+                                position:"relative",
                             }}
                         >
                             <tbody>
@@ -354,7 +355,7 @@ export function CanvasElement({
                             const selValue = element.cellData?.[selKey] || "";
 
                             return (
-                                <div className="mt-2 p-2 rounded-md bg-white border shadow-sm w-full max-w-[420px]">
+                                <div className="mt-2 p-2 rounded-md bg-white border shadow-sm w-full max-w-[420px] absolute z-[9999]">
                                     <div className="text-xs text-gray-600 mb-2">
                                         Editing cell: <strong>Row {row + 1}, Col {col + 1}</strong>
                                     </div>
