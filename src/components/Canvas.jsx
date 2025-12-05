@@ -174,8 +174,6 @@ export function Canvas({
                         Export PDF
                     </button>
 
-                    {/* <PageSizeSelector onChangePageSize={handlePageSizeChange} /> */}
-
                 </div>
             </div>
 
@@ -209,8 +207,6 @@ export function Canvas({
                             style={{
                                 width: paperSize.width,
                                 height: paperSize.height,
-                                // minWidth: paperSize.width,
-                                // minHeight: paperSize.height,
                                 backgroundSize: "17px 17px",
                             }}
 

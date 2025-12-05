@@ -150,36 +150,6 @@ export function CanvasElement({
         const selectedClass = isSelected ? "ring-2 ring-blue-500 z-10" : "";
 
         switch (element.type) {
-            case "emailField":
-                return (
-                    <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
-                        <div style={{ width: element.width ? `${element.width}px` : "auto" }}>
-                            <label
-                                style={{
-                                    fontSize: `${element.fontSize || 14}px`,
-                                    color: element.color || "#000000",
-                                    display: "block",
-                                    marginBottom: "4px",
-                                    fontWeight: "500"
-                                }}
-                            >
-                                {element.label || "Email:"}
-                            </label>
-                            <div
-                                style={{
-                                    border: "1px solid #d1d5db",
-                                    padding: "8px 12px",
-                                    borderRadius: "4px",
-                                    backgroundColor: "#f9fafb",
-                                    fontSize: `${element.fontSize || 14}px`,
-                                    color: "#9ca3af"
-                                }}
-                            >
-                                {element.placeholder || "email@example.com"}
-                            </div>
-                        </div>
-                    </div>
-                );
 
             case "list":
                 const listStyleType = element.listStyle === "bullet" ? "disc" : element.listStyle === "number" ? "decimal" : "none";
@@ -587,21 +557,20 @@ export function CanvasElement({
                     <div
                         style={{
                             ...baseStyle,
+                            padding: "4px 8px",
+                            color: element?.color || "#000000",
                             fontSize: `${element.fontSize || 12}px`,
                             fontWeight: element.fontWeight || "normal",
                             fontFamily: element.fontFamily || "Arial",
-                            color: element.color || "#000000",
-                            backgroundColor: element.backgroundColor || "transparent",
                             textAlign: (element.textAlign || "left"),
                             width: element.width ? `${element.width}px` : "auto",
-                            textDecoration:
-                                element.type === "header" && element.underline ? "underline" : "none",
-                            padding: "4px 8px"
+                            backgroundColor: element.backgroundColor || "transparent",
+                            textDecoration: element.type === "header" && element.underline ? "underline" : "none",
                         }}
-                        className={`absolute cursor-move rounded transition-all whitespace-nowrap ${isSelected
-                            ? "border-blue-500 bg-blue-50 shadow-lg"
-                            : "border-transparent hover:border-blue-300 hover:bg-blue-50"
-                            } ${selectedClass}`}
+                        className={`absolute cursor-move rounded transition-all whitespace-nowrap 
+                            ${isSelected ?
+                                "border-blue-500 bg-blue-50 shadow-lg" :
+                                "border-transparent hover:border-blue-300 hover:bg-blue-50"} ${selectedClass}`}
                         title={element.field}
                     >
                         {element.value || element.field}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import HandlebarsRules from './HandlebarsRules.jsx'
 import { ElementProperties } from "./ElementProperties.jsx";
 import { Search, ChevronRight, ChevronLeft, Layout, Sparkles } from "lucide-react";
-import { groupedFields, elementTypes, templatePresets, studentData } from "../templates/constants.js";
+import { elementTypes, templatePresets } from "../templates/constants.js";
 
 export function Sidebar({
   onDragStart,
@@ -17,8 +17,6 @@ export function Sidebar({
   const [collapsed, setCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("elements");
 
-  const filterFields = (fields) =>
-    fields?.filter((f) => f?.toLowerCase()?.includes(query?.toLowerCase()));
 
   const handleAddElement = (type) => {
     const elementConfig = elementTypes[type];
@@ -88,13 +86,14 @@ export function Sidebar({
         {["elements", "templates", "rules"]?.map((tab) => (
           <button
             key={tab}
-            className={`flex-1 py-2.5 px-3 text-xs font-semibold transition-all relative ${activeTab === tab
-              ? "text-indigo-600 bg-gradient-to-b from-indigo-50 to-white"
-              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            className={`flex-1 py-2.5 px-3 text-xs font-semibold transition-all relative 
+              ${activeTab === tab
+                ? "text-indigo-600 bg-gradient-to-b from-indigo-50 to-white"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               }`}
             onClick={() => setActiveTab(tab)}
           >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {tab?.charAt(0)?.toUpperCase() + tab.slice(1)}
             {activeTab === tab && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600 rounded-t-full"></div>
             )}
@@ -104,25 +103,6 @@ export function Sidebar({
 
       {/* Tabs Content */}
       <div className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50 to-white">
-        {activeTab === "fields" && (
-          <div className="flex flex-col h-full">
-            <div className="p-3 bg-white border-b border-gray-100 flex-shrink-0">
-              <div className="relative">
-                <Search
-                  size={14}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-indigo-400"
-                />
-                <input
-                  type="text"
-                  className="w-full pl-8 pr-2.5 py-2 border border-gray-300 rounded-lg text-xs focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 bg-white shadow-sm transition-all"
-                  placeholder="Search fields..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-        )}
 
         {activeTab === "elements" && (
           <div className="h-full flex flex-col">
@@ -146,7 +126,7 @@ export function Sidebar({
                         className="text-gray-700 group-hover:text-indigo-600 transition-colors relative z-10"
                       />
                       <span className="text-xs font-semibold text-center text-gray-700 group-hover:text-indigo-600 transition-colors relative z-10">
-                        {config.name}
+                        {config?.name || "--"}
                       </span>
                     </button>
                   ))}
@@ -161,9 +141,9 @@ export function Sidebar({
                   </h3>
                   <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-lg p-3 border border-indigo-100 shadow-lg">
                     <ElementProperties
+                      fileInputRef={fileInputRef}
                       selectedElement={selectedElement}
                       onUpdateElement={onUpdateElement}
-                      fileInputRef={fileInputRef}
                     />
                   </div>
                 </div>
@@ -196,14 +176,14 @@ export function Sidebar({
             </h3>
 
             <div className="space-y-2.5">
-              {Object.entries(templatePresets).map(([key, template]) => (
+              {Object.entries(templatePresets || {})?.map(([key, template]) => (
                 <button
                   key={key}
                   onClick={() => onLoadTemplate(template.elements)}
                   className="w-full text-left bg-white p-3.5 border border-gray-200 rounded-lg hover:border-indigo-400 hover:shadow-lg hover:-translate-y-0.5 transition-all group relative overflow-hidden"
                 >
                   <div className="font-semibold text-xs text-gray-900 mb-1.5 group-hover:text-indigo-600 transition-colors relative z-10">
-                    {template.name}
+                    {template?.name}
                   </div>
                 </button>
               ))}
