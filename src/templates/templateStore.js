@@ -54,224 +54,224 @@ export const templateStyles = `
 `;
 
 export const templates = [
-  {
-    id: "admissionForm",
-    name: "Admission Form",
-    content: `
-      <div class="header-section">
-        <h1 class="school-name">GENESIS GLOBAL SCHOOL</h1>
-        <p class="school-address">SEC-132, EXPRESSWAY, NOIDA ; 201304</p>
-        <p class="school-contact">+91-9711000498 | admissions@genesisgs.edu.in</p>
-      </div>
+  // {
+  //   id: "admissionForm",
+  //   name: "Admission Form",
+  //   content: `
+  //     <div class="header-section">
+  //       <h1 class="school-name">GENESIS GLOBAL SCHOOL</h1>
+  //       <p class="school-address">SEC-132, EXPRESSWAY, NOIDA ; 201304</p>
+  //       <p class="school-contact">+91-9711000498 | admissions@genesisgs.edu.in</p>
+  //     </div>
 
-      <div class="form-title">
-        <h2>Admission Form ({{AcademicYear}})</h2>
-        <div class="registration-number">
-          <span class="reg-label">Registration No:</span>
-          <span class="reg-value">{{ApplicantAutoId}}</span>
-        </div>
-      </div>
+  //     <div class="form-title">
+  //       <h2>Admission Form ({{AcademicYear}})</h2>
+  //       <div class="registration-number">
+  //         <span class="reg-label">Registration No:</span>
+  //         <span class="reg-value">{{ApplicantAutoId}}</span>
+  //       </div>
+  //     </div>
 
-      {{#if FirstName}}
-      <div class="info-section">
-        <h3 class="section-title">Student Information</h3>
-        <div class="info-row">
-          <div class="info-field">
-            <span class="field-label">Full Name:</span>
-            <span class="field-value">{{FirstName}} {{LastName}}</span>
-          </div>
-          <div class="info-field">
-            <span class="field-label">Gender:</span>
-            <span class="field-value">{{Gender}}</span>
-          </div>
-        </div>
-      </div>
-      {{/if}}
+  //     {{#if FirstName}}
+  //     <div class="info-section">
+  //       <h3 class="section-title">Student Information</h3>
+  //       <div class="info-row">
+  //         <div class="info-field">
+  //           <span class="field-label">Full Name:</span>
+  //           <span class="field-value">{{FirstName}} {{LastName}}</span>
+  //         </div>
+  //         <div class="info-field">
+  //           <span class="field-label">Gender:</span>
+  //           <span class="field-value">{{Gender}}</span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     {{/if}}
 
-      {{#if SiblingName}}
-      <div class="info-section">
-        <h3 class="section-title">Sibling Information</h3>
-        <div class="info-row">
-          <div class="info-field">
-            <span class="field-label">Sibling Name:</span>
-            <span class="field-value">{{SiblingName}}</span>
-          </div>
-          <div class="info-field">
-            <span class="field-label">Sibling Class:</span>
-            <span class="field-value">{{SiblingClass}}</span>
-          </div>
-        </div>
-      </div>
-      {{/if}}
+  //     {{#if SiblingName}}
+  //     <div class="info-section">
+  //       <h3 class="section-title">Sibling Information</h3>
+  //       <div class="info-row">
+  //         <div class="info-field">
+  //           <span class="field-label">Sibling Name:</span>
+  //           <span class="field-value">{{SiblingName}}</span>
+  //         </div>
+  //         <div class="info-field">
+  //           <span class="field-label">Sibling Class:</span>
+  //           <span class="field-value">{{SiblingClass}}</span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     {{/if}}
 
-      <div class="info-section">
-        <h3 class="section-title">Parent Information</h3>
-        {{#if parents.fields}}
-        <table class="parent-table">
-          <thead>
-            <tr>
-              <th>Field</th>
-              <th>Father</th>
-              <th>Mother</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each parents.fields}}
-            <tr>
-              <td class="table-label">{{label}}</td>
-              <td>{{get ../father key}}</td>
-              <td>{{get ../mother key}}</td>
-            </tr>
-            {{/each}}
-          </tbody>
-        </table>
-        {{/if}}
-      </div>
+  //     <div class="info-section">
+  //       <h3 class="section-title">Parent Information</h3>
+  //       {{#if parents.fields}}
+  //       <table class="parent-table">
+  //         <thead>
+  //           <tr>
+  //             <th>Field</th>
+  //             <th>Father</th>
+  //             <th>Mother</th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {{#each parents.fields}}
+  //           <tr>
+  //             <td class="table-label">{{label}}</td>
+  //             <td>{{get ../father key}}</td>
+  //             <td>{{get ../mother key}}</td>
+  //           </tr>
+  //           {{/each}}
+  //         </tbody>
+  //       </table>
+  //       {{/if}}
+  //     </div>
 
-      {{#if MedicalCondition}}
-      <div class="info-section">
-        <h3 class="section-title">Medical Information</h3>
-        <p class="medical-text">{{MedicalCondition}}</p>
-      </div>
-      {{/if}}
+  //     {{#if MedicalCondition}}
+  //     <div class="info-section">
+  //       <h3 class="section-title">Medical Information</h3>
+  //       <p class="medical-text">{{MedicalCondition}}</p>
+  //     </div>
+  //     {{/if}}
 
-      <div class="footer-section">
-        <p class="footer-note">This is an auto-generated admission form. Please verify all details before submission.</p>
-        <p class="footer-date">Generated on: ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-      </div>
-    `
-  },
-  {
-    id: "feeReceipt",
-    name: "Fee Receipt",
-    content: `
-      <div class="header-section">
-        <h1 class="school-name">GENESIS GLOBAL SCHOOL</h1>
-        <p class="school-address">SEC-132, EXPRESSWAY, NOIDA ; 201304</p>
-        <p class="school-contact">+91-9711000498 | accounts@genesisgs.edu.in</p>
-      </div>
+  //     <div class="footer-section">
+  //       <p class="footer-note">This is an auto-generated admission form. Please verify all details before submission.</p>
+  //       <p class="footer-date">Generated on: ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+  //     </div>
+  //   `
+  // },
+  // {
+  //   id: "feeReceipt",
+  //   name: "Fee Receipt",
+  //   content: `
+  //     <div class="header-section">
+  //       <h1 class="school-name">GENESIS GLOBAL SCHOOL</h1>
+  //       <p class="school-address">SEC-132, EXPRESSWAY, NOIDA ; 201304</p>
+  //       <p class="school-contact">+91-9711000498 | accounts@genesisgs.edu.in</p>
+  //     </div>
 
-      <div class="receipt-header">
-        <div class="receipt-title">
-          <h2>FEE RECEIPT</h2>
-          <div class="receipt-badge">PAID</div>
-        </div>
-        <div class="receipt-meta">
-          <div class="meta-item">
-            <span class="meta-label">Receipt No:</span>
-            <span class="meta-value">{{receiptNo}}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-label">Date:</span>
-            <span class="meta-value">{{receiptDate}}</span>
-          </div>
-        </div>
-      </div>
+  //     <div class="receipt-header">
+  //       <div class="receipt-title">
+  //         <h2>FEE RECEIPT</h2>
+  //         <div class="receipt-badge">PAID</div>
+  //       </div>
+  //       <div class="receipt-meta">
+  //         <div class="meta-item">
+  //           <span class="meta-label">Receipt No:</span>
+  //           <span class="meta-value">{{receiptNo}}</span>
+  //         </div>
+  //         <div class="meta-item">
+  //           <span class="meta-label">Date:</span>
+  //           <span class="meta-value">{{receiptDate}}</span>
+  //         </div>
+  //       </div>
+  //     </div>
 
-      <div class="info-section">
-        <h3 class="section-title">Student Details</h3>
-        <div class="info-row">
-          <div class="info-field">
-            <span class="field-label">Student Name:</span>
-            <span class="field-value">{{studentName}}</span>
-          </div>
-          <div class="info-field">
-            <span class="field-label">Student ID:</span>
-            <span class="field-value">{{studentId}}</span>
-          </div>
-          <div class="info-field">
-            <span class="field-label">Class:</span>
-            <span class="field-value">{{class}}</span>
-          </div>
-          <div class="info-field">
-            <span class="field-label">Father's Name:</span>
-            <span class="field-value">{{fatherName}}</span>
-          </div>
-        </div>
-      </div>
+  //     <div class="info-section">
+  //       <h3 class="section-title">Student Details</h3>
+  //       <div class="info-row">
+  //         <div class="info-field">
+  //           <span class="field-label">Student Name:</span>
+  //           <span class="field-value">{{studentName}}</span>
+  //         </div>
+  //         <div class="info-field">
+  //           <span class="field-label">Student ID:</span>
+  //           <span class="field-value">{{studentId}}</span>
+  //         </div>
+  //         <div class="info-field">
+  //           <span class="field-label">Class:</span>
+  //           <span class="field-value">{{class}}</span>
+  //         </div>
+  //         <div class="info-field">
+  //           <span class="field-label">Father's Name:</span>
+  //           <span class="field-value">{{fatherName}}</span>
+  //         </div>
+  //       </div>
+  //     </div>
 
-      <div class="info-section">
-        <h3 class="section-title">Payment Details</h3>
-        <div class="info-row">
-          <div class="info-field">
-            <span class="field-label">Academic Year:</span>
-            <span class="field-value">{{academicYear}}</span>
-          </div>
-          <div class="info-field">
-            <span class="field-label">Payment Mode:</span>
-            <span class="field-value">{{paymentMode}}</span>
-          </div>
-          {{#if transactionId}}
-          <div class="info-field">
-            <span class="field-label">Transaction ID:</span>
-            <span class="field-value">{{transactionId}}</span>
-          </div>
-          {{/if}}
-        </div>
-      </div>
+  //     <div class="info-section">
+  //       <h3 class="section-title">Payment Details</h3>
+  //       <div class="info-row">
+  //         <div class="info-field">
+  //           <span class="field-label">Academic Year:</span>
+  //           <span class="field-value">{{academicYear}}</span>
+  //         </div>
+  //         <div class="info-field">
+  //           <span class="field-label">Payment Mode:</span>
+  //           <span class="field-value">{{paymentMode}}</span>
+  //         </div>
+  //         {{#if transactionId}}
+  //         <div class="info-field">
+  //           <span class="field-label">Transaction ID:</span>
+  //           <span class="field-value">{{transactionId}}</span>
+  //         </div>
+  //         {{/if}}
+  //       </div>
+  //     </div>
 
-      <div class="info-section">
-        <h3 class="section-title">Fee Breakdown</h3>
-        <table class="fee-table">
-          <thead>
-            <tr>
-              <th style="text-align: left;">Description</th>
-              <th style="text-align: center;">Status</th>
-              <th style="text-align: right;">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each feeComponents}}
-            <tr>
-              <td>{{description}}</td>
-              <td style="text-align: center;">
-                {{#if paid}}
-                  <span class="status-badge status-paid">Paid</span>
-                {{else}}
-                  <span class="status-badge status-pending">Pending</span>
-                {{/if}}
-              </td>
-              <td style="text-align: right;">{{formatCurrency amount}}</td>
-            </tr>
-            {{/each}}
-          </tbody>
-        </table>
+  //     <div class="info-section">
+  //       <h3 class="section-title">Fee Breakdown</h3>
+  //       <table class="fee-table">
+  //         <thead>
+  //           <tr>
+  //             <th style="text-align: left;">Description</th>
+  //             <th style="text-align: center;">Status</th>
+  //             <th style="text-align: right;">Amount</th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {{#each feeComponents}}
+  //           <tr>
+  //             <td>{{description}}</td>
+  //             <td style="text-align: center;">
+  //               {{#if paid}}
+  //                 <span class="status-badge status-paid">Paid</span>
+  //               {{else}}
+  //                 <span class="status-badge status-pending">Pending</span>
+  //               {{/if}}
+  //             </td>
+  //             <td style="text-align: right;">{{formatCurrency amount}}</td>
+  //           </tr>
+  //           {{/each}}
+  //         </tbody>
+  //       </table>
 
-        <div class="fee-summary">
-          <div class="summary-row">
-            <span class="summary-label">Subtotal:</span>
-            <span class="summary-value">₹33,200</span>
-          </div>
+  //       <div class="fee-summary">
+  //         <div class="summary-row">
+  //           <span class="summary-label">Subtotal:</span>
+  //           <span class="summary-value">₹33,200</span>
+  //         </div>
           
-          {{#if hasDiscount}}
-          <div class="summary-row discount-row">
-            <span class="summary-label">
-              Discount ({{discountReason}}):
-            </span>
-            <span class="summary-value">- ₹{{discountAmount}}</span>
-          </div>
-          {{/if}}
+  //         {{#if hasDiscount}}
+  //         <div class="summary-row discount-row">
+  //           <span class="summary-label">
+  //             Discount ({{discountReason}}):
+  //           </span>
+  //           <span class="summary-value">- ₹{{discountAmount}}</span>
+  //         </div>
+  //         {{/if}}
           
-          <div class="summary-row total-row">
-            <span class="summary-label">Total Paid:</span>
-            <span class="summary-value">₹29,880</span>
-          </div>
-        </div>
-      </div>
+  //         <div class="summary-row total-row">
+  //           <span class="summary-label">Total Paid:</span>
+  //           <span class="summary-value">₹29,880</span>
+  //         </div>
+  //       </div>
+  //     </div>
 
-      {{#if remarksAvailable}}
-      <div class="info-section">
-        <h3 class="section-title">Remarks</h3>
-        <p class="remarks-text">{{remarks}}</p>
-      </div>
-      {{/if}}
+  //     {{#if remarksAvailable}}
+  //     <div class="info-section">
+  //       <h3 class="section-title">Remarks</h3>
+  //       <p class="remarks-text">{{remarks}}</p>
+  //     </div>
+  //     {{/if}}
 
-      <div class="footer-section">
-        <p class="footer-note">This is a computer-generated receipt and does not require a signature.</p>
-        <p class="footer-date">Generated on: ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-      </div>
-    `
-  }
+  //     <div class="footer-section">
+  //       <p class="footer-note">This is a computer-generated receipt and does not require a signature.</p>
+  //       <p class="footer-date">Generated on: ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+  //     </div>
+  //   `
+  // }
 ];
 
 
