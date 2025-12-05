@@ -35,10 +35,6 @@ export default function TemplateBuilder() {
     const canRedo = currentPage?.historyIndex < currentPage?.history?.length - 1;
 
 
-    console.log('this is element', currentPage?.elements)
-    console.log('selectedElement', selectedElement);
-    console.log('selectedIndex', selectedIndex);
-
     const clearSelection = () => {
         setSelectedElement(null);
         setSelectedIndex(null);
@@ -258,8 +254,8 @@ export default function TemplateBuilder() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [canUndo, canRedo, currentPageIndex, pages]);
 
-    // ===== DRAG HANDLERS =====
 
+    // ===== DRAG HANDLERS =====
     const handleDragStart = (e, field) => {
         setDraggingField(field);
         try {

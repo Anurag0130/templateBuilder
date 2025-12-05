@@ -176,7 +176,7 @@ export default function TemplatePreview() {
           <div
             id="template-container"
             ref={containerRef}
-            className="max-w-6xl mx-auto   rounded min-h-[calc(100vh-10rem)]"
+            className="max-w-6xl mx-auto bg-white p-6 rounded min-h-[calc(100vh-10rem)]"
           >
             <div className="text-center text-gray-400 py-20">
               <FileText size={48} className="opacity-30 mx-auto mb-4" />
