@@ -166,16 +166,17 @@ export default function TemplatePreview() {
         )}
 
         {/* Main Content */}
-        <div 
-          className={`
-            flex-1 p-8 pb-24 overflow-y-auto transition-all duration-300
-            ${sidebarOpen ? 'ml-80' : 'ml-0'}
-          `}
-        >
+       <div
+  className={`
+    flex-1 p-8 pb-24 overflow-y-auto transition-all duration-300
+    ${sidebarOpen ? 'ml-[290px]' : 'ml-0'}
+  `}
+>
+
           <div
             id="template-container"
             ref={containerRef}
-            className="max-w-6xl mx-auto  bg-white border border-gray-300 rounded min-h-[calc(100vh-10rem)]"
+            className="max-w-6xl mx-auto   rounded min-h-[calc(100vh-10rem)]"
           >
             <div className="text-center text-gray-400 py-20">
               <FileText size={48} className="opacity-30 mx-auto mb-4" />

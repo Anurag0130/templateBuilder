@@ -115,8 +115,8 @@ export function Canvas({
 
     const [paperSize, setPaperSize] = useState({
         name: "A4",
-        width: "680px",
-        height: "954px",
+        width: "210mm",
+        height: "297mm",
         orientation: "portrait"
     });
 
