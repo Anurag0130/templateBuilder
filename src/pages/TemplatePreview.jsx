@@ -167,7 +167,7 @@ export default function TemplatePreview() {
 
         {/* Main Content */}
         <div
-          className={`flex-1 pb-24 overflow-y-auto transition-all duration-300 ${sidebarOpen ? 'ml-[290px]' : 'ml-0'}`}
+          className={`flex-1 flex justify-center items-center pb-24 overflow-y-auto transition-all duration-300 ${sidebarOpen ? 'ml-[290px]' : 'ml-0'}`}
         >
 
           <div
@@ -176,7 +176,7 @@ export default function TemplatePreview() {
             className=" p-6 rounded min-h-[calc(100vh-10rem)]"
             style={{}}
           >
-            <div className="text-center text-gray-400 py-20">
+            <div className="text-center text-gray-400 py-60">
               <FileText size={48} className="opacity-30 mx-auto mb-4" />
               <p className="text-sm">Preview will appear here</p>
             </div>
