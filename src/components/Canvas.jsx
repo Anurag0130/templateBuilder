@@ -33,6 +33,8 @@ export function Canvas({
     onAddPage,
     onDeletePage,
     onDuplicatePage,
+    // ✅ NEW PROP for cell selection
+    onCellSelect,
     savedPaPerSize = null
 }) {
 
@@ -237,6 +239,8 @@ export function Canvas({
                                     onDragEnd={handleElementDragEnd}
                                     onDelete={onDeleteElement}
                                     onUpdateElement={onUpdateElement}
+                                    // ✅ NEW PROP for cell selection
+                                    onCellSelect={onCellSelect}
                                 />
                             ))}
                         </div>
