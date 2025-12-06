@@ -20,6 +20,9 @@ export default function TemplateBuilder() {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [selectedElement, setSelectedElement] = useState(null);
 
+    // ✅ NEW: Cell selection state
+    const [selectedCellInfo, setSelectedCellInfo] = useState(null);
+
     // Pages state
     const [pages, setPages] = useState([{
         id: 1,
@@ -38,6 +41,8 @@ export default function TemplateBuilder() {
     const clearSelection = () => {
         setSelectedElement(null);
         setSelectedIndex(null);
+         // ✅ NEW: Clear cell selection bhi
+        setSelectedCellInfo(null);
     };
 
     const updatePage = (pageUpdates) => {
@@ -151,6 +156,20 @@ export default function TemplateBuilder() {
             copy[index] = updatedElement;
             updatePageElements(copy);
             if (index === selectedIndex) setSelectedElement(updatedElement);
+
+             // ✅ NEW: Agar cell selected hai toh uski info bhi update karo
+            if (selectedCellInfo && selectedCellInfo.elementIndex === index) {
+                const cellKey = selectedCellInfo.cellKey;
+                const updatedStyles = updatedElement.cellStyles?.[cellKey] || {};
+                const updatedData = updatedElement.cellData?.[cellKey] || "";
+                
+                setSelectedCellInfo({
+                    ...selectedCellInfo,
+                    element: updatedElement,
+                    styles: updatedStyles,
+                    cellData: updatedData
+                });
+            }
         },
 
         delete: (index) => {
@@ -161,6 +180,8 @@ export default function TemplateBuilder() {
         select: (element, index) => {
             setSelectedElement(element);
             setSelectedIndex(index);
+             // ✅ NEW: Element select hone pe cell selection clear karo
+            setSelectedCellInfo(null);
         },
 
         move: (index, coords) => {
@@ -190,6 +211,49 @@ export default function TemplateBuilder() {
         }
     };
 
+    // ✅ NEW: Cell selection handler
+    const handleCellSelect = (cellInfo) => {
+        console.log("Cell selected:", cellInfo); // Debug
+        setSelectedCellInfo(cellInfo);
+        // Cell select hone pe element selection clear karo
+        setSelectedElement(null);
+        setSelectedIndex(null);
+    };
+
+    // ✅ NEW: Cell style update handler
+    const handleUpdateCellStyle = (newStyles) => {
+        if (!selectedCellInfo) return;
+
+        const element = currentPage.elements[selectedCellInfo.elementIndex];
+        
+        const updatedCellStyles = {
+            ...(element.cellStyles || {}),
+            [selectedCellInfo.cellKey]: {
+                ...(element.cellStyles?.[selectedCellInfo.cellKey] || {}),
+                ...newStyles
+            }
+        };
+
+        const updatedElement = {
+            ...element,
+            cellStyles: updatedCellStyles
+        };
+
+        elementOperations.update(updatedElement, selectedCellInfo.elementIndex);
+           // ✅ selectedCellInfo ko bhi update karo
+        setSelectedCellInfo({
+            ...selectedCellInfo,
+            styles: {
+                ...selectedCellInfo.styles,
+                ...newStyles
+            }
+        });
+    };
+
+    // ✅ NEW: Clear cell selection handler
+    const handleClearCellSelection = () => {
+        setSelectedCellInfo(null);
+    };
 
 
     const handleLoadTemplate = (templateElements) => {
@@ -282,6 +346,10 @@ export default function TemplateBuilder() {
                     onAddElement={elementOperations.add}
                     fileInputRef={fileInputRef}
                     onLoadTemplate={handleLoadTemplate}
+                     // ✅ NEW PROPS for cell editing
+                    selectedCellInfo={selectedCellInfo}
+                    onUpdateCellStyle={handleUpdateCellStyle}
+                    onClearCellSelection={handleClearCellSelection}
                 />
                 <Canvas
                     pages={pages}
@@ -305,6 +373,8 @@ export default function TemplateBuilder() {
                     isEditMode={isEditMode}
                     currentTemplateId={currentTemplateId}
                     currentTemplateName={currentTemplateName}
+                     // ✅ NEW PROP for cell selection
+                    onCellSelect={handleCellSelect}
                 />
             </div>
         </>
