@@ -5,22 +5,24 @@ import { useState, useRef, useEffect } from "react";
 import { templates as savedTemplates } from "../templates/templateStore";
 
 export default function TemplateBuilder() {
-    const fileInputRef = useRef(null);
+    
     const location = useLocation();
+    const fileInputRef = useRef(null);
 
 
     const incomingTemplateId = location?.state?.templateId || null;
     const isEditMode = location?.state?.mode === "edit" && incomingTemplateId;
 
+    const [savedPaPerSize, setSavedPaperSize] = useState("");
     const [currentTemplateId, setCurrentTemplateId] = useState(null);
     const [currentTemplateName, setCurrentTemplateName] = useState("");
-    const [savedPaPerSize, setSavedPaperSize] = useState("")
-    // Element state
+
+
     const [draggingField, setDraggingField] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [selectedElement, setSelectedElement] = useState(null);
 
-    // ✅ NEW: Cell selection state
+
     const [selectedCellInfo, setSelectedCellInfo] = useState(null);
 
     // Pages state
@@ -41,7 +43,7 @@ export default function TemplateBuilder() {
     const clearSelection = () => {
         setSelectedElement(null);
         setSelectedIndex(null);
-         // ✅ NEW: Clear cell selection bhi
+        // ✅ NEW: Clear cell selection bhi
         setSelectedCellInfo(null);
     };
 
@@ -60,6 +62,7 @@ export default function TemplateBuilder() {
 
             if (newHistory.length > 50) {
                 newHistory?.shift();
+                updates.historyIndex = currentPage.historyIndex - 1;
             } else {
                 updates.historyIndex = currentPage.historyIndex + 1;
             }
@@ -105,11 +108,11 @@ export default function TemplateBuilder() {
         },
 
         delete: () => {
-            if (pages.length === 1) {
+            if (pages?.length === 1) {
                 alert("You must have at least one page!");
                 return;
             }
-            setPages(pages.filter((_, i) => i !== currentPageIndex));
+            setPages(pages?.filter((_, i) => i !== currentPageIndex));
             setCurrentPageIndex(Math.max(0, currentPageIndex - 1));
             clearSelection();
         },
@@ -157,12 +160,13 @@ export default function TemplateBuilder() {
             updatePageElements(copy);
             if (index === selectedIndex) setSelectedElement(updatedElement);
 
-             // ✅ NEW: Agar cell selected hai toh uski info bhi update karo
+            console.log('selectedCellInfo123', selectedCellInfo)
+            // ✅ NEW: Agar cell selected hai toh uski info bhi update karo
             if (selectedCellInfo && selectedCellInfo.elementIndex === index) {
                 const cellKey = selectedCellInfo.cellKey;
                 const updatedStyles = updatedElement.cellStyles?.[cellKey] || {};
                 const updatedData = updatedElement.cellData?.[cellKey] || "";
-                
+
                 setSelectedCellInfo({
                     ...selectedCellInfo,
                     element: updatedElement,
@@ -180,7 +184,7 @@ export default function TemplateBuilder() {
         select: (element, index) => {
             setSelectedElement(element);
             setSelectedIndex(index);
-             // ✅ NEW: Element select hone pe cell selection clear karo
+            // ✅ NEW: Element select hone pe cell selection clear karo
             setSelectedCellInfo(null);
         },
 
@@ -213,9 +217,9 @@ export default function TemplateBuilder() {
 
     // ✅ NEW: Cell selection handler
     const handleCellSelect = (cellInfo) => {
-        console.log("Cell selected:", cellInfo); // Debug
+
         setSelectedCellInfo(cellInfo);
-        // Cell select hone pe element selection clear karo
+
         setSelectedElement(null);
         setSelectedIndex(null);
     };
@@ -225,7 +229,7 @@ export default function TemplateBuilder() {
         if (!selectedCellInfo) return;
 
         const element = currentPage.elements[selectedCellInfo.elementIndex];
-        
+
         const updatedCellStyles = {
             ...(element.cellStyles || {}),
             [selectedCellInfo.cellKey]: {
@@ -240,7 +244,7 @@ export default function TemplateBuilder() {
         };
 
         elementOperations.update(updatedElement, selectedCellInfo.elementIndex);
-           // ✅ selectedCellInfo ko bhi update karo
+
         setSelectedCellInfo({
             ...selectedCellInfo,
             styles: {
@@ -250,7 +254,7 @@ export default function TemplateBuilder() {
         });
     };
 
-    // ✅ NEW: Clear cell selection handler
+
     const handleClearCellSelection = () => {
         setSelectedCellInfo(null);
     };
@@ -286,7 +290,7 @@ export default function TemplateBuilder() {
 
 
 
-    // Load template in edit mode
+
     useEffect(() => {
         if (!incomingTemplateId) return;
         const template = savedTemplates?.find(t => t?.id === incomingTemplateId);
@@ -346,7 +350,7 @@ export default function TemplateBuilder() {
                     onAddElement={elementOperations.add}
                     fileInputRef={fileInputRef}
                     onLoadTemplate={handleLoadTemplate}
-                     // ✅ NEW PROPS for cell editing
+
                     selectedCellInfo={selectedCellInfo}
                     onUpdateCellStyle={handleUpdateCellStyle}
                     onClearCellSelection={handleClearCellSelection}
@@ -374,7 +378,7 @@ export default function TemplateBuilder() {
                     isEditMode={isEditMode}
                     currentTemplateId={currentTemplateId}
                     currentTemplateName={currentTemplateName}
-                     // ✅ NEW PROP for cell selection
+
                     onCellSelect={handleCellSelect}
                 />
             </div>

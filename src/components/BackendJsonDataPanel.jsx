@@ -1,9 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Copy, Check, Code, ChevronDown, ChevronRight, ChevronLeft, Minimize2, Maximize2 } from "lucide-react";
 import { backendData } from "../templates/constants";
 
 
-export default function DummyJsonDataPanel({ initialData }) {
+export default React.memo(function BackendJsonDataPanel({ initialData }) {
     const [jsonData, setJsonData] = useState(initialData || backendData);
     const [copied, setCopied] = useState(false);
     const [copiedField, setCopiedField] = useState(null);
@@ -130,7 +130,7 @@ export default function DummyJsonDataPanel({ initialData }) {
                             </h2>
                         </div>
                         <div className="flex items-center gap-1">
-                          
+
                             <button
                                 onClick={handleCopy}
                                 className="p-1.5 hover:bg-white rounded-md transition-colors"
@@ -193,4 +193,4 @@ export default function DummyJsonDataPanel({ initialData }) {
             )}
         </div>
     );
-}
+})

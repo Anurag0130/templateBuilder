@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import Handlebars from "../utils/handlebarsHelpers";
 import { useRef, useEffect, useState } from "react";
-import { backendData, feeReceiptData } from "../templates/constants";
-import { templates, templateStyles } from "../templates/templateStore";
+import { backendData } from "../templates/constants";
+import { templates } from "../templates/templateStore";
 import { FileText, Download, RefreshCw, Eye, Edit, Menu, X } from "lucide-react";
 
 
@@ -35,7 +35,7 @@ export default function TemplatePreview() {
 
     if (!currentTemplate) return;
 
-    const data = selectedTemplate === "admissionForm" ? backendData : selectedTemplate === "feeReceipt" ? feeReceiptData : backendData;
+    const data = backendData;
     const compiled = Handlebars.compile(currentTemplate.content);
     containerRef.current.innerHTML = compiled(data);
 
@@ -64,7 +64,7 @@ export default function TemplatePreview() {
 
   return (
     <>
-      <style>{templateStyles}</style>
+      {/* <style>{templateStyles}</style> */}
 
       <div className="flex min-h-screen bg-gray-100">
         {/* Sidebar */}
