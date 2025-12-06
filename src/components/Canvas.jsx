@@ -3,11 +3,12 @@ import { CanvasElement } from "./CanvasElement.jsx";
 import { PageThumbnails } from "./PageThumbnails.jsx";
 import PageSizeSelector from "./PageSizeSelector.jsx";
 import { getButtonClass } from "../utils/styleHelpers.js";
-import DummyJsonDataPanel from "./DummyJsonDataPanel.jsx";
+import DummyJsonDataPanel from "./BackendJsonDataPanel.jsx";
 import { MultiPageToolbar } from "./MultiPageToolbar.jsx";
 import { SaveTemplateModal } from "./SaveTemplateModal.jsx";
 import { Save, FileDown, Undo, Redo, Sparkles } from "lucide-react";
 import { downloadAllPagesHTML, saveMultiPageTemplate } from "../utils/canvasExport.js";
+import BackendJsonDataPanel from "./BackendJsonDataPanel.jsx";
 
 const DRAG_OFFSET_X = 40;
 const DRAG_OFFSET_Y = 10;
@@ -247,7 +248,7 @@ export function Canvas({
                     </div>
                 </div>
 
-                <DummyJsonDataPanel onDataChange={(data) => console.log("Template data updated:", data)} />
+                <BackendJsonDataPanel onDataChange={(data) => console.log("Template data updated:", data)} />
             </div>
 
             <SaveTemplateModal
