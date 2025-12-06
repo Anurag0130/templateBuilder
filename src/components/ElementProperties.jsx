@@ -1,4 +1,231 @@
-export function ElementProperties({ selectedElement, onUpdateElement, fileInputRef }) {
+export function ElementProperties({
+  selectedElement,
+  onUpdateElement,
+  fileInputRef,
+  // ✅ NEW PROPS for cell editing
+  selectedCellInfo,
+  onUpdateCellStyle,
+  onClearCellSelection
+}) {
+
+  if (selectedCellInfo) {
+    const isMultiSelect = selectedCellInfo.isMultiSelect || false;
+    const cellCount = selectedCellInfo.selectedCells?.length || 1;
+    
+    return (
+      <div className="p-4">
+        <h3 className="text-sm font-semibold text-gray-800 mb-4">Cell Properties</h3>
+
+        {/* ✅ FIXED: Conditional Cell Info Header */}
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+          {isMultiSelect ? (
+            <>
+              <div className="text-xs text-blue-900 font-medium">
+                Editing <strong>{cellCount} cells</strong>
+              </div>
+              <div className="text-xs text-blue-700 mt-1">
+               Styling will apply to all {cellCount} selected cells
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="text-xs text-blue-900 font-medium">
+                Editing Cell: <strong>Row {selectedCellInfo.row + 1}, Col {selectedCellInfo.col + 1}</strong>
+              </div>
+              <div className="text-xs text-blue-700 mt-1">
+                Cell Key: {selectedCellInfo.cellKey}
+              </div>
+            </>
+          )}
+        </div>
+        
+        {/* ✅ Cell Content - only show for single cell */}
+        {!isMultiSelect && (
+          <div className="mb-4">
+            <label className="block text-xs font-medium text-gray-600 mb-2">Cell Content</label>
+            <input
+              type="text"
+              value={selectedCellInfo.cellData || ""}
+              onChange={(e) => {
+                // Update cell data
+                const newCellData = { ...(selectedCellInfo.element.cellData || {}) };
+                newCellData[selectedCellInfo.cellKey] = e.target.value;
+                onUpdateElement({
+                  ...selectedCellInfo.element,
+                  cellData: newCellData
+                });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+              placeholder="Enter cell content"
+            />
+          </div>
+        )}
+
+        {/* Font Size */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Font Size (px)</label>
+          <input
+            type="number"
+            value={selectedCellInfo.styles.fontSize || 12}
+            onChange={(e) => onUpdateCellStyle({ fontSize: Number(e.target.value) })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="8"
+            max="72"
+          />
+        </div>
+
+        {/* Font Weight */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Font Weight</label>
+          <select
+            value={selectedCellInfo.styles.fontWeight || "normal"}
+            onChange={(e) => onUpdateCellStyle({ fontWeight: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="300">Light</option>
+            <option value="normal">Normal</option>
+            <option value="600">Semi-Bold</option>
+            <option value="bold">Bold</option>
+            <option value="700">700</option>
+          </select>
+        </div>
+
+        {/* Font Family */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Font Family</label>
+          <select
+            value={selectedCellInfo.styles.fontFamily || "Tahoma"}
+            onChange={(e) => onUpdateCellStyle({ fontFamily: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="Tahoma">Tahoma</option>
+            <option value="Arial">Arial</option>
+            <option value="Helvetica">Helvetica</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Trebuchet MS">Trebuchet MS</option>
+          </select>
+        </div>
+
+        {/* Font Style */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Font Style</label>
+          <select
+            value={selectedCellInfo.styles.fontStyle || "normal"}
+            onChange={(e) => onUpdateCellStyle({ fontStyle: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="normal">Normal</option>
+            <option value="italic">Italic</option>
+            <option value="oblique">Oblique</option>
+          </select>
+        </div>
+
+        {/* Text Transform */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Text Transform</label>
+          <select
+            value={selectedCellInfo.styles.textTransform || "none"}
+            onChange={(e) => onUpdateCellStyle({ textTransform: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="none">None</option>
+            <option value="uppercase">Uppercase</option>
+            <option value="lowercase">Lowercase</option>
+            <option value="capitalize">Capitalize</option>
+          </select>
+        </div>
+
+        {/* Text Decoration */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Text Decoration</label>
+          <select
+            value={selectedCellInfo.styles.textDecoration || "none"}
+            onChange={(e) => onUpdateCellStyle({ textDecoration: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="none">None</option>
+            <option value="underline">Underline</option>
+            <option value="line-through">Line Through</option>
+          </select>
+        </div>
+
+        {/* Text Color */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Text Color</label>
+          <input
+            type="color"
+            value={selectedCellInfo.styles.color || "#000000"}
+            onChange={(e) => onUpdateCellStyle({ color: e.target.value })}
+            className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+          />
+        </div>
+
+        {/* Background Color */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Background Color</label>
+          <input
+            type="color"
+            value={selectedCellInfo.styles.backgroundColor || "#ffffff"}
+            onChange={(e) => onUpdateCellStyle({ backgroundColor: e.target.value })}
+            className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+          />
+        </div>
+
+        {/* Text Align */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Text Align</label>
+          <select
+            value={selectedCellInfo.styles.textAlign || "left"}
+            onChange={(e) => onUpdateCellStyle({ textAlign: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="left">Left</option>
+            <option value="center">Center</option>
+            <option value="right">Right</option>
+          </select>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2 mt-6">
+          <button
+            onClick={onClearCellSelection}
+            className="flex-1 px-4 py-2 text-sm rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
+          >
+            Close
+          </button>
+          <button
+            onClick={() => {
+              // ✅ FIXED: Reset ALL selected cells
+              const element = selectedCellInfo.element;
+              const newCellStyles = { ...(element.cellStyles || {}) };
+              
+              if (isMultiSelect && selectedCellInfo.selectedCells) {
+                // Delete styles for all selected cells
+                selectedCellInfo.selectedCells.forEach(({ row, col }) => {
+                  const key = `${row}-${col}`;
+                  delete newCellStyles[key];
+                });
+              } else {
+                // Delete single cell style
+                delete newCellStyles[selectedCellInfo.cellKey];
+              }
+              
+              onUpdateElement({ ...element, cellStyles: newCellStyles });
+              onClearCellSelection();
+            }}
+            className="flex-1 px-4 py-2 text-sm rounded-md bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+          >
+            Reset {isMultiSelect ? `${cellCount} Cells` : 'Style'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
   if (!selectedElement) {
     return (
       <div className="p-4">

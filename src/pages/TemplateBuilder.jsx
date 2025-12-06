@@ -32,16 +32,14 @@ export default function TemplateBuilder() {
     }]);
     const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
-
     const currentPage = pages[currentPageIndex];
     const canUndo = currentPage?.historyIndex > 0;
     const canRedo = currentPage?.historyIndex < currentPage?.history?.length - 1;
 
-
     const clearSelection = () => {
         setSelectedElement(null);
         setSelectedIndex(null);
-         // ✅ NEW: Clear cell selection bhi
+        // ✅ NEW: Clear cell selection bhi
         setSelectedCellInfo(null);
     };
 
@@ -155,9 +153,7 @@ export default function TemplateBuilder() {
             const copy = [...currentPage.elements];
             copy[index] = updatedElement;
             updatePageElements(copy);
-            if (index === selectedIndex) setSelectedElement(updatedElement);
-
-             // ✅ NEW: Agar cell selected hai toh uski info bhi update karo
+            if (index === selectedIndex) setSelectedElement(updatedElement);            // ✅ NEW: Agar cell selected hai toh uski info bhi update karo
             if (selectedCellInfo && selectedCellInfo.elementIndex === index) {
                 const cellKey = selectedCellInfo.cellKey;
                 const updatedStyles = updatedElement.cellStyles?.[cellKey] || {};
@@ -180,7 +176,7 @@ export default function TemplateBuilder() {
         select: (element, index) => {
             setSelectedElement(element);
             setSelectedIndex(index);
-             // ✅ NEW: Element select hone pe cell selection clear karo
+            // ✅ NEW: Element select hone pe cell selection clear karo
             setSelectedCellInfo(null);
         },
 
@@ -220,19 +216,30 @@ export default function TemplateBuilder() {
         setSelectedIndex(null);
     };
 
-    // ✅ NEW: Cell style update handler
+    // ✅ NEW: Cell style update handler (supports multiple cells)
     const handleUpdateCellStyle = (newStyles) => {
         if (!selectedCellInfo) return;
 
         const element = currentPage.elements[selectedCellInfo.elementIndex];
-        
-        const updatedCellStyles = {
-            ...(element.cellStyles || {}),
-            [selectedCellInfo.cellKey]: {
-                ...(element.cellStyles?.[selectedCellInfo.cellKey] || {}),
+        const updatedCellStyles = { ...(element.cellStyles || {}) };
+
+        // ✅ FIX: Agar multiple cells selected hain toh sabko update karo
+        if (selectedCellInfo.selectedCells && selectedCellInfo.selectedCells.length > 0) {
+            // Multiple cells selected
+            selectedCellInfo.selectedCells.forEach(({ row, col }) => {
+                const cellKey = `${row}-${col}`;
+                updatedCellStyles[cellKey] = {
+                    ...(updatedCellStyles[cellKey] || {}),
+                    ...newStyles
+                };
+            });
+        } else {
+            // Single cell selected
+            updatedCellStyles[selectedCellInfo.cellKey] = {
+                ...(updatedCellStyles[selectedCellInfo.cellKey] || {}),
                 ...newStyles
-            }
-        };
+            };
+        }
 
         const updatedElement = {
             ...element,
@@ -240,7 +247,8 @@ export default function TemplateBuilder() {
         };
 
         elementOperations.update(updatedElement, selectedCellInfo.elementIndex);
-           // ✅ selectedCellInfo ko bhi update karo
+
+        // ✅ selectedCellInfo ko bhi update karo
         setSelectedCellInfo({
             ...selectedCellInfo,
             styles: {
@@ -254,7 +262,6 @@ export default function TemplateBuilder() {
     const handleClearCellSelection = () => {
         setSelectedCellInfo(null);
     };
-
 
     const handleLoadTemplate = (templateElements) => {
         clearSelection();
@@ -283,8 +290,6 @@ export default function TemplateBuilder() {
         reader.readAsDataURL(file);
         event.target.value = "";
     };
-
-
 
     // Load template in edit mode
     useEffect(() => {
@@ -346,7 +351,7 @@ export default function TemplateBuilder() {
                     onAddElement={elementOperations.add}
                     fileInputRef={fileInputRef}
                     onLoadTemplate={handleLoadTemplate}
-                     // ✅ NEW PROPS for cell editing
+                    // ✅ NEW PROPS for cell editing
                     selectedCellInfo={selectedCellInfo}
                     onUpdateCellStyle={handleUpdateCellStyle}
                     onClearCellSelection={handleClearCellSelection}
@@ -374,7 +379,7 @@ export default function TemplateBuilder() {
                     isEditMode={isEditMode}
                     currentTemplateId={currentTemplateId}
                     currentTemplateName={currentTemplateName}
-                     // ✅ NEW PROP for cell selection
+                    // ✅ NEW PROP for cell selection
                     onCellSelect={handleCellSelect}
                 />
             </div>

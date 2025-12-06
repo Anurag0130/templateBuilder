@@ -148,7 +148,8 @@ export const exportCanvasToHTML = (elements, page, pageSize = null) => {
             width:${cellWidth}px; 
             border:${borderWidth}px solid ${borderColor}; 
             padding:4px;
-            background:${bg};
+           
+            background:${cellStyles.backgroundColor || element.backgroundColor || "#ffffff"};
             font-size:${cellStyles.fontSize || element.fontSize || 12}px;
             font-weight:${cellStyles.fontWeight || "normal"};
             font-family:${cellStyles.fontFamily || "Tahoma"};
@@ -180,7 +181,7 @@ export const exportCanvasToHTML = (elements, page, pageSize = null) => {
           width:${cellWidth}px;
           border:${borderWidth}px solid ${borderColor};
           padding:4px;
-          background:${bg};
+          background:${cellStyles.backgroundColor || element.backgroundColor || "#ffffff"};
           font-size:${cellStyles.fontSize || element.fontSize || 12}px;
           font-weight:${cellStyles.fontWeight || "normal"};
           font-family:${cellStyles.fontFamily || "Tahoma"};

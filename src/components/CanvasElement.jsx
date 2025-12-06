@@ -93,7 +93,7 @@ export function CanvasElement({
     // };
 
 
-    // ✅ UPDATED: Cell click handler mein parent ko notify karne ka logic add kiya
+    // ✅ UPDATED: Cell click handler with multi-select support
     const handleCellClick = (e, row, col) => {
         e.stopPropagation();
 
@@ -103,22 +103,41 @@ export function CanvasElement({
             // toggle cell selection (multi-select)
             const exists = selectedCells.some(c => c.row === row && c.col === col);
 
-            setSelectedCells(prev =>
-                exists
-                    ? prev.filter(c => !(c.row === row && c.col === col))
-                    : [...prev, { row, col }]
-            );
+            const newSelectedCells = exists
+                ? selectedCells.filter(c => !(c.row === row && c.col === col))
+                : [...selectedCells, { row, col }];
+
+            setSelectedCells(newSelectedCells);
+
+            // ✅ NEW: Parent ko multi-select info bhejo
+            if (onCellSelect && element.type === "table" && newSelectedCells.length > 0) {
+                const firstCell = newSelectedCells[0];
+                const cellKey = `${firstCell.row}-${firstCell.col}`;
+                const cellStyles = (element.cellStyles && element.cellStyles[cellKey]) || {};
+                const cellData = element.cellData?.[cellKey] || "";
+
+                onCellSelect({
+                    elementIndex: index,
+                    row: firstCell.row,
+                    col: firstCell.col,
+                    cellKey,
+                    styles: cellStyles,
+                    cellData: cellData,
+                    element: element,
+                    selectedCells: newSelectedCells, // ✅ Multiple cells info
+                    isMultiSelect: newSelectedCells.length > 1
+                });
+            }
         } else {
             // normal selection (single cell)
             setSelectedCells([{ row, col }]);
 
-            // ✅ NEW: Parent ko inform karo ki cell select hua hai
+            // ✅ Parent ko single cell info bhejo
             if (onCellSelect && element.type === "table") {
                 const cellKey = `${row}-${col}`;
                 const cellStyles = (element.cellStyles && element.cellStyles[cellKey]) || {};
                 const cellData = element.cellData?.[cellKey] || "";
 
-                // Parent ko complete cell info bhejo
                 onCellSelect({
                     elementIndex: index,
                     row,
@@ -126,7 +145,9 @@ export function CanvasElement({
                     cellKey,
                     styles: cellStyles,
                     cellData: cellData,
-                    element: element // Full element reference
+                    element: element,
+                    selectedCells: [{ row, col }], // ✅ Single cell as array
+                    isMultiSelect: false
                 });
             }
         }
