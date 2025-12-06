@@ -8,7 +8,8 @@ export function CanvasElement({
     onSelect,
     onDragEnd,
     onDelete,
-    onUpdateElement
+    onUpdateElement,
+    onCellSelect
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editingCell, setEditingCell] = useState(null);
@@ -71,13 +72,35 @@ export function CanvasElement({
     //         setSelectedCells([{ row, col }]);
     //     }
     // };
+    // const handleCellClick = (e, row, col) => {
+    //     e.stopPropagation();
+
+    //     const isCtrl = e.ctrlKey || e.metaKey;
+
+    //     if (isCtrl) {
+    //         // toggle cell selection
+    //         const exists = selectedCells.some(c => c.row === row && c.col === col);
+
+    //         setSelectedCells(prev =>
+    //             exists
+    //                 ? prev.filter(c => !(c.row === row && c.col === col))
+    //                 : [...prev, { row, col }]
+    //         );
+    //     } else {
+    //         // normal selection (single)
+    //         setSelectedCells([{ row, col }]);
+    //     }
+    // };
+
+
+    // ✅ UPDATED: Cell click handler mein parent ko notify karne ka logic add kiya
     const handleCellClick = (e, row, col) => {
         e.stopPropagation();
 
         const isCtrl = e.ctrlKey || e.metaKey;
 
         if (isCtrl) {
-            // toggle cell selection
+            // toggle cell selection (multi-select)
             const exists = selectedCells.some(c => c.row === row && c.col === col);
 
             setSelectedCells(prev =>
@@ -86,11 +109,28 @@ export function CanvasElement({
                     : [...prev, { row, col }]
             );
         } else {
-            // normal selection (single)
+            // normal selection (single cell)
             setSelectedCells([{ row, col }]);
+
+            // ✅ NEW: Parent ko inform karo ki cell select hua hai
+            if (onCellSelect && element.type === "table") {
+                const cellKey = `${row}-${col}`;
+                const cellStyles = (element.cellStyles && element.cellStyles[cellKey]) || {};
+                const cellData = element.cellData?.[cellKey] || "";
+
+                // Parent ko complete cell info bhejo
+                onCellSelect({
+                    elementIndex: index,
+                    row,
+                    col,
+                    cellKey,
+                    styles: cellStyles,
+                    cellData: cellData,
+                    element: element // Full element reference
+                });
+            }
         }
     };
-
 
 
     const handleCellDoubleClick = (e, row, col) => {
@@ -150,6 +190,36 @@ export function CanvasElement({
         const selectedClass = isSelected ? "ring-2 ring-blue-500 z-10" : "";
 
         switch (element.type) {
+            // case "emailField":
+            //     return (
+            //         <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
+            //             <div style={{ width: element.width ? `${element.width}px` : "auto" }}>
+            //                 <label
+            //                     style={{
+            //                         fontSize: `${element.fontSize || 14}px`,
+            //                         color: element.color || "#000000",
+            //                         display: "block",
+            //                         marginBottom: "4px",
+            //                         fontWeight: "500"
+            //                     }}
+            //                 >
+            //                     {element.label || "Email:"}
+            //                 </label>
+            //                 <div
+            //                     style={{
+            //                         border: "1px solid #d1d5db",
+            //                         padding: "8px 12px",
+            //                         borderRadius: "4px",
+            //                         backgroundColor: "#f9fafb",
+            //                         fontSize: `${element.fontSize || 14}px`,
+            //                         color: "#9ca3af"
+            //                     }}
+            //                 >
+            //                     {element.placeholder || "email@example.com"}
+            //                 </div>
+            //             </div>
+            //         </div>
+            //     );
 
             case "list":
                 const listStyleType = element.listStyle === "bullet" ? "disc" : element.listStyle === "number" ? "decimal" : "none";
@@ -210,7 +280,7 @@ export function CanvasElement({
                                 borderColor: element.borderColor || "#000000",
                                 backgroundColor: element.backgroundColor || "#fff",
                                 height: "auto",
-                                position:"relative",
+                                position: "relative",
                             }}
                         >
                             <tbody>
@@ -318,7 +388,7 @@ export function CanvasElement({
                         </table>
 
                         {/* Cell-properties panel: shows when exactly 1 cell is selected */}
-                        {selectedCells.length > 0 && (() => {
+                        {/* {selectedCells.length > 0 && (() => {
                             const { row, col } = selectedCells[0];
                             const selKey = `${row}-${col}`;
                             const selStyles = (element.cellStyles && element.cellStyles[selKey]) || {};
@@ -483,7 +553,7 @@ export function CanvasElement({
                                     </div>
                                 </div>
                             );
-                        })()}
+                        })()} */}
                         {selectedCells.length > 0 && selectedCells.length !== 1 && (
                             <div className="mt-2 text-xs text-blue-600">
                                 {selectedCells.length} cell(s) selected.
@@ -552,7 +622,6 @@ export function CanvasElement({
                         />
                     );
                 }
-
                 return (
                     <div
                         style={{
