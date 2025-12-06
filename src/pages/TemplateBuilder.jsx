@@ -14,7 +14,7 @@ export default function TemplateBuilder() {
 
     const [currentTemplateId, setCurrentTemplateId] = useState(null);
     const [currentTemplateName, setCurrentTemplateName] = useState("");
-
+    const [savedPaPerSize, setSavedPaperSize] = useState("")
     // Element state
     const [draggingField, setDraggingField] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -289,13 +289,13 @@ export default function TemplateBuilder() {
     // Load template in edit mode
     useEffect(() => {
         if (!incomingTemplateId) return;
-
         const template = savedTemplates?.find(t => t?.id === incomingTemplateId);
         if (template?.pages) {
             setCurrentTemplateId(template.id || "--");
             setCurrentTemplateName(template.name || "--");
             setPages(template.pages);
             setCurrentPageIndex(0);
+            setSavedPaperSize(template?.pageSize)
         }
     }, [incomingTemplateId]);
 
@@ -353,6 +353,7 @@ export default function TemplateBuilder() {
                 />
                 <Canvas
                     pages={pages}
+                    savedPaPerSize={savedPaPerSize}
                     currentPageIndex={currentPageIndex}
                     onPageChange={pageOperations.change}
                     onAddPage={pageOperations.add}
