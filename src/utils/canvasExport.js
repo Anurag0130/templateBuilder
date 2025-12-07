@@ -308,7 +308,7 @@ export const downloadAllPagesHTML = (pages, filename = "template-multipage.html"
 };
 
 
-export const saveMultiPageTemplate = (templateName, pages, existingTemplateId = null, pageSize = null) => {
+export const saveMultiPageTemplate = async (templateName, pages, existingTemplateId = null, pageSize = null) => {
 
 
   const htmlContent = exportAllPagesToHTML(pages, pageSize);
@@ -324,11 +324,24 @@ export const saveMultiPageTemplate = (templateName, pages, existingTemplateId = 
 
   if (existingTemplateId) {
     updateTemplate(templateData);
+    // await updateTemplateAPI(templateData);
     successAlert("Edited successfully!");
-  } else {
-    addTemplate(templateData);
-    successAlert("Saved successfully!");
   }
 
+  else {
+    addTemplate(templateData);
+
+    // const response = await saveTemplateAPI(templateData);
+    // console.log("Saving Payload:", templateData);
+
+    // if (response.status === 200) {
+    //   successAlert("Saved successfully!");
+    // } else {
+    //   throw new Error("Error saving the template");
+    // }
+  }
+
+
+  successAlert("Saved successfully!");
   return templateId;
 };
