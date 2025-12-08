@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { Rnd } from "react-rnd";
 import { Trash2 } from "lucide-react";
 
 export function CanvasElement({
@@ -16,7 +17,6 @@ export function CanvasElement({
     const [selectedCells, setSelectedCells] = useState([]); // array of {row, col}
     const [editValue, setEditValue] = useState(element?.value || "");
 
-    // ✅ NEW: Ref for textarea auto-resize
     const textareaRef = useRef(null);
 
     // ✅ NEW: Auto-resize textarea when content changes
@@ -50,34 +50,6 @@ export function CanvasElement({
         }
     };
 
-    // const handleKeyDown = (e) => {
-    //     if (e.key === "Enter" && !e.shiftKey) {
-    //         handleBlur();
-    //     } else if (e.key === "Escape") {
-    //         setIsEditing(false);
-    //         setEditValue(element.value || "");
-    //     }
-    // };
-    // const handleKeyDown = (e) => {
-    //     // NEW: allow multiline
-    //     if (e.key === "Enter" && e.shiftKey) {
-    //         e.preventDefault();
-    //         setEditValue(prev => prev + "\n");
-    //         return;
-    //     }
-
-    //     // Enter without shift → finish editing
-    //     if (e.key === "Enter") {
-    //         e.preventDefault();
-    //         handleBlur();
-    //         return;
-    //     }
-
-    //     if (e.key === "Escape") {
-    //         setIsEditing(false);
-    //         setEditValue(element.value || "");
-    //     }
-    // };
     const handleKeyDown = (e) => {
         // ENTER always inserts newline
         if (e.key === "Enter") {
@@ -93,53 +65,10 @@ export function CanvasElement({
         }
     };
 
-    const handleDragEnd = (e) => {
-        e.stopPropagation();
-        onDragEnd(e, index);
-    };
-
     const handleDelete = (e) => {
         e.stopPropagation();
         onDelete(index);
     };
-
-
-    // const handleCellClick = (e, row, col) => {
-    //     e.stopPropagation();
-
-
-    //     const alreadySelected =
-    //         selectedCells.length === 1 &&
-    //         selectedCells[0].row === row &&
-    //         selectedCells[0].col === col;
-
-    //     if (alreadySelected) {
-
-    //         setSelectedCells([]);
-    //     } else {
-    //         setSelectedCells([{ row, col }]);
-    //     }
-    // };
-    // const handleCellClick = (e, row, col) => {
-    //     e.stopPropagation();
-
-    //     const isCtrl = e.ctrlKey || e.metaKey;
-
-    //     if (isCtrl) {
-    //         // toggle cell selection
-    //         const exists = selectedCells.some(c => c.row === row && c.col === col);
-
-    //         setSelectedCells(prev =>
-    //             exists
-    //                 ? prev.filter(c => !(c.row === row && c.col === col))
-    //                 : [...prev, { row, col }]
-    //         );
-    //     } else {
-    //         // normal selection (single)
-    //         setSelectedCells([{ row, col }]);
-    //     }
-    // };
-
 
     // ✅ UPDATED: Cell click handler with multi-select support
     const handleCellClick = (e, row, col) => {
@@ -201,7 +130,6 @@ export function CanvasElement({
         }
     };
 
-
     const handleCellDoubleClick = (e, row, col) => {
         e.stopPropagation();
         if (element.type === "table") {
@@ -236,76 +164,68 @@ export function CanvasElement({
         return { merged: false, isStart: false, merge: null };
     };
 
-    // ---- Cell style update helper ----
-    const updateCellStyle = (newStyles) => {
-        const updated = { ...(element.cellStyles || {}) };
+    // ✅ NEW: Handle drag stop
+    const handleDragStop = (e, d) => {
+        onUpdateElement({
+            ...element,
+            x: d.x,
+            y: d.y
+        }, index);
+    };
 
-        selectedCells.forEach(({ row, col }) => {
-            const key = `${row}-${col}`;
-            updated[key] = { ...(updated[key] || {}), ...newStyles };
-        });
-
-        onUpdateElement({ ...element, cellStyles: updated }, index);
+    // ✅ NEW: Handle resize stop
+    const handleResizeStop = (e, direction, ref, delta, position) => {
+        onUpdateElement({
+            ...element,
+            x: position.x,
+            y: position.y,
+            width: ref.offsetWidth,
+            height: ref.offsetHeight
+        }, index);
     };
 
 
-    // ---- Render ----
-    const renderElement = () => {
-        const baseStyle = {
-            left: `${element.x}px`,
-            top: `${element.y}px`
+    // ✅ NEW: Get default size based on element type
+    const getDefaultSize = () => {
+        const defaults = {
+            text: { width: 200, height: 100 },
+            header: { width: 300, height: 50 },
+            table: { width: 400, height: 150 },
+            image: { width: 200, height: 150 },
+            line: { width: 200, height: 2 },
+            list: { width: 200, height: 120 },
+            link: { width: 150, height: 30 }
         };
 
-        const selectedClass = isSelected ? "ring-2 ring-blue-500 z-10" : "";
+        return {
+            width: element.width || defaults[element.type]?.width || 200,
+            height: element.height || defaults[element.type]?.height || 100
+        };
+    };
+
+    // ✅ NEW: Render content without position styling (handled by Rnd)
+    const renderContent = () => {
+        const selectedClass = useMemo(() => (isSelected ? "ring-2 ring-blue-500 z-10" : ""), [isSelected]);
 
         switch (element.type) {
-            // case "emailField":
-            //     return (
-            //         <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
-            //             <div style={{ width: element.width ? `${element.width}px` : "auto" }}>
-            //                 <label
-            //                     style={{
-            //                         fontSize: `${element.fontSize || 14}px`,
-            //                         color: element.color || "#000000",
-            //                         display: "block",
-            //                         marginBottom: "4px",
-            //                         fontWeight: "500"
-            //                     }}
-            //                 >
-            //                     {element.label || "Email:"}
-            //                 </label>
-            //                 <div
-            //                     style={{
-            //                         border: "1px solid #d1d5db",
-            //                         padding: "8px 12px",
-            //                         borderRadius: "4px",
-            //                         backgroundColor: "#f9fafb",
-            //                         fontSize: `${element.fontSize || 14}px`,
-            //                         color: "#9ca3af"
-            //                     }}
-            //                 >
-            //                     {element.placeholder || "email@example.com"}
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     );
-
             case "list":
                 const listStyleType = element.listStyle === "bullet" ? "disc" : element.listStyle === "number" ? "decimal" : "none";
                 const ListTag = element.listStyle === "number" ? "ol" : "ul";
 
                 return (
-                    <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
+                    <div className={`cursor-move ${selectedClass}`}>
                         <ListTag
                             style={{
-                                width: element.width ? `${element.width}px` : "auto",
+                                width: "100%",
+                                height: "100%",
                                 fontSize: `${element.fontSize || 14}px`,
                                 fontWeight: element.fontWeight || "normal",
                                 color: element.color || "#000000",
                                 lineHeight: element.lineHeight || 1.8,
                                 listStyleType: listStyleType,
                                 paddingLeft: element.listStyle === "none" ? "0" : `${element.indentation || 20}px`,
-                                margin: 0
+                                margin: 0,
+                                boxSizing: "border-box"
                             }}
                         >
                             {(element.items || ["Item 1", "Item 2", "Item 3"]).map((item, idx) => (
@@ -317,7 +237,7 @@ export function CanvasElement({
 
             case "link":
                 return (
-                    <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
+                    <div className={`cursor-move ${selectedClass}`}>
                         <a
                             href={element.href || "#"}
                             style={{
@@ -325,9 +245,14 @@ export function CanvasElement({
                                 fontWeight: element.fontWeight || "normal",
                                 color: element.color || "#2563eb",
                                 textDecoration: element.underline ? "underline" : "none",
-                                display: "inline-block",
-                                width: element.width ? `${element.width}px` : "auto",
-                                cursor: "pointer"
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: element.textAlign || "left",
+                                width: "100%",
+                                height: "100%",
+                                cursor: "pointer",
+                                boxSizing: "border-box",
+                                padding: "4px 8px"
                             }}
                             onClick={(e) => e.preventDefault()}
                         >
@@ -337,19 +262,21 @@ export function CanvasElement({
                 );
 
             case "table": {
-                const cellWidth = (element.width || 400) / (element.cols || 2);
-                const cellHeight = (element.height || 100) / (element.rows || 2);
+                const { width, height } = getDefaultSize();
+                const cellWidth = width / (element.cols || 2);
+                const cellHeight = height / (element.rows || 2);
 
                 return (
-                    <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
+                    <div className={`cursor-move ${selectedClass}`} style={{ width: "100%", height: "100%" }}>
                         <table
                             style={{
                                 borderCollapse: "collapse",
-                                width: `${element.width || 400}px`,
+                                width: "100%",
+                                height: "100%",
                                 borderColor: element.borderColor || "#000000",
                                 backgroundColor: element.backgroundColor || "#fff",
-                                height: "auto",
                                 position: "relative",
+                                tableLayout: "fixed"
                             }}
                         >
                             <tbody>
@@ -372,16 +299,6 @@ export function CanvasElement({
                                             // apply per-cell styles if present
                                             const cellStyles = (element.cellStyles && element.cellStyles[cellKey]) || {};
 
-                                            // const computedBackground =
-                                            //     isSelectedCell ? "#DBEAFE" :
-                                            //         rowIdx === 0 && element.headerRow ? "#f3f4f6" :
-                                            //             cellStyles.backgroundColor || "transparent";
-
-                                            // const computedBackground =
-                                            //     cellStyles.backgroundColor ||
-                                            //     (rowIdx === 0 && element.headerRow ? "#f3f4f6" : "transparent");
-
-
                                             const computedFontSize = cellStyles.fontSize ? `${cellStyles.fontSize}px` : undefined;
                                             const computedColor = cellStyles.color || undefined;
                                             const computedFontWeight = cellStyles.fontWeight || undefined;
@@ -392,11 +309,10 @@ export function CanvasElement({
                                             const computedTextDecoration = cellStyles.textDecoration || undefined;
                                             const computedFontFamily = cellStyles.fontFamily || undefined;
 
-
                                             return (
                                                 <td
                                                     key={colIdx}
-                                                    className={`p-2 cursor-pointer hover:bg-blue-50 transition-colors ${isSelectedCell ? "bg-blue-100" : ""
+                                                    className={`cursor-pointer hover:bg-blue-50 transition-colors ${isSelectedCell ? "bg-blue-100" : ""
                                                         }`}
                                                     style={{
                                                         width: `${cellWidth}px`,
@@ -413,7 +329,7 @@ export function CanvasElement({
                                                         textTransform: computedTextTransform,
                                                         textDecoration: computedTextDecoration,
                                                         fontFamily: computedFontFamily,
-
+                                                        boxSizing: "border-box"
                                                     }}
                                                     rowSpan={cellInfo.merge?.rowSpan || 1}
                                                     colSpan={cellInfo.merge?.colSpan || 1}
@@ -439,12 +355,13 @@ export function CanvasElement({
                                                                 height: "100%",
                                                                 border: "1px solid #3b82f6",
                                                                 padding: "4px",
-                                                                fontSize: "12px"
+                                                                fontSize: "12px",
+                                                                boxSizing: "border-box"
                                                             }}
                                                             onClick={(e) => e.stopPropagation()}
                                                         />
                                                     ) : (
-                                                        <div style={{ padding: "6px", minHeight: "100%", boxSizing: "border-box" }}>
+                                                        <div style={{ padding: "6px", height: "100%", boxSizing: "border-box" }}>
                                                             {cellContent || `Cell ${rowIdx + 1},${colIdx + 1}`}
                                                         </div>
                                                     )}
@@ -456,173 +373,6 @@ export function CanvasElement({
                             </tbody>
                         </table>
 
-                        {/* Cell-properties panel: shows when exactly 1 cell is selected */}
-                        {/* {selectedCells.length > 0 && (() => {
-                            const { row, col } = selectedCells[0];
-                            const selKey = `${row}-${col}`;
-                            const selStyles = (element.cellStyles && element.cellStyles[selKey]) || {};
-                            const selValue = element.cellData?.[selKey] || "";
-
-                            return (
-                                <div className="mt-2 p-2 rounded-md bg-white border shadow-sm w-full max-w-[420px] absolute z-[9999]">
-                                    <div className="text-xs text-gray-600 mb-2">
-                                        Editing cell: <strong>Row {row + 1}, Col {col + 1}</strong>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div>
-                                            <label className="text-xs block mb-1">Font size (px)</label>
-                                            <input
-                                                type="number"
-                                                value={selStyles.fontSize || element.fontSize || 12}
-                                                onChange={(e) => updateCellStyle({ fontSize: Number(e.target.value) })}
-                                                className="w-full border rounded px-2 py-1 text-sm"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="text-xs block mb-1">Font weight</label>
-                                            <select
-                                                value={selStyles.fontWeight || "normal"}
-                                                onChange={(e) => updateCellStyle({ fontWeight: e.target.value })}
-                                                className="w-full border rounded px-2 py-1 text-sm"
-                                            >
-                                                <option value="normal">Normal</option>
-                                                <option value="bold">Bold</option>
-                                                <option value="600">600</option>
-                                                <option value="700">700</option>
-                                            </select>
-                                        </div>
-
-                                        <div>
-                                            <label className="text-xs block mb-1">Font Family</label>
-                                            <select
-                                                value={selStyles.fontFamily || "Tahoma"}
-                                                onChange={(e) => updateCellStyle({ fontFamily: e.target.value })}
-                                                className="w-full border rounded px-2 py-1 text-sm"
-                                            >
-                                                <option value="Tahoma">Tahoma</option>
-                                                <option value="Arial">Arial</option>
-                                                <option value="Helvetica">Helvetica</option>
-                                                <option value="Times New Roman">Times New Roman</option>
-                                                <option value="Courier New">Courier New</option>
-                                                <option value="Verdana">Verdana</option>
-                                                <option value="Georgia">Georgia</option>
-
-                                                <option value="Trebuchet MS">Trebuchet MS</option>
-                                            </select>
-                                        </div>
-
-
-
-                                        <div>
-                                            <label className="text-xs block mb-1">Font Style</label>
-                                            <select
-                                                value={selStyles.fontStyle || "normal"}
-                                                onChange={(e) =>
-                                                    updateCellStyle({ fontStyle: e.target.value })
-                                                }
-                                                className="w-full border rounded px-2 py-1 text-sm"
-                                            >
-                                                <option value="normal">Normal</option>
-                                                <option value="italic">Italic</option>
-                                                <option value="oblique">Oblique</option>
-
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="text-xs block mb-1">Text Transform</label>
-                                            <select
-                                                value={selStyles.fontStyle || "normal"}
-                                                onChange={(e) =>
-                                                    updateCellStyle({ textTransform: e.target.value })
-                                                }
-                                                className="w-full border rounded px-2 py-1 text-sm"
-                                            >
-                                                <option value="none">None</option>
-                                                <option value="uppercase">Uppercase</option>
-                                                <option value="lowercase">Lowercase</option>
-                                                <option value="capitalize">Capitalize</option>
-
-                                            </select>
-                                        </div>
-
-                                        <div>
-                                            <label className="text-xs block mb-1">Text Decoration</label>
-                                            <select
-                                                value={selStyles.textDecoration || "none"}
-                                                onChange={(e) =>
-                                                    updateCellStyle({ textDecoration: e.target.value })
-                                                }
-                                                className="w-full border rounded px-2 py-1 text-sm"
-                                            >
-                                                <option value="none">None</option>
-                                                <option value="underline">Underline</option>
-                                                <option value="line-through">Line Through</option>
-                                            </select>
-                                        </div>
-
-
-
-                                        <div>
-                                            <label className="text-xs block mb-1">Text color</label>
-                                            <input
-                                                type="color"
-                                                value={selStyles.color || "#000000"}
-                                                onChange={(e) => updateCellStyle({ color: e.target.value })}
-                                                className="w-full border rounded px-2 py-1 text-sm h-9"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="text-xs block mb-1">Background</label>
-                                            <input
-                                                type="color"
-                                                value={selStyles.backgroundColor || "#ffffff"}
-                                                onChange={(e) => updateCellStyle({ backgroundColor: e.target.value })}
-                                                className="w-full border rounded px-2 py-1 text-sm h-9"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="text-xs block mb-1">Text align</label>
-                                            <select
-                                                value={selStyles.textAlign || "left"}
-                                                onChange={(e) => updateCellStyle({ textAlign: e.target.value })}
-                                                className="w-full border rounded px-2 py-1 text-sm"
-                                            >
-                                                <option value="left">Left</option>
-                                                <option value="center">Center</option>
-                                                <option value="right">Right</option>
-                                            </select>
-                                        </div>
-
-
-                                    </div>
-
-                                    <div className="mt-3 flex justify-end gap-2">
-                                        <button
-                                            onClick={() => setSelectedCells([])}
-                                            className="px-3 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200"
-                                        >
-                                            Done
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                // Reset the styles for this cell
-                                                const key = `${row}-${col}`;
-                                                const newCellStyles = { ...(element.cellStyles || {}) };
-                                                delete newCellStyles[key];
-                                                onUpdateElement({ ...element, cellStyles: newCellStyles }, index);
-                                            }}
-                                            className="px-3 py-1 text-sm rounded bg-red-50 text-red-600 hover:bg-red-100"
-                                        >
-                                            Reset
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })()} */}
                         {selectedCells.length > 0 && selectedCells.length !== 1 && (
                             <div className="mt-2 text-xs text-blue-600">
                                 {selectedCells.length} cell(s) selected.
@@ -634,13 +384,13 @@ export function CanvasElement({
 
             case "image":
                 return (
-                    <div style={baseStyle} className={`absolute cursor-move ${selectedClass}`}>
+                    <div className={`cursor-move ${selectedClass}`} style={{ width: "100%", height: "100%" }}>
                         <img
                             src={element.src}
                             alt={element.alt || "Image"}
                             style={{
-                                width: element.width || 200,
-                                height: element.height || 150,
+                                width: "100%",
+                                height: "100%",
                                 objectFit: "cover",
                                 display: "block",
                             }}
@@ -652,12 +402,11 @@ export function CanvasElement({
                 return (
                     <div
                         style={{
-                            ...baseStyle,
-                            width: `${element.width || 200}px`,
-                            height: `${element.lineWidth || 1}px`,
+                            width: "100%",
+                            height: "100%",
                             backgroundColor: element.color || "#000000"
                         }}
-                        className={`absolute cursor-move ${selectedClass}`}
+                        className={`cursor-move ${selectedClass}`}
                     />
                 );
 
@@ -667,54 +416,55 @@ export function CanvasElement({
                 if (isEditing) {
                     return (
                         <textarea
-                            ref={textareaRef}  // ✅ NEW: Added ref for auto-resize
+                            ref={textareaRef}
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
                             onBlur={handleBlur}
                             onKeyDown={handleKeyDown}
                             autoFocus
                             style={{
-                                ...baseStyle,
                                 fontSize: `${element.fontSize || 12}px`,
                                 fontWeight: element.fontWeight || "normal",
-                                fontFsamily: element.fontFamily || "Arial",
+                                fontFamily: element.fontFamily || "Arial",
                                 color: element.color || "#000000",
                                 backgroundColor: element.backgroundColor || "transparent",
                                 textAlign: element.textAlign || "left",
-                                width: element.width ? `${element.width}px` : "auto",
+                                width: "100%",
+                                height: "100%",
                                 border: "2px solid #3B82F6",
                                 outline: "none",
                                 padding: "4px 8px",
                                 borderRadius: "4px",
-                                // resize: "none",  // ✅ NEW: Disable manual resize
-                                overflow: "hidden",  // ✅ NEW: Hide scrollbar
-                                minHeight: "30px",  // ✅ NEW: Minimum height
-                                lineHeight: "1.5"  // ✅ NEW: Consistent line spacing
-
+                                overflow: "hidden",
+                                minHeight: "30px",
+                                lineHeight: "1.5",
+                                resize: "none",
+                                boxSizing: "border-box"
                             }}
-                            // rows={element.rows || 4} // height control  // ✅ Kept but textarea will auto-resize
-                            className="absolute"
+                            className="w-full h-full"
                         />
                     );
                 }
                 return (
                     <div
                         style={{
-                            ...baseStyle,
                             padding: "4px 8px",
                             color: element?.color || "#000000",
                             fontSize: `${element.fontSize || 12}px`,
                             fontWeight: element.fontWeight || "normal",
                             fontFamily: element.fontFamily || "Arial",
                             textAlign: element.textAlign || "left",
-                            width: element.width ? `${element.width}px` : "auto",
+                            width: "100%",
+                            height: "100%",
                             backgroundColor: element.backgroundColor || "transparent",
                             textDecoration: element.type === "header" && element.underline ? "underline" : "none",
-                            whiteSpace: "pre-wrap",     // << preserve newline
-                            wordBreak: "break-word",    // << wrap long words
+                            whiteSpace: "pre-wrap",
+                            wordBreak: "break-word",
+                            overflow: "hidden",
+                            boxSizing: "border-box"
                         }}
-                        className={`absolute cursor-move rounded transition-all 
-      ${isSelected ?
+                        className={`cursor-move rounded transition-all 
+                            ${isSelected ?
                                 "border-blue-500 bg-blue-50 shadow-lg" :
                                 "border-transparent hover:border-blue-300 hover:bg-blue-50"} ${selectedClass}`}
                         title={element.field}
@@ -725,23 +475,43 @@ export function CanvasElement({
         }
     };
 
+    const { width, height } = getDefaultSize();
+
     return (
-        <div
-            draggable
-            onDragEnd={handleDragEnd}
+        <Rnd
+            enableRotation={true}
+            onRotateStop={(angle) => {
+                onUpdateElement({ ...element, rotation: angle }, index);
+            }}
+
+            size={{ width, height }}
+            position={{ x: element.x || 0, y: element.y || 0 }}
+            onDragStop={handleDragStop}
+            onResizeStop={handleResizeStop}
             onClick={handleClick}
             onDoubleClick={handleDoubleClick}
-            className="relative"
+            bounds="parent"
+            disableDragging={isEditing || editingCell} // Disable drag when editing
+            enableResizing={!isEditing && !editingCell} // Disable resize when editing
+
+            style={{ cursor: 'move' }}
+            resizeHandleClasses={{
+                bottomRight: 'custom-resize-handle'
+            }}
+            className={`${isSelected ? 'z-10' : 'z-0'}`}
         >
-            {renderElement()}
-            {isSelected && (
-                <button
-                    onClick={handleDelete}
-                    className="absolute -top-0 -right-0 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors z-20"
-                >
-                    <Trash2 size={12} />
-                </button>
-            )}
-        </div>
+            <div className="relative w-full h-full">
+                {renderContent()}
+                {isSelected && (
+                    <button
+                        onClick={handleDelete}
+                        className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors z-20 shadow-md"
+                        style={{ zIndex: 1000 }}
+                    >
+                        <Trash2 size={12} />
+                    </button>
+                )}
+            </div>
+        </Rnd>
     );
 }
