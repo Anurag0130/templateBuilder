@@ -98,6 +98,65 @@ export const exportCanvasToHTML = (elements, page, pageSize = null) => {
           "></div>
         `;
 
+
+        case "box": {
+        let shadowStyle = "";
+        switch (element.shadow) {
+          case 'sm':
+            shadowStyle = 'box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);';
+            break;
+          case 'md':
+            shadowStyle = 'box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);';
+            break;
+          case 'lg':
+            shadowStyle = 'box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);';
+            break;
+          case 'xl':
+            shadowStyle = 'box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);';
+            break;
+          case '2xl':
+            shadowStyle = 'box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);';
+            break;
+          default:
+            shadowStyle = '';
+        }
+
+        const borderStyle = element.borderStyle === 'none' ? '' : `
+          border-width: ${element.borderWidth || 1}px;
+          border-style: ${element.borderStyle || 'solid'};
+          border-color: ${element.borderColor || '#d1d5db'};
+        `;
+
+        return `
+          <div style="
+            ${baseStyle}
+            width: ${element.width || 500}px;
+            height: ${element.height || 400}px;
+            background-color: ${element.backgroundColor || '#ffffff'};
+            ${borderStyle}
+            border-radius: ${element.borderRadius || 0}px;
+            padding: ${element.padding || 20}px;
+            ${shadowStyle}
+            opacity: ${element.opacity || 1};
+            box-sizing: border-box;
+            overflow: hidden;
+          ">
+            <div style="
+              width: 100%;
+              height: 100%;
+              position: relative;
+              box-sizing: border-box;
+            ">
+              <!-- Box content area -->
+              ${element.children && element.children.length > 0 ? 
+                '<!-- Nested elements would go here -->' : 
+                '<div style="color: #9ca3af; font-size: 14px; font-style: italic; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">Container</div>'
+              }
+            </div>
+          </div>
+        `;
+      }
+
       case "table": {
         const width = element.width || 400;
         const borderColor = element.borderColor || "#000000";

@@ -1048,6 +1048,175 @@ export function ElementProperties({
             </div>
           </>
         );
+      // Add this case after your other element cases in the switch statement
+      case "box":
+        return (
+          <>
+            {commonControls}
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
+              <input
+                type="number"
+                value={selectedElement.width || 500}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  if (value < 50) return;
+                  onUpdateElement({
+                    ...selectedElement,
+                    width: value,
+                  });
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+                min="50"
+                max="2000"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-600 mb-2">Height (px)</label>
+              <input
+                type="number"
+                value={selectedElement.height || 400}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  if (value < 50) return;
+                  onUpdateElement({
+                    ...selectedElement,
+                    height: value,
+                  });
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+                min="50"
+                max="2000"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-600 mb-2">Background Color</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="color"
+                  value={selectedElement.backgroundColor || "#ffffff"}
+                  onChange={(e) => onUpdateElement({ ...selectedElement, backgroundColor: e.target.value })}
+                  className="flex-1 h-10 border border-gray-300 rounded-md cursor-pointer"
+                />
+                <button
+                  onClick={() => onUpdateElement({ ...selectedElement, backgroundColor: "transparent" })}
+                  className="px-3 py-2 text-xs border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-600 mb-2">Border Style</label>
+              <select
+                value={selectedElement.borderStyle || "solid"}
+                onChange={(e) => onUpdateElement({ ...selectedElement, borderStyle: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+              >
+                <option value="none">None</option>
+                <option value="solid">Solid</option>
+                <option value="dashed">Dashed</option>
+                <option value="dotted">Dotted</option>
+                <option value="double">Double</option>
+              </select>
+            </div>
+            {selectedElement.borderStyle !== "none" && (
+              <>
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-gray-600 mb-2">Border Width (px)</label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={selectedElement.borderWidth || 1}
+                    onChange={(e) => onUpdateElement({ ...selectedElement, borderWidth: parseInt(e.target.value) })}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>1</span>
+                    <span>{selectedElement.borderWidth || 1} px</span>
+                    <span>10</span>
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-gray-600 mb-2">Border Color</label>
+                  <input
+                    type="color"
+                    value={selectedElement.borderColor || "#d1d5db"}
+                    onChange={(e) => onUpdateElement({ ...selectedElement, borderColor: e.target.value })}
+                    className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                  />
+                </div>
+              </>
+            )}
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-600 mb-2">Border Radius (px)</label>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value={selectedElement.borderRadius || 0}
+                onChange={(e) => onUpdateElement({ ...selectedElement, borderRadius: parseInt(e.target.value) })}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>0</span>
+                <span>{selectedElement.borderRadius || 0} px</span>
+                <span>50</span>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-600 mb-2">Padding (px)</label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={selectedElement.padding || 20}
+                onChange={(e) => onUpdateElement({ ...selectedElement, padding: parseInt(e.target.value) })}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>0</span>
+                <span>{selectedElement.padding || 20} px</span>
+                <span>100</span>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-600 mb-2">Shadow</label>
+              <select
+                value={selectedElement.shadow || "none"}
+                onChange={(e) => onUpdateElement({ ...selectedElement, shadow: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+              >
+                <option value="none">None</option>
+                <option value="sm">Small</option>
+                <option value="md">Medium</option>
+                <option value="lg">Large</option>
+                <option value="xl">Extra Large</option>
+              </select>
+            </div>
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-600 mb-2">Opacity (%)</label>
+              <input
+                type="range"
+                min="10"
+                max="100"
+                value={(selectedElement.opacity || 1) * 100}
+                onChange={(e) => onUpdateElement({
+                  ...selectedElement,
+                  opacity: parseInt(e.target.value) / 100
+                })}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>10%</span>
+                <span>{((selectedElement.opacity || 1) * 100).toFixed(0)}%</span>
+                <span>100%</span>
+              </div>
+            </div>
+          </>
+        );
+
 
       case "header":
       case "text":

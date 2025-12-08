@@ -1,4 +1,4 @@
-import { Type, Table, Image as ImageIcon, Minus, Link, } from "lucide-react";
+import { Type, Table, Image as ImageIcon, Minus, Link, Square, } from "lucide-react";
 
 
 
@@ -111,6 +111,29 @@ export const elementTypes = {
       width: 400,
     },
   },
+
+  // NEW: Box/Container element
+  box: {
+    name: "Container",
+    icon: Square,
+    defaultProps: {
+      type: "box",
+      width: 500,
+      height: 400,
+      backgroundColor: "#ffffff",
+      borderWidth: 1,
+      borderColor: "#d1d5db",
+      borderStyle: "solid",
+      borderRadius: 8,
+      padding: 20,
+      shadow: "none", // none, sm, md, lg, xl
+      opacity: 1,
+      // Container can have children elements
+      children: [], // Array of element IDs or element objects
+      x: 50,
+      y: 50,
+    },
+  }
 
 };
 
