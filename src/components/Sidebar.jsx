@@ -137,21 +137,6 @@ export function Sidebar({
                 </div>
               </div>
 
-              {/* {selectedElement && (
-                <div className="border-t border-gray-200 pt-4">
-                  <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider px-1 mb-3 flex items-center gap-2">
-                    <div className="w-0.5 h-3 bg-gradient-to-b from-purple-500 to-indigo-600 rounded-full shadow-sm"></div>
-                    Element Properties
-                  </h3>
-                  <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-lg p-3 border border-indigo-100 shadow-lg">
-                    <ElementProperties
-                      fileInputRef={fileInputRef}
-                      selectedElement={selectedElement}
-                      onUpdateElement={onUpdateElement}
-                    />
-                  </div>
-                </div>
-              )} */}
 
                {/* ✅ UPDATED: Cell properties ya element properties dikhao */}
               {(selectedElement || selectedCellInfo) && (
