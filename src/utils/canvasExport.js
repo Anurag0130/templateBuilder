@@ -51,16 +51,17 @@ export const exportCanvasToHTML = (elements, page, pageSize = null) => {
             font-weight: ${element.fontWeight || "normal"};
             font-family: ${element.fontFamily || "Arial"};
             color: ${element.color || "#000000"};
-            background-color: ${element.backgroundColor || "transparent"};
-            text-align: ${element.textAlign || "left"};
-            ${element.width ? `width: ${element.width}px;` : ""}
-            padding: 4px 8px;
-            ${element.type === "header" && element.underline ? "text-decoration: underline;" : ""}
-            
-          ">
-            ${element.value || element.field}
-          </div>
-        `;
+             background-color: ${element.backgroundColor || "transparent"};
+              text-align: ${element.textAlign || "left"}; 
+              ${element.width ? `width: ${element.width}px;` : ""}
+               padding: 4px 8px;
+                white-space: pre-wrap;
+                 word-break: break-word;
+                  line-height: 1.5;
+                   ${element.type === "header" && element.underline ? "text-decoration: underline;" : ""}
+                   ">${element.value || element.field}
+                  </div>
+                   `;
 
       case "image":
         return `

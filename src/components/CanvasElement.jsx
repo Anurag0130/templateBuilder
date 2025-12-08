@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Trash2 } from "lucide-react";
 
 export function CanvasElement({
@@ -15,6 +15,20 @@ export function CanvasElement({
     const [editingCell, setEditingCell] = useState(null);
     const [selectedCells, setSelectedCells] = useState([]); // array of {row, col}
     const [editValue, setEditValue] = useState(element?.value || "");
+
+    // ✅ NEW: Ref for textarea auto-resize
+    const textareaRef = useRef(null);
+
+    // ✅ NEW: Auto-resize textarea when content changes
+    useEffect(() => {
+        if (isEditing && textareaRef.current) {
+            const textarea = textareaRef.current;
+            // Reset height to auto to get the correct scrollHeight
+            textarea.style.height = 'auto';
+            // Set height to scrollHeight to fit content
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        }
+    }, [editValue, isEditing]);
 
     const handleClick = (e) => {
         e.stopPropagation();
@@ -36,10 +50,44 @@ export function CanvasElement({
         }
     };
 
+    // const handleKeyDown = (e) => {
+    //     if (e.key === "Enter" && !e.shiftKey) {
+    //         handleBlur();
+    //     } else if (e.key === "Escape") {
+    //         setIsEditing(false);
+    //         setEditValue(element.value || "");
+    //     }
+    // };
+    // const handleKeyDown = (e) => {
+    //     // NEW: allow multiline
+    //     if (e.key === "Enter" && e.shiftKey) {
+    //         e.preventDefault();
+    //         setEditValue(prev => prev + "\n");
+    //         return;
+    //     }
+
+    //     // Enter without shift → finish editing
+    //     if (e.key === "Enter") {
+    //         e.preventDefault();
+    //         handleBlur();
+    //         return;
+    //     }
+
+    //     if (e.key === "Escape") {
+    //         setIsEditing(false);
+    //         setEditValue(element.value || "");
+    //     }
+    // };
     const handleKeyDown = (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            handleBlur();
-        } else if (e.key === "Escape") {
+        // ENTER always inserts newline
+        if (e.key === "Enter") {
+            e.preventDefault();
+            setEditValue(prev => prev + "\n");
+            return;
+        }
+
+        // ESCAPE cancels editing
+        if (e.key === "Escape") {
             setIsEditing(false);
             setEditValue(element.value || "");
         }
@@ -618,8 +666,8 @@ export function CanvasElement({
             default:
                 if (isEditing) {
                     return (
-                        <input
-                            type="text"
+                        <textarea
+                            ref={textareaRef}  // ✅ NEW: Added ref for auto-resize
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
                             onBlur={handleBlur}
@@ -629,16 +677,22 @@ export function CanvasElement({
                                 ...baseStyle,
                                 fontSize: `${element.fontSize || 12}px`,
                                 fontWeight: element.fontWeight || "normal",
-                                fontFamily: element.fontFamily || "Arial",
+                                fontFsamily: element.fontFamily || "Arial",
                                 color: element.color || "#000000",
                                 backgroundColor: element.backgroundColor || "transparent",
-                                textAlign: (element.textAlign || "left"),
+                                textAlign: element.textAlign || "left",
                                 width: element.width ? `${element.width}px` : "auto",
                                 border: "2px solid #3B82F6",
                                 outline: "none",
                                 padding: "4px 8px",
-                                borderRadius: "4px"
+                                borderRadius: "4px",
+                                // resize: "none",  // ✅ NEW: Disable manual resize
+                                overflow: "hidden",  // ✅ NEW: Hide scrollbar
+                                minHeight: "30px",  // ✅ NEW: Minimum height
+                                lineHeight: "1.5"  // ✅ NEW: Consistent line spacing
+
                             }}
+                            // rows={element.rows || 4} // height control  // ✅ Kept but textarea will auto-resize
                             className="absolute"
                         />
                     );
@@ -652,13 +706,15 @@ export function CanvasElement({
                             fontSize: `${element.fontSize || 12}px`,
                             fontWeight: element.fontWeight || "normal",
                             fontFamily: element.fontFamily || "Arial",
-                            textAlign: (element.textAlign || "left"),
+                            textAlign: element.textAlign || "left",
                             width: element.width ? `${element.width}px` : "auto",
                             backgroundColor: element.backgroundColor || "transparent",
                             textDecoration: element.type === "header" && element.underline ? "underline" : "none",
+                            whiteSpace: "pre-wrap",     // << preserve newline
+                            wordBreak: "break-word",    // << wrap long words
                         }}
-                        className={`absolute cursor-move rounded transition-all whitespace-nowrap 
-                            ${isSelected ?
+                        className={`absolute cursor-move rounded transition-all 
+      ${isSelected ?
                                 "border-blue-500 bg-blue-50 shadow-lg" :
                                 "border-transparent hover:border-blue-300 hover:bg-blue-50"} ${selectedClass}`}
                         title={element.field}

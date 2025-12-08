@@ -11,7 +11,6 @@ export function ElementProperties({
   if (selectedCellInfo) {
     const isMultiSelect = selectedCellInfo.isMultiSelect || false;
     const cellCount = selectedCellInfo.selectedCells?.length || 1;
-    
     return (
       <div className="p-4">
         <h3 className="text-sm font-semibold text-gray-800 mb-4">Cell Properties</h3>
@@ -24,7 +23,7 @@ export function ElementProperties({
                 Editing <strong>{cellCount} cells</strong>
               </div>
               <div className="text-xs text-blue-700 mt-1">
-               Styling will apply to all {cellCount} selected cells
+                Styling will apply to all {cellCount} selected cells
               </div>
             </>
           ) : (
@@ -38,7 +37,6 @@ export function ElementProperties({
             </>
           )}
         </div>
-        
         {/* ✅ Cell Content - only show for single cell */}
         {!isMultiSelect && (
           <div className="mb-4">
@@ -62,17 +60,48 @@ export function ElementProperties({
         )}
 
         {/* Font Size */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="block text-xs font-medium text-gray-600 mb-2">Font Size (px)</label>
           <input
             type="number"
             value={selectedCellInfo.styles.fontSize || 12}
-            onChange={(e) => onUpdateCellStyle({ fontSize: Number(e.target.value) })}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+
+              // prevent negative or less than 8
+              if (value < 0) return;
+
+              onUpdateElement({
+                ...selectedElement,
+                fontSize: value,
+              });
+            }}
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-            min="8"
+            min="0"
+            max="72"
+          />
+        </div> */}
+
+        {/* Font Size */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">
+            Font Size (px)
+          </label>
+          <input
+            type="number"
+            value={selectedCellInfo.styles.fontSize || 12}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+              if (value < 0) return;
+              if (value > 72) return;
+              onUpdateCellStyle({ fontSize: value });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="0"
             max="72"
           />
         </div>
+
 
         {/* Font Weight */}
         <div className="mb-4">
@@ -201,7 +230,7 @@ export function ElementProperties({
               // ✅ FIXED: Reset ALL selected cells
               const element = selectedCellInfo.element;
               const newCellStyles = { ...(element.cellStyles || {}) };
-              
+
               if (isMultiSelect && selectedCellInfo.selectedCells) {
                 // Delete styles for all selected cells
                 selectedCellInfo.selectedCells.forEach(({ row, col }) => {
@@ -212,7 +241,7 @@ export function ElementProperties({
                 // Delete single cell style
                 delete newCellStyles[selectedCellInfo.cellKey];
               }
-              
+
               onUpdateElement({ ...element, cellStyles: newCellStyles });
               onClearCellSelection();
             }}
@@ -248,23 +277,45 @@ export function ElementProperties({
           <input
             type="number"
             value={selectedElement.x || 0}
-            onChange={(e) => onUpdateElement({ ...selectedElement, x: parseInt(e.target.value) })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-            min="0"
-            max="750"
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+
+              if (value < 1) return;
+
+              onUpdateElement({
+                ...selectedElement,
+                x: value,
+              });
+            }} className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="1"
+            max="1000"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-xs font-medium text-gray-600 mb-2">Position Y (px)</label>
+          <label className="block text-xs font-medium text-gray-600 mb-2">
+            Position Y (px)
+          </label>
+
           <input
             type="number"
             value={selectedElement.y || 0}
-            onChange={(e) => onUpdateElement({ ...selectedElement, y: parseInt(e.target.value) })}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+
+              // prevent negative or less than 1
+              if (value < 1) return;
+
+              onUpdateElement({
+                ...selectedElement,
+                y: value,
+              });
+            }}
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-            min="0"
+            min="1"
             max="1123"
           />
         </div>
+
       </>
     );
 
@@ -300,9 +351,19 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.fontSize || 14}
-                onChange={(e) => onUpdateElement({ ...selectedElement, fontSize: parseInt(e.target.value) })}
+                // onChange={(e) => onUpdateElement({ ...selectedElement, fontSize: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  if (value < 0) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    fontSize: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="8"
+                min="0"
                 max="72"
               />
             </div>
@@ -356,10 +417,20 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.width || 400}
-                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  // prevent negative or less than 8
+                  if (value < 10) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    width: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="100"
-                max="750"
+                min="10"
+                max="100"
               />
             </div>
           </>
@@ -452,9 +523,18 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.fontSize || 14}
-                onChange={(e) => onUpdateElement({ ...selectedElement, fontSize: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  if (value < 0) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    fontSize: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="8"
+                min="0"
                 max="72"
               />
             </div>
@@ -507,10 +587,20 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.width || 400}
-                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  // prevent negative or less than 8
+                  if (value < 10) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    width: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
-                max="750"
+                min="10"
+                max="1000"
               />
             </div>
           </>
@@ -545,9 +635,18 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.fontSize || 14}
-                onChange={(e) => onUpdateElement({ ...selectedElement, fontSize: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  if (value < 0) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    fontSize: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="8"
+                min="0"
                 max="72"
               />
             </div>
@@ -565,10 +664,19 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.width || 400}
-                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  if (value < 10) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    fontSize: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="200"
-                max="750"
+                min="10"
+                max="1000"
               />
             </div>
             <div className="mb-4">
@@ -617,10 +725,19 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.width || 400}
-                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  if (value < 50) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    width: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="100"
-                max="750"
+                min="50"
+                max="1000"
               />
             </div>
 
@@ -629,7 +746,16 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.height || 200}
-                onChange={(e) => onUpdateElement({ ...selectedElement, height: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  if (value < 100) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    height: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
                 min="50"
                 max="1000"
@@ -762,10 +888,20 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.width || 200}
-                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  // prevent negative or less than 8
+                  if (value < 10) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    width: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
-                max="600"
+                min="10"
+                max="1000"
               />
             </div>
             <div className="mb-4">
@@ -773,9 +909,19 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.height || 150}
-                onChange={(e) => onUpdateElement({ ...selectedElement, height: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  // prevent negative or less than 8
+                  if (value < 10) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    height: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
+                min="10"
                 max="600"
               />
             </div>
@@ -799,10 +945,19 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.width || 200}
-                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  if (value < 10) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    width: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
-                max="600"
+                min="10"
+                max="1000"
               />
             </div>
             <div className="mb-4">
@@ -810,10 +965,19 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.height || 100}
-                onChange={(e) => onUpdateElement({ ...selectedElement, height: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  if (value < 10) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    height: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
-                max="600"
+                min="10"
+                max="1000"
               />
             </div>
             <div className="mb-4">
@@ -928,9 +1092,19 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.fontSize || 12}
-                onChange={(e) => onUpdateElement({ ...selectedElement, fontSize: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+
+                  if (value < 0) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    fontSize: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="8"
+                min="0"
                 max="72"
               />
             </div>
@@ -1003,10 +1177,19 @@ export function ElementProperties({
               <input
                 type="number"
                 value={selectedElement.width || 100}
-                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+
+                  if (value < 10) return;
+
+                  onUpdateElement({
+                    ...selectedElement,
+                    width: value,
+                  });
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
-                max="750"
+                min="10"
+                max="1000"
               />
             </div>
           </>
