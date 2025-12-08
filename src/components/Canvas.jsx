@@ -1,17 +1,17 @@
+import { Rnd } from "react-rnd";
 import React, { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { CanvasElement } from "./CanvasElement.jsx";
 import { PageThumbnails } from "./PageThumbnails.jsx";
 import PageSizeSelector from "./PageSizeSelector.jsx";
 import { getButtonClass } from "../utils/styleHelpers.js";
-import DummyJsonDataPanel from "./BackendJsonDataPanel.jsx";
 import { MultiPageToolbar } from "./MultiPageToolbar.jsx";
 import { SaveTemplateModal } from "./SaveTemplateModal.jsx";
 import { Save, FileDown, Undo, Redo, Sparkles } from "lucide-react";
 import { downloadAllPagesHTML, saveMultiPageTemplate } from "../utils/canvasExport.js";
 import BackendJsonDataPanel from "./BackendJsonDataPanel.jsx";
 
-const DRAG_OFFSET_X = 40;
-const DRAG_OFFSET_Y = 10;
+// const DRAG_OFFSET_X = 40;
+// const DRAG_OFFSET_Y = 10;
 
 export function Canvas({
     elements = [],
@@ -34,7 +34,7 @@ export function Canvas({
     onAddPage,
     onDeletePage,
     onDuplicatePage,
-    // ✅ NEW PROP for cell selection
+
     onCellSelect,
     savedPaPerSize = null
 }) {
@@ -100,18 +100,15 @@ export function Canvas({
         });
     }, [onDropToPage]);
 
-    const handleElementDragEnd = useCallback((e, index) => {
-        if (!pageRef.current || !onElementMove) return;
+    // const handleElementDragEnd = useCallback((e, index) => {
+    //     if (!pageRef.current || !onElementMove) return;
 
-        const rect = pageRef.current.getBoundingClientRect();
-        onElementMove(index, {
-            x: Math.round(e.clientX - rect.left - DRAG_OFFSET_X),
-            y: Math.round(e.clientY - rect.top - DRAG_OFFSET_Y)
-        });
-    }, [onElementMove]);
-
-
-
+    //     const rect = pageRef.current.getBoundingClientRect();
+    //     onElementMove(index, {
+    //         x: Math.round(e.clientX - rect.left - DRAG_OFFSET_X),
+    //         y: Math.round(e.clientY - rect.top - DRAG_OFFSET_Y)
+    //     });
+    // }, [onElementMove]);
 
     const handleSaveTemplate = useCallback((templateName) => {
         setModalVisible(false);
@@ -230,7 +227,7 @@ export function Canvas({
                                 </div>
                             )}
 
-                            {elementsList?.map((element, index) => (
+                            {/* {elementsList?.map((element, index) => (
                                 <CanvasElement
                                     key={element.id}
                                     element={element}
@@ -240,9 +237,79 @@ export function Canvas({
                                     onDragEnd={handleElementDragEnd}
                                     onDelete={onDeleteElement}
                                     onUpdateElement={onUpdateElement}
-                                    // ✅ NEW PROP for cell selection
+
                                     onCellSelect={onCellSelect}
                                 />
+                            ))} */}
+
+                            {elementsList?.map((element, index) => (
+                                <Rnd
+                                    key={element.id}
+                                    position={{
+                                        x: Number(element.x) || 0,
+                                        y: Number(element.y) || 0
+                                    }}
+                                    size={{
+                                        width: element.width || "auto",
+                                        height: element.height || "auto"
+                                    }}
+                                    onDragStop={(e, d) => {
+                                        const updatedElement = {
+                                            ...element,
+                                            x: d.x,
+                                            y: d.y
+                                        };
+                                        onUpdateElement?.(updatedElement, index);
+                                    }}
+                                    onResizeStop={(e, direction, ref, delta, position) => {
+                                        const updatedElement = {
+                                            ...element,
+                                            width: ref.style.width,
+                                            height: ref.style.height,
+                                            x: position.x,
+                                            y: position.y
+                                        };
+                                        onUpdateElement?.(updatedElement, index);
+                                    }}
+                                    bounds="parent"
+                                    enableResizing={{
+                                        top: true,
+                                        right: true,
+                                        bottom: true,
+                                        left: true,
+                                        topRight: true,
+                                        bottomRight: true,
+                                        bottomLeft: true,
+                                        topLeft: true
+                                    }}
+                                    className={`${selectedElement?.id === element.id
+                                        ? "ring-2 ring-indigo-500 ring-offset-2"
+                                        : ""
+                                        }`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onSelectElement?.(element, index);
+                                    }}
+                                    style={{
+                                        zIndex: selectedElement?.id === element.id ? 1000 : 10 + index
+                                    }}
+                                    minWidth={20}
+                                    minHeight={20}
+                                    dragGrid={[1, 1]}
+                                    resizeGrid={[1, 1]}
+                                >
+                                    <div className="w-full h-full">
+                                        <CanvasElement
+                                            element={element}
+                                            index={index}
+                                            isSelected={selectedElement?.id === element.id}
+                                            onSelect={onSelectElement}
+                                            onDelete={onDeleteElement}
+                                            onUpdateElement={onUpdateElement}
+                                            onCellSelect={onCellSelect}
+                                        />
+                                    </div>  
+                                </Rnd>
                             ))}
                         </div>
                     </div>

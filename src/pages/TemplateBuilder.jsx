@@ -41,8 +41,6 @@ export default function TemplateBuilder() {
     const clearSelection = () => {
         setSelectedElement(null);
         setSelectedIndex(null);
-        // ✅ NEW: Clear cell selection bhi
-        // ✅ NEW: Clear cell selection bhi
         setSelectedCellInfo(null);
     };
 

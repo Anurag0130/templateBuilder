@@ -11,7 +11,7 @@ export function Sidebar({
   onAddElement,
   fileInputRef,
   onLoadTemplate,
-   // ✅ NEW PROPS for cell editing
+
   selectedCellInfo,
   onUpdateCellStyle,
   onClearCellSelection
@@ -136,24 +136,6 @@ export function Sidebar({
                   ))}
                 </div>
               </div>
-
-              {/* {selectedElement && (
-                <div className="border-t border-gray-200 pt-4">
-                  <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider px-1 mb-3 flex items-center gap-2">
-                    <div className="w-0.5 h-3 bg-gradient-to-b from-purple-500 to-indigo-600 rounded-full shadow-sm"></div>
-                    Element Properties
-                  </h3>
-                  <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-lg p-3 border border-indigo-100 shadow-lg">
-                    <ElementProperties
-                      fileInputRef={fileInputRef}
-                      selectedElement={selectedElement}
-                      onUpdateElement={onUpdateElement}
-                    />
-                  </div>
-                </div>
-              )} */}
-
-               {/* ✅ UPDATED: Cell properties ya element properties dikhao */}
               {(selectedElement || selectedCellInfo) && (
                 <div className="border-t border-gray-200 pt-4">
                   <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider px-1 mb-3 flex items-center gap-2">
@@ -175,23 +157,7 @@ export function Sidebar({
               )}
             </div>
 
-            {/* {!selectedElement && (
-              <div className="border-t border-gray-200 bg-gradient-to-b from-white to-gray-50 p-6">
-                <div className="text-center">
-                  <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center shadow-lg">
-                    <Sparkles className="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <p className="text-xs text-gray-800 font-semibold mb-1">
-                    No element selected
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Click an element to customize it
-                  </p>
-                </div>
-              </div>
-            )} */}
 
-             {/* ✅ UPDATED: Show message only when nothing is selected */}
             {!selectedElement && !selectedCellInfo && (
               <div className="border-t border-gray-200 bg-gradient-to-b from-white to-gray-50 p-6">
                 <div className="text-center">
