@@ -72,7 +72,7 @@ export function BoxElement({
               fontStyle: 'italic'
             }}
           >
-            Drag elements here
+            {/* Drag elements here */}
           </div>
         )}
       </div>
