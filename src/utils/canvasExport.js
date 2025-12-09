@@ -148,9 +148,9 @@ export const exportCanvasToHTML = (elements, page, pageSize = null) => {
               box-sizing: border-box;
             ">
               <!-- Box content area -->
-              ${element.children && element.children.length > 0 ? 
+              ${element?.children && element?.children.length > 0 ? 
                 '<!-- Nested elements would go here -->' : 
-                '<div style="color: #9ca3af; font-size: 14px; font-style: italic; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">Container</div>'
+                '<div style="color: #9ca3af; font-size: 14px; font-style: italic; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></div>'
               }
             </div>
           </div>
