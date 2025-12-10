@@ -1,3 +1,5 @@
+import { ColorPalette } from './ColorPalette';
+
 export function ElementProperties({
   selectedElement,
   onUpdateElement,
@@ -181,27 +183,22 @@ export function ElementProperties({
           </select>
         </div>
 
-        {/* Text Color */}
-        <div className="mb-4">
-          <label className="block text-xs font-medium text-gray-600 mb-2">Text Color</label>
-          <input
-            type="color"
-            value={selectedCellInfo.styles.color || "#000000"}
-            onChange={(e) => onUpdateCellStyle({ color: e.target.value })}
-            className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-          />
-        </div>
+        {/* Text Color - REPLACED WITH COLOR PALETTE */}
+        <ColorPalette
+          label="Text Color"
+          value={selectedCellInfo.styles.color || "#000000"}
+          onChange={(color) => onUpdateCellStyle({ color })}
+          defaultColor="#000000"
+        />
 
-        {/* Background Color */}
-        <div className="mb-4">
-          <label className="block text-xs font-medium text-gray-600 mb-2">Background Color</label>
-          <input
-            type="color"
-            value={selectedCellInfo.styles.backgroundColor || "#ffffff"}
-            onChange={(e) => onUpdateCellStyle({ backgroundColor: e.target.value })}
-            className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-          />
-        </div>
+        {/* Background Color - REPLACED WITH COLOR PALETTE */}
+        <ColorPalette
+          label="Background Color"
+          value={selectedCellInfo.styles.backgroundColor || "#ffffff"}
+          onChange={(color) => onUpdateCellStyle({ backgroundColor: color })}
+          showTransparent={true}
+          defaultColor="#ffffff"
+        />
 
         {/* Text Align */}
         <div className="mb-4">
@@ -380,15 +377,15 @@ export function ElementProperties({
                 <option value="bold">Bold</option>
               </select>
             </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Text Color</label>
-              <input
-                type="color"
-                value={selectedElement.color || "#000000"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-              />
-            </div>
+            
+            {/* Text Color - REPLACED WITH COLOR PALETTE */}
+            <ColorPalette
+              label="Text Color"
+              value={selectedElement.color || "#000000"}
+              onChange={(color) => onUpdateElement({ ...selectedElement, color })}
+              defaultColor="#000000"
+            />
+
             <div className="mb-4">
               <label className="block text-xs font-medium text-gray-600 mb-2">Line Height</label>
               <input
@@ -436,6 +433,7 @@ export function ElementProperties({
           </>
         );
 
+      case "barcode":
         return (
           <>
             {commonControls}
@@ -551,15 +549,15 @@ export function ElementProperties({
                 <option value="bold">Bold</option>
               </select>
             </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Link Color</label>
-              <input
-                type="color"
-                value={selectedElement.color || "#2563eb"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-              />
-            </div>
+            
+            {/* Link Color - REPLACED WITH COLOR PALETTE */}
+            <ColorPalette
+              label="Link Color"
+              value={selectedElement.color || "#2563eb"}
+              onChange={(color) => onUpdateElement({ ...selectedElement, color })}
+              defaultColor="#2563eb"
+            />
+
             <div className="mb-4">
               <label className="flex items-center">
                 <input
@@ -606,7 +604,7 @@ export function ElementProperties({
           </>
         );
 
-
+      case "textarea":
         return (
           <>
             {commonControls}
@@ -650,15 +648,15 @@ export function ElementProperties({
                 max="72"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Text Color</label>
-              <input
-                type="color"
-                value={selectedElement.color || "#000000"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-              />
-            </div>
+            
+            {/* Text Color - REPLACED WITH COLOR PALETTE */}
+            <ColorPalette
+              label="Text Color"
+              value={selectedElement.color || "#000000"}
+              onChange={(color) => onUpdateElement({ ...selectedElement, color })}
+              defaultColor="#000000"
+            />
+
             <div className="mb-4">
               <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
               <input
@@ -693,7 +691,7 @@ export function ElementProperties({
           </>
         );
 
-      case "table":
+     case "table":
       case "formTable":
         return (
           <>
@@ -870,501 +868,484 @@ export function ElementProperties({
         );
 
       case "image":
-        return (
+       return (
+         <>
+        {commonControls}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Image Preview</label>
+          <div className="border border-gray-300 rounded-md p-2 bg-gray-50 flex justify-center">
+            <img
+              src={selectedElement.src}
+              alt={selectedElement.alt || "Image"}
+              className="max-h-32 max-w-full object-contain"
+            />
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
+          <input
+            type="number"
+            value={selectedElement.width || 200}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+
+              // prevent negative or less than 8
+              if (value < 10) return;
+
+              onUpdateElement({
+                ...selectedElement,
+                width: value,
+              });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="10"
+            max="1000"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Height (px)</label>
+          <input
+            type="number"
+            value={selectedElement.height || 150}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+
+              // prevent negative or less than 8
+              if (value < 10) return;
+
+              onUpdateElement({
+                ...selectedElement,
+                height: value,
+              });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="10"
+            max="600"
+          />
+        </div>
+        <div className="mb-4">
+          <button
+            onClick={handleImageChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 hover:border-blue-500 transition-colors text-sm font-medium text-gray-700"
+          >
+            Change Image
+          </button>
+        </div>
+      </>
+    );
+
+  case "rectangle":
+    return (
+      <>
+        {commonControls}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
+          <input
+            type="number"
+            value={selectedElement.width || 200}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+
+              if (value < 10) return;
+
+              onUpdateElement({
+                ...selectedElement,
+                width: value,
+              });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="10"
+            max="1000"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Height (px)</label>
+          <input
+            type="number"
+            value={selectedElement.height || 100}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+
+              if (value < 10) return;
+
+              onUpdateElement({
+                ...selectedElement,
+                height: value,
+              });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="10"
+            max="1000"
+          />
+        </div>
+        
+        {/* Background Color - REPLACED WITH COLOR PALETTE */}
+        <ColorPalette
+          label="Background Color"
+          value={selectedElement.backgroundColor || "#ffffff"}
+          onChange={(color) => onUpdateElement({ ...selectedElement, backgroundColor: color })}
+          showTransparent={true}
+          defaultColor="#ffffff"
+        />
+
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Border Width (px)</label>
+          <input
+            type="number"
+            value={selectedElement.borderWidth || 1}
+            onChange={(e) => onUpdateElement({ ...selectedElement, borderWidth: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="0"
+            max="5"
+          />
+        </div>
+        
+        {/* Border Color - REPLACED WITH COLOR PALETTE */}
+        <ColorPalette
+          label="Border Color"
+          value={selectedElement.borderColor || "#d1d5db"}
+          onChange={(color) => onUpdateElement({ ...selectedElement, borderColor: color })}
+          defaultColor="#d1d5db"
+        />
+      </>
+    );
+
+  case "line":
+    return (
+      <>
+        {commonControls}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Length (px)</label>
+          <input
+            type="number"
+            value={selectedElement.width || 200}
+            onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="50"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Line Width (px)</label>
+          <input
+            type="number"
+            value={selectedElement.lineWidth || 1}
+            onChange={(e) => onUpdateElement({ ...selectedElement, lineWidth: parseInt(e.target.value) })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="1"
+            max="1000"
+          />
+        </div>
+        
+        {/* Line Color - REPLACED WITH COLOR PALETTE */}
+        <ColorPalette
+          label="Line Color"
+          value={selectedElement.color || "#000000"}
+          onChange={(color) => onUpdateElement({ ...selectedElement, color })}
+          defaultColor="#000000"
+        />
+      </>
+    );
+  // Add this case after your other element cases in the switch statement
+  case "box":
+    return (
+      <>
+        {commonControls}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
+          <input
+            type="number"
+            value={selectedElement.width || 500}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+              if (value < 50) return;
+              onUpdateElement({
+                ...selectedElement,
+                width: value,
+              });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="50"
+            max="2000"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Height (px)</label>
+          <input
+            type="number"
+            value={selectedElement.height || 400}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+              if (value < 50) return;
+              onUpdateElement({
+                ...selectedElement,
+                height: value,
+              });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="50"
+            max="2000"
+          />
+        </div>
+        
+        {/* Background Color - REPLACED WITH COLOR PALETTE */}
+        <ColorPalette
+          label="Background Color"
+          value={selectedElement.backgroundColor || "#ffffff"}
+          onChange={(color) => onUpdateElement({ ...selectedElement, backgroundColor: color })}
+          showTransparent={true}
+          defaultColor="#ffffff"
+        />
+
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Border Style</label>
+          <select
+            value={selectedElement.borderStyle || "solid"}
+            onChange={(e) => onUpdateElement({ ...selectedElement, borderStyle: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="none">None</option>
+            <option value="solid">Solid</option>
+            <option value="dashed">Dashed</option>
+            <option value="dotted">Dotted</option>
+            <option value="double">Double</option>
+          </select>
+        </div>
+        {selectedElement.borderStyle !== "none" && (
           <>
-            {commonControls}
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Image Preview</label>
-              <div className="border border-gray-300 rounded-md p-2 bg-gray-50 flex justify-center">
-                <img
-                  src={selectedElement.src}
-                  alt={selectedElement.alt || "Image"}
-                  className="max-h-32 max-w-full object-contain"
-                />
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
-              <input
-                type="number"
-                value={selectedElement.width || 200}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-
-                  // prevent negative or less than 8
-                  if (value < 10) return;
-
-                  onUpdateElement({
-                    ...selectedElement,
-                    width: value,
-                  });
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="10"
-                max="1000"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Height (px)</label>
-              <input
-                type="number"
-                value={selectedElement.height || 150}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-
-                  // prevent negative or less than 8
-                  if (value < 10) return;
-
-                  onUpdateElement({
-                    ...selectedElement,
-                    height: value,
-                  });
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="10"
-                max="600"
-              />
-            </div>
-            <div className="mb-4">
-              <button
-                onClick={handleImageChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 hover:border-blue-500 transition-colors text-sm font-medium text-gray-700"
-              >
-                Change Image
-              </button>
-            </div>
-          </>
-        );
-
-      case "rectangle":
-        return (
-          <>
-            {commonControls}
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
-              <input
-                type="number"
-                value={selectedElement.width || 200}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-
-                  if (value < 10) return;
-
-                  onUpdateElement({
-                    ...selectedElement,
-                    width: value,
-                  });
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="10"
-                max="1000"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Height (px)</label>
-              <input
-                type="number"
-                value={selectedElement.height || 100}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-
-                  if (value < 10) return;
-
-                  onUpdateElement({
-                    ...selectedElement,
-                    height: value,
-                  });
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="10"
-                max="1000"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Background Color</label>
-              <input
-                type="color"
-                value={selectedElement.backgroundColor || "#ffffff"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, backgroundColor: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-              />
-            </div>
             <div className="mb-4">
               <label className="block text-xs font-medium text-gray-600 mb-2">Border Width (px)</label>
               <input
-                type="number"
+                type="range"
+                min="1"
+                max="10"
                 value={selectedElement.borderWidth || 1}
                 onChange={(e) => onUpdateElement({ ...selectedElement, borderWidth: parseInt(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="0"
-                max="5"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Border Color</label>
-              <input
-                type="color"
-                value={selectedElement.borderColor || "#d1d5db"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, borderColor: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-              />
-            </div>
-          </>
-        );
-
-      case "line":
-        return (
-          <>
-            {commonControls}
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Length (px)</label>
-              <input
-                type="number"
-                value={selectedElement.width || 200}
-                onChange={(e) => onUpdateElement({ ...selectedElement, width: parseInt(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Line Width (px)</label>
-              <input
-                type="number"
-                value={selectedElement.lineWidth || 1}
-                onChange={(e) => onUpdateElement({ ...selectedElement, lineWidth: parseInt(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="1"
-                max="1000"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Line Color</label>
-              <input
-                type="color"
-                value={selectedElement.color || "#000000"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-              />
-            </div>
-          </>
-        );
-      // Add this case after your other element cases in the switch statement
-      case "box":
-        return (
-          <>
-            {commonControls}
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
-              <input
-                type="number"
-                value={selectedElement.width || 500}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  if (value < 50) return;
-                  onUpdateElement({
-                    ...selectedElement,
-                    width: value,
-                  });
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
-                max="2000"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Height (px)</label>
-              <input
-                type="number"
-                value={selectedElement.height || 400}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  if (value < 50) return;
-                  onUpdateElement({
-                    ...selectedElement,
-                    height: value,
-                  });
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
-                max="2000"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Background Color</label>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="color"
-                  value={selectedElement.backgroundColor || "#ffffff"}
-                  onChange={(e) => onUpdateElement({ ...selectedElement, backgroundColor: e.target.value })}
-                  className="flex-1 h-10 border border-gray-300 rounded-md cursor-pointer"
-                />
-                <button
-                  onClick={() => onUpdateElement({ ...selectedElement, backgroundColor: "transparent" })}
-                  className="px-3 py-2 text-xs border border-gray-300 rounded-md hover:bg-gray-50"
-                >
-                  Clear
-                </button>
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Border Style</label>
-              <select
-                value={selectedElement.borderStyle || "solid"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, borderStyle: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-              >
-                <option value="none">None</option>
-                <option value="solid">Solid</option>
-                <option value="dashed">Dashed</option>
-                <option value="dotted">Dotted</option>
-                <option value="double">Double</option>
-              </select>
-            </div>
-            {selectedElement.borderStyle !== "none" && (
-              <>
-                <div className="mb-4">
-                  <label className="block text-xs font-medium text-gray-600 mb-2">Border Width (px)</label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="10"
-                    value={selectedElement.borderWidth || 1}
-                    onChange={(e) => onUpdateElement({ ...selectedElement, borderWidth: parseInt(e.target.value) })}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>1</span>
-                    <span>{selectedElement.borderWidth || 1} px</span>
-                    <span>10</span>
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-xs font-medium text-gray-600 mb-2">Border Color</label>
-                  <input
-                    type="color"
-                    value={selectedElement.borderColor || "#d1d5db"}
-                    onChange={(e) => onUpdateElement({ ...selectedElement, borderColor: e.target.value })}
-                    className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-                  />
-                </div>
-              </>
-            )}
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Border Radius (px)</label>
-              <input
-                type="range"
-                min="0"
-                max="50"
-                value={selectedElement.borderRadius || 0}
-                onChange={(e) => onUpdateElement({ ...selectedElement, borderRadius: parseInt(e.target.value) })}
                 className="w-full"
               />
               <div className="flex justify-between text-xs text-gray-500">
-                <span>0</span>
-                <span>{selectedElement.borderRadius || 0} px</span>
-                <span>50</span>
+                <span>1</span>
+                <span>{selectedElement.borderWidth || 1} px</span>
+                <span>10</span>
               </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Padding (px)</label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={selectedElement.padding || 20}
-                onChange={(e) => onUpdateElement({ ...selectedElement, padding: parseInt(e.target.value) })}
-                className="w-full"
-              />
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>0</span>
-                <span>{selectedElement.padding || 20} px</span>
-                <span>100</span>
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Shadow</label>
-              <select
-                value={selectedElement.shadow || "none"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, shadow: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-              >
-                <option value="none">None</option>
-                <option value="sm">Small</option>
-                <option value="md">Medium</option>
-                <option value="lg">Large</option>
-                <option value="xl">Extra Large</option>
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Opacity (%)</label>
-              <input
-                type="range"
-                min="10"
-                max="100"
-                value={(selectedElement.opacity || 1) * 100}
-                onChange={(e) => onUpdateElement({
-                  ...selectedElement,
-                  opacity: parseInt(e.target.value) / 100
-                })}
-                className="w-full"
-              />
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>10%</span>
-                <span>{((selectedElement.opacity || 1) * 100).toFixed(0)}%</span>
-                <span>100%</span>
-              </div>
-            </div>
+            
+            {/* Border Color - REPLACED WITH COLOR PALETTE */}
+            <ColorPalette
+              label="Border Color"
+              value={selectedElement.borderColor || "#d1d5db"}
+              onChange={(color) => onUpdateElement({ ...selectedElement, borderColor: color })}
+              defaultColor="#d1d5db"
+            />
           </>
-        );
+        )}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Border Radius (px)</label>
+          <input
+            type="range"
+            min="0"
+            max="50"
+            value={selectedElement.borderRadius || 0}
+            onChange={(e) => onUpdateElement({ ...selectedElement, borderRadius: parseInt(e.target.value) })}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-gray-500">
+            <span>0</span>
+            <span>{selectedElement.borderRadius || 0} px</span>
+            <span>50</span>
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Padding (px)</label>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={selectedElement.padding || 20}
+            onChange={(e) => onUpdateElement({ ...selectedElement, padding: parseInt(e.target.value) })}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-gray-500">
+            <span>0</span>
+            <span>{selectedElement.padding || 20} px</span>
+            <span>100</span>
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Shadow</label>
+          <select
+            value={selectedElement.shadow || "none"}
+            onChange={(e) => onUpdateElement({ ...selectedElement, shadow: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="none">None</option>
+            <option value="sm">Small</option>
+            <option value="md">Medium</option>
+            <option value="lg">Large</option>
+            <option value="xl">Extra Large</option>
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Opacity (%)</label>
+          <input
+            type="range"
+            min="10"
+            max="100"
+            value={(selectedElement.opacity || 1) * 100}
+            onChange={(e) => onUpdateElement({
+              ...selectedElement,
+              opacity: parseInt(e.target.value) / 100
+            })}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-gray-500">
+            <span>10%</span>
+            <span>{((selectedElement.opacity || 1) * 100).toFixed(0)}%</span>
+            <span>100%</span>
+          </div>
+        </div>
+      </>
+    );
 
 
-      case "header":
-      case "text":
-      default:
-        return (
-          <>
-            {commonControls}
-            {selectedElement.field && (
-              <div className="mb-4">
-                <label className="block text-xs font-medium text-gray-600 mb-2">Field Name</label>
-                <div className="px-3 py-2 bg-gray-100 rounded-md text-xs text-gray-800 font-mono">
-                  {selectedElement.field}
-                </div>
-              </div>
-            )}
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Text Content</label>
+  case "header":
+  case "text":
+  default:
+    return (
+      <>
+        {commonControls}
+        {selectedElement.field && (
+          <div className="mb-4">
+            <label className="block text-xs font-medium text-gray-600 mb-2">Field Name</label>
+            <div className="px-3 py-2 bg-gray-100 rounded-md text-xs text-gray-800 font-mono">
+              {selectedElement.field}
+            </div>
+          </div>
+        )}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Text Content</label>
+          <input
+            type="text"
+            value={selectedElement.value || ""}
+            onChange={(e) => onUpdateElement({ ...selectedElement, value: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Font Family</label>
+          <select
+            value={selectedElement.fontFamily || "Arial"}
+            onChange={(e) => onUpdateElement({ ...selectedElement, fontFamily: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Comic Sans MS">Comic Sans MS</option>
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Font Size (px)</label>
+          <input
+            type="number"
+            value={selectedElement.fontSize || 12}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+
+
+              if (value < 0) return;
+
+              onUpdateElement({
+                ...selectedElement,
+                fontSize: value,
+              });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="0"
+            max="72"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Font Weight</label>
+          <select
+            value={selectedElement.fontWeight || "normal"}
+            onChange={(e) => onUpdateElement({ ...selectedElement, fontWeight: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="300">Light</option>
+            <option value="normal">Normal</option>
+            <option value="600">Semi-Bold</option>
+            <option value="bold">Bold</option>
+          </select>
+        </div>
+        
+        {/* Text Color - REPLACED WITH COLOR PALETTE */}
+        <ColorPalette
+          label="Text Color"
+          value={selectedElement.color || "#000000"}
+          onChange={(color) => onUpdateElement({ ...selectedElement, color })}
+          defaultColor="#000000"
+        />
+
+        {/* Background Color - REPLACED WITH COLOR PALETTE */}
+        <ColorPalette
+          label="Background Color"
+          value={selectedElement.backgroundColor || "transparent"}
+          onChange={(color) => onUpdateElement({ ...selectedElement, backgroundColor: color })}
+          showTransparent={true}
+          defaultColor="#ffffff"
+        />
+
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Text Alignment</label>
+          <select
+            value={selectedElement.textAlign || "left"}
+            onChange={(e) => onUpdateElement({ ...selectedElement, textAlign: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option value="left">Left</option>
+            <option value="center">Center</option>
+            <option value="right">Right</option>
+          </select>
+        </div>
+        {selectedElement.type === "header" && (
+          <div className="mb-4">
+            <label className="flex items-center">
               <input
-                type="text"
-                value={selectedElement.value || ""}
-                onChange={(e) => onUpdateElement({ ...selectedElement, value: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+                type="checkbox"
+                checked={selectedElement.underline || false}
+                onChange={(e) => onUpdateElement({ ...selectedElement, underline: e.target.checked })}
+                className="mr-2"
               />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Font Family</label>
-              <select
-                value={selectedElement.fontFamily || "Arial"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, fontFamily: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-              >
-                <option value="Arial">Arial</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Verdana">Verdana</option>
-                <option value="Comic Sans MS">Comic Sans MS</option>
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Font Size (px)</label>
-              <input
-                type="number"
-                value={selectedElement.fontSize || 12}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
+              <span className="text-xs font-medium text-gray-600">Underline</span>
+            </label>
+          </div>
+        )}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
+          <input
+            type="number"
+            value={selectedElement.width || 100}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
 
+              if (value < 10) return;
 
-                  if (value < 0) return;
-
-                  onUpdateElement({
-                    ...selectedElement,
-                    fontSize: value,
-                  });
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="0"
-                max="72"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Font Weight</label>
-              <select
-                value={selectedElement.fontWeight || "normal"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, fontWeight: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-              >
-                <option value="300">Light</option>
-                <option value="normal">Normal</option>
-                <option value="600">Semi-Bold</option>
-                <option value="bold">Bold</option>
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Text Color</label>
-              <input
-                type="color"
-                value={selectedElement.color || "#000000"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Background Color</label>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="color"
-                  value={selectedElement.backgroundColor === "transparent" ? "#ffffff" : selectedElement.backgroundColor || "#ffffff"}
-                  onChange={(e) => onUpdateElement({ ...selectedElement, backgroundColor: e.target.value })}
-                  className="flex-1 h-10 border border-gray-300 rounded-md cursor-pointer"
-                />
-                <button
-                  onClick={() => onUpdateElement({ ...selectedElement, backgroundColor: "transparent" })}
-                  className="px-3 py-2 text-xs border border-gray-300 rounded-md hover:bg-gray-50"
-                >
-                  Clear
-                </button>
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Text Alignment</label>
-              <select
-                value={selectedElement.textAlign || "left"}
-                onChange={(e) => onUpdateElement({ ...selectedElement, textAlign: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-              >
-                <option value="left">Left</option>
-                <option value="center">Center</option>
-                <option value="right">Right</option>
-              </select>
-            </div>
-            {selectedElement.type === "header" && (
-              <div className="mb-4">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={selectedElement.underline || false}
-                    onChange={(e) => onUpdateElement({ ...selectedElement, underline: e.target.checked })}
-                    className="mr-2"
-                  />
-                  <span className="text-xs font-medium text-gray-600">Underline</span>
-                </label>
-              </div>
-            )}
-            <div className="mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-2">Width (px)</label>
-              <input
-                type="number"
-                value={selectedElement.width || 100}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-
-                  if (value < 10) return;
-
-                  onUpdateElement({
-                    ...selectedElement,
-                    width: value,
-                  });
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="10"
-                max="1000"
-              />
-            </div>
-          </>
-        );
-    }
-  };
+              onUpdateElement({
+                ...selectedElement,
+                width: value,
+              });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
+            min="10"
+            max="1000"
+          />
+        </div>
+      </>
+    );
+}
+ };
   return (
     <div className="p-4">
       <h3 className="text-sm font-semibold text-gray-800 mb-4">Element Properties</h3>
