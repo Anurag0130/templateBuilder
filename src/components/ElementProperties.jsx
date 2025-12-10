@@ -1034,7 +1034,7 @@ export function ElementProperties({
                 onChange={(e) => onUpdateElement({ ...selectedElement, lineWidth: parseInt(e.target.value) })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
                 min="1"
-                max="10"
+                max="1000"
               />
             </div>
             <div className="mb-4">

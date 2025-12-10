@@ -1,4 +1,3 @@
-// hooks/useElementInteractions.js
 import { useCallback } from "react";
 
 export function useElementInteractions({
@@ -34,13 +33,25 @@ export function useElementInteractions({
   }, [element, index, onUpdateElement]);
 
   const handleResizeStop = useCallback((e, direction, ref, delta, position) => {
-    onUpdateElement({
-      ...element,
-      x: position.x,
-      y: position.y,
-      width: ref.offsetWidth,
-      height: ref.offsetHeight
-    }, index);
+    // ✅ SPECIAL CASE: For line elements, map height to lineWidth
+    if (element.type === 'line') {
+      onUpdateElement({
+        ...element,
+        x: position.x,
+        y: position.y,
+        width: ref.offsetWidth,
+        lineWidth: ref.offsetHeight  // ✅ Map height to lineWidth for lines
+      }, index);
+    } else {
+      // For all other elements, use normal width and height
+      onUpdateElement({
+        ...element,
+        x: position.x,
+        y: position.y,
+        width: ref.offsetWidth,
+        height: ref.offsetHeight
+      }, index);
+    }
   }, [element, index, onUpdateElement]);
 
   return {
