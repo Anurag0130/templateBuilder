@@ -1,6 +1,7 @@
 // TableElement.jsx
 import { useState } from "react";
 import { TableCell } from "./TableCell";
+import { Merge, SplitSquareHorizontal } from "lucide-react";
 
 export function TableElement({ element, isSelected, index, onCellSelect, onUpdateElement }) {
     const [selectedCells, setSelectedCells] = useState([]);
@@ -79,10 +80,64 @@ export function TableElement({ element, isSelected, index, onCellSelect, onUpdat
                 col >= startCol &&
                 col < startCol + merge.colSpan
             ) {
-                return { merged: true, isStart: row === startRow && col === startCol, merge };
+                return { merged: true, isStart: row === startRow && col === startCol, merge, startKey: key };
             }
         }
-        return { merged: false, isStart: false, merge: null };
+        return { merged: false, isStart: false, merge: null, startKey: null };
+    };
+
+    // ✅ NEW: Merge selected cells
+    const handleMergeCells = (e) => {
+        e.stopPropagation();
+        if (selectedCells.length < 2) return;
+
+        // Find the bounding box of selected cells
+        const rows = selectedCells.map(c => c.row);
+        const cols = selectedCells.map(c => c.col);
+        const minRow = Math.min(...rows);
+        const maxRow = Math.max(...rows);
+        const minCol = Math.min(...cols);
+        const maxCol = Math.max(...cols);
+
+        const rowSpan = maxRow - minRow + 1;
+        const colSpan = maxCol - minCol + 1;
+
+        // Check if selection forms a rectangle
+        const expectedCells = rowSpan * colSpan;
+        if (selectedCells.length !== expectedCells) {
+            alert('Please select a rectangular area of cells to merge');
+            return;
+        }
+
+        const mergeKey = `${minRow}-${minCol}`;
+        const newMergedCells = { ...(element.mergedCells || {}) };
+        
+        newMergedCells[mergeKey] = { rowSpan, colSpan };
+
+        onUpdateElement({ ...element, mergedCells: newMergedCells });
+        setSelectedCells([]);
+        if (onCellSelect) onCellSelect(null);
+    };
+
+    // ✅ NEW: Split merged cell
+    const handleSplitCell = (e) => {
+        e.stopPropagation();
+        if (selectedCells.length !== 1) return;
+
+        const { row, col } = selectedCells[0];
+        const cellInfo = isCellMerged(row, col);
+
+        if (!cellInfo.merged || !cellInfo.startKey) {
+            alert('This cell is not merged');
+            return;
+        }
+
+        const newMergedCells = { ...(element.mergedCells || {}) };
+        delete newMergedCells[cellInfo.startKey];
+
+        onUpdateElement({ ...element, mergedCells: newMergedCells });
+        setSelectedCells([]);
+        if (onCellSelect) onCellSelect(null);
     };
 
     const selectedClass = isSelected ? "ring-2 ring-blue-500 z-10" : "";
@@ -131,9 +186,32 @@ export function TableElement({ element, isSelected, index, onCellSelect, onUpdat
                 </tbody>
             </table>
 
-            {selectedCells.length > 0 && selectedCells.length !== 1 && (
-                <div className="mt-2 text-xs text-blue-600">
-                    {selectedCells.length} cell(s) selected.
+            {/* ✅ NEW: Merge/Split Controls */}
+            {selectedCells.length > 0 && (
+                <div className="mt-2 flex gap-2 items-center" onClick={(e) => e.stopPropagation()}>
+                    <div className="text-xs text-blue-600 flex-1">
+                        {selectedCells.length} cell(s) selected
+                    </div>
+                    
+                    {selectedCells.length > 1 && (
+                        <button
+                            onClick={handleMergeCells}
+                            className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center gap-1"
+                        >
+                            <Merge size={12} />
+                            Merge
+                        </button>
+                    )}
+                    
+                    {selectedCells.length === 1 && isCellMerged(selectedCells[0].row, selectedCells[0].col).merged && (
+                        <button
+                            onClick={handleSplitCell}
+                            className="px-3 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors flex items-center gap-1"
+                        >
+                            <SplitSquareHorizontal size={12} />
+                            Split
+                        </button>
+                    )}
                 </div>
             )}
         </div>

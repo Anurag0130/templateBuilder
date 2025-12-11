@@ -1,4 +1,5 @@
 // TableCell.jsx
+import {Split } from 'lucide-react';
 export function TableCell({
   row,
   col,
@@ -22,7 +23,7 @@ export function TableCell({
     width: `${cellWidth}px`,
     height: `${cellHeight}px`,
     border: `${element.borderWidth || 1}px solid ${element.borderColor || "#000000"}`,
-    backgroundColor: cellStyles.backgroundColor,
+    backgroundColor: cellStyles.backgroundColor || (isSelected ? "#dbeafe" : "transparent"),
     fontWeight: cellStyles.fontWeight,
     padding: 0,
     textAlign: cellStyles.textAlign,
@@ -37,7 +38,7 @@ export function TableCell({
 
   return (
     <td
-      className={`cursor-pointer hover:bg-blue-50 transition-colors ${isSelected ? "bg-blue-100" : ""}`}
+      className={`cursor-pointer hover:bg-blue-50 transition-colors ${isSelected ? "ring-blue-400 ring-inset" : ""}`}
       style={computedStyle}
       rowSpan={cellInfo.merge?.rowSpan || 1}
       colSpan={cellInfo.merge?.colSpan || 1}

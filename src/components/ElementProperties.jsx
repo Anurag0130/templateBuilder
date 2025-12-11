@@ -704,7 +704,7 @@ export function ElementProperties({
                 onChange={(e) => onUpdateElement({ ...selectedElement, rows: parseInt(e.target.value) })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
                 min="1"
-                max="20"
+                max="100"
               />
             </div>
             <div className="mb-4">
@@ -715,7 +715,7 @@ export function ElementProperties({
                 onChange={(e) => onUpdateElement({ ...selectedElement, cols: parseInt(e.target.value) })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
                 min="1"
-                max="10"
+                max="100"
               />
             </div>
             <div className="mb-4">
@@ -726,7 +726,7 @@ export function ElementProperties({
                 onChange={(e) => {
                   const value = parseInt(e.target.value);
 
-                  if (value < 50) return;
+                  if (value < 20) return;
 
                   onUpdateElement({
                     ...selectedElement,
@@ -734,7 +734,7 @@ export function ElementProperties({
                   });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
+                min="20"
                 max="1000"
               />
             </div>
@@ -747,7 +747,7 @@ export function ElementProperties({
                 onChange={(e) => {
                   const value = parseInt(e.target.value);
 
-                  if (value < 100) return;
+                  if (value < 20) return;
 
                   onUpdateElement({
                     ...selectedElement,
@@ -755,7 +755,7 @@ export function ElementProperties({
                   });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
-                min="50"
+                min="20"
                 max="1000"
               />
             </div>

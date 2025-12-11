@@ -172,10 +172,71 @@ const renderLink = (element, baseStyle = '', isInsideBox = false) => {
   return `<a href="${url}" style="${buildInlineStyle(linkStyle)}">${text}</a>`;
 };
 
+// const renderTable = (element, baseStyle = '') => {
+//   const width = element.width ?? 400;
+//   const borderColor = element.borderColor ?? '#000000';
+//   const borderWidth = element.borderWidth ?? 1;
+//   const height = element.height ?? 75;
+
+//   let numCols = 2;
+//   let colKeys = null;
+//   if (Array.isArray(element.cols)) {
+//     colKeys = element.cols;
+//     numCols = element.cols.length;
+//   } else if (typeof element.cols === 'number') {
+//     numCols = element.cols;
+//   }
+
+//   const rows = element.rows ?? 2;
+//   const cellWidth = Math.round(width / numCols);
+//    const cellHeight = Math.round(height / rows);
+
+//   let html = `<div style="${buildInlineStyle({ 'margin-top': px(element.marginTop), 'margin-left': px(element.x) })}"><table style="border-collapse: collapse; width: ${px(width)}; border-color: ${borderColor}; height: ${px(height)}"><tbody>`;
+
+//   const repeat = element.repeat;
+//   const repeatStartIndex = repeat ? (Number(repeat.startRow || 1) - 1) : null;
+
+//   for (let r = 0; r < rows; r++) {
+//     if (repeat && r === repeatStartIndex) {
+//       html += `{{#each ${repeat.arrayPath}}}\n<tr>`;
+//       for (let c = 0; c < numCols; c++) {
+//         const colKey = (Array.isArray(repeat.cols) && repeat.cols[c])
+//           ? repeat.cols[c]
+//           : (Array.isArray(colKeys) && colKeys[c])
+//             ? colKeys[c]
+//             : `col${c + 1}`;
+
+//         const key = `${r}-${c}`;
+//         const cellStyles = element.cellStyles?.[key] || {};
+
+//         html += `<td style="width:${px(cellWidth)}; border:${borderWidth}px solid ${borderColor}; padding:4px; background:${cellStyles.backgroundColor || element.backgroundColor || '#ffffff'}; font-size:${px(cellStyles.fontSize || element.fontSize || 12)}; font-weight:${cellStyles.fontWeight || 'normal'}; font-family:${cellStyles.fontFamily || DEFAULTS.TABLE_FONT_FAMILY}; text-decoration:${cellStyles.textDecoration || 'none'}; text-transform:${cellStyles.textTransform || 'none'}; font-style:${cellStyles.fontStyle || 'normal'}; color:${cellStyles.color || '#000000'}; text-align:${cellStyles.textAlign || 'left'};">{{${colKey}}}</td>`;
+//       }
+//       html += `</tr>\n{{/each}}`;
+//       continue;
+//     }
+
+//     html += '<tr>';
+//     for (let c = 0; c < numCols; c++) {
+//       const key = `${r}-${c}`;
+//       const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
+//       const cellStyles = element.cellStyles?.[key] || {};
+
+//       html += `<td style="width:${px(cellWidth)}; border:${borderWidth}px solid ${borderColor}; padding:4px; background:${cellStyles.backgroundColor || element.backgroundColor || '#ffffff'}; font-size:${px(cellStyles.fontSize || element.fontSize || 12)}; font-weight:${cellStyles.fontWeight || 'normal'}; font-family:${cellStyles.fontFamily || DEFAULTS.TABLE_FONT_FAMILY}; text-decoration:${cellStyles.textDecoration || 'none'}; text-transform:${cellStyles.textTransform || 'none'}; font-style:${cellStyles.fontStyle || 'normal'}; color:${cellStyles.color || '#000000'}; text-align:${cellStyles.textAlign || 'left'};">${escapeHtml(cellContent)}</td>`;
+//     }
+//     html += '</tr>';
+//   }
+
+//   html += '</tbody></table></div>';
+//   return html;
+// };
+  
+// In canvasExport.js - Update the renderTable function
+
 const renderTable = (element, baseStyle = '') => {
   const width = element.width ?? 400;
   const borderColor = element.borderColor ?? '#000000';
   const borderWidth = element.borderWidth ?? 1;
+  const height = element.height ?? 75;
 
   let numCols = 2;
   let colKeys = null;
@@ -188,8 +249,25 @@ const renderTable = (element, baseStyle = '') => {
 
   const rows = element.rows ?? 2;
   const cellWidth = Math.round(width / numCols);
+  const cellHeight = Math.round(height / rows);
 
-  let html = `<div style="${buildInlineStyle({ 'margin-top': px(element.marginTop), 'margin-left': px(element.x) })}"><table style="border-collapse: collapse; width: ${px(width)}; border-color: ${borderColor};"><tbody>`;
+  // ✅ Helper to check if cell is merged
+  const isCellMerged = (row, col) => {
+    for (const [key, merge] of Object.entries(element.mergedCells || {})) {
+      const [startRow, startCol] = key.split("-").map(Number);
+      if (
+        row >= startRow &&
+        row < startRow + merge.rowSpan &&
+        col >= startCol &&
+        col < startCol + merge.colSpan
+      ) {
+        return { merged: true, isStart: row === startRow && col === startCol, merge };
+      }
+    }
+    return { merged: false, isStart: false, merge: null };
+  };
+
+  let html = `<div style="${buildInlineStyle({ 'margin-top': px(element.marginTop), 'margin-left': px(element.x) })}"><table style="border-collapse: collapse; width: ${px(width)}; border-color: ${borderColor}; height: ${px(height)}"><tbody>`;
 
   const repeat = element.repeat;
   const repeatStartIndex = repeat ? (Number(repeat.startRow || 1) - 1) : null;
@@ -215,11 +293,21 @@ const renderTable = (element, baseStyle = '') => {
 
     html += '<tr>';
     for (let c = 0; c < numCols; c++) {
+      const cellInfo = isCellMerged(r, c);
+      
+      // ✅ Skip cells that are part of a merge (but not the start)
+      if (cellInfo.merged && !cellInfo.isStart) continue;
+
       const key = `${r}-${c}`;
       const cellContent = element.cellData?.[key] ?? `Cell ${r + 1},${c + 1}`;
       const cellStyles = element.cellStyles?.[key] || {};
 
-      html += `<td style="width:${px(cellWidth)}; border:${borderWidth}px solid ${borderColor}; padding:4px; background:${cellStyles.backgroundColor || element.backgroundColor || '#ffffff'}; font-size:${px(cellStyles.fontSize || element.fontSize || 12)}; font-weight:${cellStyles.fontWeight || 'normal'}; font-family:${cellStyles.fontFamily || DEFAULTS.TABLE_FONT_FAMILY}; text-decoration:${cellStyles.textDecoration || 'none'}; text-transform:${cellStyles.textTransform || 'none'}; font-style:${cellStyles.fontStyle || 'normal'}; color:${cellStyles.color || '#000000'}; text-align:${cellStyles.textAlign || 'left'};">${escapeHtml(cellContent)}</td>`;
+      // ✅ Add rowspan and colspan attributes
+      const rowSpan = cellInfo.merge?.rowSpan || 1;
+      const colSpan = cellInfo.merge?.colSpan || 1;
+      const spanAttrs = `${rowSpan > 1 ? ` rowspan="${rowSpan}"` : ''}${colSpan > 1 ? ` colspan="${colSpan}"` : ''}`;
+
+      html += `<td${spanAttrs} style="width:${px(cellWidth)}; border:${borderWidth}px solid ${borderColor}; padding:4px; background:${cellStyles.backgroundColor || element.backgroundColor || '#ffffff'}; font-size:${px(cellStyles.fontSize || element.fontSize || 12)}; font-weight:${cellStyles.fontWeight || 'normal'}; font-family:${cellStyles.fontFamily || DEFAULTS.TABLE_FONT_FAMILY}; text-decoration:${cellStyles.textDecoration || 'none'}; text-transform:${cellStyles.textTransform || 'none'}; font-style:${cellStyles.fontStyle || 'normal'}; color:${cellStyles.color || '#000000'}; text-align:${cellStyles.textAlign || 'left'};">${escapeHtml(cellContent)}</td>`;
     }
     html += '</tr>';
   }
