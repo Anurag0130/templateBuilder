@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { templates as savedTemplates } from "../templates/templateStore";
 
 export default function TemplateBuilder() {
-    
+
     const location = useLocation();
     const fileInputRef = useRef(null);
 
@@ -301,6 +301,7 @@ export default function TemplateBuilder() {
     useEffect(() => {
         if (!incomingTemplateId) return;
         const template = savedTemplates?.find(t => t?.id === incomingTemplateId);
+        console.log('template', template)
         if (template?.pages) {
             setCurrentTemplateId(template.id || "--");
             setCurrentTemplateName(template.name || "--");
